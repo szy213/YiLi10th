@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>陈粒巡演全纪录 · 水墨长卷</title>
+    <style>
+        :root {
+            /* 水墨三色逻辑 */
+            --tag-guest: #1a3c34;     /* 墨绿 */
+            --tag-request: #719949;   /* 草绿 */
+            --tag-surprise: #c4d600;  /* 黄绿 */
+            --paper-white: rgba(255, 255, 255, 0.4);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            /* 背景图设置：随页面同步滑动，宽度100%自适应 */
+            background-image: url('images/033de8f0d6622db97e42ea88b4770bba.jpg');
+            background-size: 100% auto;
+            background-repeat: no-repeat;
+            background-attachment: scroll;
+            background-position: top center;
+            background-color: #f2f2f2;
+            
+            font-family: "STSong", "SimSun", "Times New Roman", serif;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* 顶部装饰性留白 */
+        .header {
+            text-align: center;
+            padding: 120px 20px 60px;
+        }
+        .header h1 {
+            font-weight: 300;
+            letter-spacing: 12px;
+            font-size: 2.8em;
+            margin: 0;
+            color: var(--tag-guest);
+        }
+        .header p {
+            font-size: 0.9em;
+            letter-spacing: 5px;
+            opacity: 0.5;
+            margin-top: 15px;
+        }
+
+        /* 主容器：调节 gap 控制场次分布 */
+        .tour-grid {
+            max-width: 750px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 160px; /* 间距控制场次落在画轴对应的位置 */
+            padding: 60px 20px 400px;
+        }
+
+        /* 卡片设计：极致极简 */
+        .tour-card {
+            position: relative;
+            background: var(--paper-white);
+            backdrop-filter: blur(3px);
+            padding: 35px;
+            border-left: 1px solid var(--tag-guest);
+            transition: all 0.4s ease;
+        }
+        .tour-card:hover {
+            background: rgba(255, 255, 255, 0.6);
+            transform: translateX(5px);
+        }
+
+        .tour-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            padding-bottom: 12px;
+        }
+        .tour-date {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--tag-guest);
+        }
+        .tour-guest {
+            font-size: 0.8em;
+            color: #555;
+            letter-spacing: 2px;
+        }
+
+        /* 图片滑动展示 */
+        .image-slider {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            margin-bottom: 25px;
+            scrollbar-width: none;
+        }
+        .image-slider::-webkit-scrollbar { display: none; }
+        .image-slider img {
+            height: 160px;
+            width: auto;
+            filter: grayscale(0.3) contrast(0.9);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .image-slider img:hover { filter: grayscale(0); }
+
+        /* 歌单模块：三色镂空标签 */
+        .special-songs-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .song-tag {
+            padding: 3px 12px;
+            font-size: 12px;
+            border: 1px solid currentColor;
+            letter-spacing: 1px;
+        }
+        .song-tag.guest { color: var(--tag-guest); }
+        .song-tag.request { color: var(--tag-request); }
+        .song-tag.surprise { color: #9a9a00; border-color: var(--tag-surprise); }
+
+        .check-area {
+            font-size: 0.8em;
+            color: #999;
+            text-align: right;
+            font-style: italic;
+        }
+
+        /* 弹窗样式 */
+        #quoteModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.85);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: #fff;
+            padding: 50px;
+            max-width: 450px;
+            border: 1px solid var(--tag-guest);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+        }
+        .modal-text {
+            display: block;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+            line-height: 2.2;
+            color: #222;
+        }
+        .close-btn {
+            background: var(--tag-guest);
+            color: #fff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            width: 100%;
+            letter-spacing: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>陳粒 · 巡演全纪录</h1>
+    <p>“ 在长卷中 听见万物生长 ”</p>
+</div>
+
+<div class="tour-grid" id="mainGrid"></div>
+
+<div id="quoteModal" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="modal-text" id="modalText"></span>
+        <button class="close-btn" onclick="closeModal()">知晓</button>
+    </div>
+</div>
+
+<script>
+    // 语录库
+    const chenQuotes = {
+        "0726": "0:00，又长大了一岁。谢谢你们陪着我，爱着我。",
+        "0727": "朝夕相伴触手可及的亲昵。love u all!",
+        "1231": "跨年快乐！牵起明天的手掌。且歌且行，循着微光。",
+        "0101": "新年~新的日光，新的希望。愿你天真，充满想象。"
+    };
+
+    // 歌单数据录入（已包含你整理的所有核心逻辑）
+    const tourData = [
+        { 
+            id: "0726", date: "07.26 北京", guest: "任贤齐", 
+            imgList: ["0726guest(1).jpg"],
+            songs: [
+                {n:"近来可好 feat 任贤齐", t:"guest"}, {n:"天涯 feat 任贤齐", t:"guest"}, {n:"我是一只鱼", t:"guest"},
+                {n:"五言", t:"request"}, {n:"自然环境", t:"request"}, {n:"少年时代心目中的英雄", t:"request"}, {n:"飞松", t:"request"},
+                {n:"七楼", t:"surprise"}
+            ] 
+        },
+        { 
+            id: "0727", date: "07.27 北京", guest: "李宇春", 
+            imgList: ["0727guest(1).jpg"],
+            songs: [
+                {n:"空空 feat 李宇春", t:"guest"}, {n:"冬泳 feat 李宇春", t:"guest"},
+                {n:"五言", t:"request"}, {n:"我们存在一刹那的喜欢", t:"request"}, {n:"小半", t:"request"},
+                {n:"七楼", t:"surprise"}, {n:"远辰", t:"surprise"}
+            ] 
+        },
+        // 更多场次可在此按格式继续添加...
+        { 
+            id: "1231", date: "12.31 武汉", guest: "跨年夜", 
+            imgList: ["1231(1).jpg"],
+            songs: [
+                {n:"海市蜃楼", t:"request"}, {n:"亲爱的你", t:"request"}, {n:"银泰", t:"request"},
+                {n:"乱", t:"surprise"}, {n:"比如世界", t:"surprise"}, {n:"Girl with One Eye", t:"surprise"}
+            ] 
+        },
+        { 
+            id: "0101", date: "01.01 武汉", guest: "元旦场", 
+            imgList: ["0101(1).jpg"],
+            songs: [
+                {n:"情景剧", t:"request"}, {n:"再度重相逢", t:"request"},
+                {n:"乱", t:"surprise"}, {n:"Girl with One Eye", t:"surprise"}, {n:"剧烈", t:"surprise"}
+            ] 
+        }
+    ];
+
+    function render() {
+        const grid = document.getElementById('mainGrid');
+        tourData.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'tour-card';
+            
+            const imgs = item.imgList.map(img => `<img src="images/${img}" onclick="showQuote('${item.id}')" onerror="this.src='https://via.placeholder.com/200x150/f4f4f4/999?text=Memory'">`).join('');
+            const tags = item.songs.map(s => `<span class="song-tag ${s.t}">${s.n}</span>`).join('');
+
+            card.innerHTML = `
+                <div class="tour-info">
+                    <span class="tour-date">${item.date}</span>
+                    <span class="tour-guest">GUEST: ${item.guest}</span>
+                </div>
+                <div class="image-slider">${imgs}</div>
+                <div class="special-songs-box">${tags}</div>
+                <div class="check-area">
+                    <label><input type="checkbox"> 曾在场</label>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    function showQuote(id) {
+        document.getElementById('modalText').innerText = chenQuotes[id] || "谢谢你来听我的演唱会。";
+        document.getElementById('quoteModal').style.display = 'flex';
+    }
+
+    function closeModal() { document.getElementById('quoteModal').style.display = 'none'; }
+
+    render();
+</script>
+</body>
+</html>
