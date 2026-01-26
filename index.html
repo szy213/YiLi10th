@@ -106,6 +106,14 @@
     
     /* 信纸质感 */
     background-image: linear-gradient(to bottom, #fff 0%, #f9f9f9 100%);
+
+    background-image: repeating-linear-gradient(
+        transparent 0px, 
+        transparent 31px, 
+        #ececec 32px
+    );
+    background-size: 100% 32px;
+    padding-top: 60px; /* 调整顶部间距，避开火漆印 */
 }
 
 /* 激活时飞入正中心 */
@@ -132,7 +140,7 @@
     margin: 20px 0 30px; 
     color: #444; 
     line-height: 1.8; 
-    text-align: center;
+    text-align: left;
     font-size: 1.1em;
 }
         .close-btn { background: var(--tag-guest); color: #fff; border: none; padding: 12px; cursor: pointer; width: 100%; }
@@ -230,7 +238,7 @@
 <script>
     // 1. 数据定义 (放在最前面，确保函数能访问到)
     const quotes = {
-        "0726": "0:00，又长大了一岁\n谢谢你们陪着我，爱着我，常常想起：我也记得你在心里撑起好多艰难时刻\n💗 \n谢谢你来.",
+        "0726": "0:00，又长大了一岁\n谢谢你们陪着我，爱着我，常常想起：我也记得你在心里撑起好多艰难时刻(隐藏断句)\n💗 \n谢谢你来.",
         "0727": "是... \n朝夕相伴触手可及的亲昵🍎 \n❤️❤️❤️❤️❤️❤️\n love u all❤️！",
         "0808": "回到上海，曾经在这里 ，\n未满足的幻想和期盼\n求而不得的未知和迷幻\n希望今天能帮你短暂地填满\n希望你满载而归，\n而我也熟记了：求而不得未必是遗憾。\n🎈2025.8.8",
         "0809": "I, love, Shanghai.",
@@ -290,8 +298,10 @@ eggIcons.forEach(src => {
     // 替换第 216 行起的函数
 function showQuote(id) {
     if (quotes[id]) { 
-        document.getElementById('modalText').innerText = quotes[id]; 
+        // 将原来的 innerText 改为调用打字机
+        const target = document.getElementById('modalText');
         showModal();
+        typewriter(target, quotes[id], 60); 
     }
 }
 
@@ -408,8 +418,8 @@ egg.onclick = function(e) {
     // 2. 准备语录内容
     const randomQuote = eggQuotes[Math.floor(Math.random() * eggQuotes.length)];
     document.getElementById('modalText').innerHTML = `
-        <div style="text-align:center; color:var(--tag-guest); margin-bottom:15px; font-weight:bold;">🍎捡到一粒果实🍎</div>
-        <div style="font-style:italic; text-align:center;">${randomQuote}</div>`;
+        <div style="text-align:left; color:var(--tag-guest); margin-bottom:15px; font-weight:bold;">🍎捡到一粒果实🍎</div>
+        <div style="font-style:italic; text-align:left;">${randomQuote}</div>`;
     
     // 3. 调用之前定义的 showModal 函数（关键：这会添加 .active 类名，让弹窗显示）
     showModal();
@@ -419,6 +429,20 @@ egg.onclick = function(e) {
 
      }
 }
+
+function typewriter(element, text, speed = 50) {
+    element.innerText = '';
+    let i = 0;
+    const timer = setInterval(() => {
+        if (i < text.length) {
+            element.innerText += text.charAt(i);
+            i++;
+        } else {
+            clearInterval(timer);
+        }
+    }, speed);
+}
+
     window.onload = render;
 </script>
 </body>
