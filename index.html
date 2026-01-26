@@ -207,6 +207,7 @@
 <div class="part-selector">
     <button class="part-btn active" onclick="changePart(1, this)">PART I</button>
     <button class="part-btn" onclick="changePart(2, this)">PART II</button>
+    <button class="part-btn" onclick="changePart(3, this)">我的一粒</button>
 </div>
 
 <div class="tour-grid" id="mainGrid"></div>
@@ -359,6 +360,11 @@ function closeModal() {
     function render() {
         const grid = document.getElementById('mainGrid');
         if(!grid) return; grid.innerHTML = '';
+
+        if (currentPart === 3) {
+        renderMyGrain(grid);
+        return;
+    }
         
         const filteredData = tourData.filter(item => item.part === currentPart);
         filteredData.forEach(item => {
