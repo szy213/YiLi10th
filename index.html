@@ -207,7 +207,6 @@
 <div class="part-selector">
     <button class="part-btn active" onclick="changePart(1, this)">PART I</button>
     <button class="part-btn" onclick="changePart(2, this)">PART II</button>
-    <button class="part-btn" onclick="changePart(3, this)">我的一粒</button>
 </div>
 
 <div class="tour-grid" id="mainGrid"></div>
@@ -352,19 +351,29 @@ function closeModal() {
 
     let currentPart = 1;
     function changePart(part, btn) {
-        currentPart = part;
-        document.querySelectorAll('.part-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active'); render(); window.scrollTo({ top: 400, behavior: 'smooth' });
+    currentPart = part;
+    
+    // 1. 处理按钮高亮样式
+    document.querySelectorAll('.part-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // 2. 核心：动态切换背景图
+    if (part === 3) {
+        // 设置“我的一粒”专属背景图
+        document.body.style.backgroundImage = "linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0.5)), url('images/your-my-grain-bg.jpg')";
+    } else {
+        // 还原回原来的巡演背景图
+        document.body.style.backgroundImage = "linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 25%, transparent 40%), url('images/033de8f0d6622db97e42ea88b4770bba.jpg')";
     }
+
+    // 3. 重新渲染内容
+    render(); 
+    window.scrollTo({ top: 400, behavior: 'smooth' });
+}
 
     function render() {
         const grid = document.getElementById('mainGrid');
         if(!grid) return; grid.innerHTML = '';
-
-        if (currentPart === 3) {
-        renderMyGrain(grid);
-        return;
-    }
         
         const filteredData = tourData.filter(item => item.part === currentPart);
         filteredData.forEach(item => {
