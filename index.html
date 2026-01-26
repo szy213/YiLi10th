@@ -13,7 +13,7 @@
             --seal-red: #8C2222; 
         }
 
-        /* --- 保持原有样式不变 --- */
+        /* --- 样式部分保持不变 --- */
         * { box-sizing: border-box; }
         body {
             margin: 0; padding: 0;
@@ -24,8 +24,34 @@
         .header { text-align: center; padding: 120px 20px 60px; }
         .header h1 { letter-spacing: 25px; font-size: 4.5em; margin: 0; color: #262626; margin-right: -25px; }
         .header p { font-size: 1.5em; letter-spacing: 5px; margin-top: 20px; color: #4a4a4a; font-weight: bold; }
-        .tour-grid { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 160px; padding: 60px 20px 400px; }
-        .tour-card { position: relative; background: var(--paper-white); backdrop-filter: blur(5px); padding: 35px; border-left: 2px solid var(--tag-guest); transition: all 0.4s ease; }
+        .tour-grid { position: relative; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 160px; padding: 60px 20px 400px; }
+      .tour-card {
+    position: relative;
+    background: var(--paper-white);
+    backdrop-filter: blur(5px);
+    padding: 35px;
+    border-left: 2px solid var(--tag-guest);
+    z-index: 10;
+    
+    /* 核心：添加过渡动画，让效果平滑 */
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05); /* 初始微弱阴影 */
+}
+
+/* 2. 定义鼠标移上去（hover）时的呼吸放大效果 */
+.tour-card:hover {
+    /* 稍微放大卡片 */
+    transform: translateY(-5px) scale(1.02); 
+    
+    /* 增加阴影深度，模拟抬升感 */
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    
+    /* 可选：改变背景透明度让呼吸感更强 */
+    background: rgba(255, 255, 255, 0.8);
+    
+    /* 确保悬停时层级最高，不被果实遮挡 */
+    z-index: 11;
+}
         .tour-info { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 25px; border-bottom: 1px solid rgba(0,0,0,0.08); padding-bottom: 12px; }
         .city-name { color: #4a4a4a; font-size: 2em; font-weight: bold; margin-right: 15px; cursor: pointer; }
         .date-num { color:#4a4a4a ; font-size: 1.5em; font-family: "Times New Roman", serif; }
@@ -39,11 +65,18 @@
         .image-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 15px; margin: 15px 0 25px 0; padding-bottom: 10px; }
         .image-slider::-webkit-scrollbar { height: 4px; }
         .image-slider::-webkit-scrollbar-thumb { background: var(--tag-guest); border-radius: 10px; }
-        .slider-img { flex: 0 0 auto; height: 300px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        .slider-img { 
+            flex: 0 0 auto; height: 300px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+            opacity: 0; transition: opacity 0.5s ease-in-out;
+        }
+        .slider-img[src] { opacity: 1; }
+
         #quoteModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.7); z-index: 999; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
         .modal-content { background: #fff; padding: 40px; max-width: 450px; border: 1px solid var(--tag-guest); }
         .modal-text { display: block; margin-bottom: 30px; white-space: pre-line; }
         .close-btn { background: var(--tag-guest); color: #fff; border: none; padding: 12px; cursor: pointer; width: 100%; }
+        
         .music-wrapper { position: fixed; bottom: 30px; right: 30px; display: flex; align-items: center; gap: 10px; z-index: 1000; }
         #bgmSelector { background: var(--paper-white); backdrop-filter: blur(10px); border: 1px solid var(--tag-guest); padding: 5px; border-radius: 5px; font-family: inherit; font-size: 12px; cursor: pointer; opacity: 0; transition: opacity 0.3s; }
         .music-wrapper:hover #bgmSelector { opacity: 1; }
@@ -52,79 +85,49 @@
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .special-badge {
-            position: absolute;
-            top: -10px;
-            right: 25px;
-            padding: 10px 6px;
-            background-color: var(--seal-red);
-            color: white;
-            font-size: 13px;
-            font-weight: bold;
-            writing-mode: vertical-rl;
-            letter-spacing: 2px;
-            z-index: 10;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+            position: absolute; top: -10px; right: 25px; padding: 10px 6px; background-color: var(--seal-red); color: white; font-size: 13px; font-weight: bold; writing-mode: vertical-rl; letter-spacing: 2px; z-index: 11; box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
         }
         .special-badge::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            border-width: 4px 14px;
-            border-style: solid;
-            border-color: var(--seal-red) var(--seal-red) transparent var(--seal-red);
+            content: ''; position: absolute; bottom: -8px; left: 0; border-width: 4px 14px; border-style: solid; border-color: var(--seal-red) var(--seal-red) transparent var(--seal-red);
         }
 
-        .part-selector {
-            text-align: center;
-            margin-bottom: 40px;
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-        }
-        .part-btn {
-            font-family: "STSong", "SimSun", serif;
-            font-size: 2em;
-            background: none;
-            border: none;
-            border-bottom: 2px solid transparent;
-            color: #666;
-            cursor: pointer;
-            padding: 5px 15px;
-            transition: all 0.3s;
-            letter-spacing: 4px;
-        }
-        .part-btn.active {
-            color: var(--tag-guest);
-            border-bottom: 2px solid var(--tag-guest);
-            font-weight: bold;
-        }
-        .tour-card.unplayed {
-            opacity: 0.8;
-            filter: grayscale(0.8);
-        }
-        .unplayed-label {
-            color: var(--tag-bg);
-            font-size: 0.8em;
-            margin-left: 10px;
-        }
+        .part-selector { text-align: center; margin-bottom: 40px; display: flex; justify-content: center; gap: 30px; }
+        .part-btn { font-family: "STSong", "SimSun", serif; font-size: 2em; background: none; border: none; border-bottom: 2px solid transparent; color: #666; cursor: pointer; padding: 5px 15px; transition: all 0.3s; letter-spacing: 4px; }
+        .part-btn.active { color: var(--tag-guest); border-bottom: 2px solid var(--tag-guest); font-weight: bold; }
+        .tour-card.unplayed { opacity: 0.8; filter: grayscale(0.8); }
+        .unplayed-label { color: var(--tag-bg); font-size: 0.8em; margin-left: 10px; }
 
-        /* 新增：Coming Soon 文本框样式 */
-        .coming-soon-footer {
-            margin-top: 60px;
-            padding: 60px;
-            border: 2px dashed #ccc;
-            background: rgba(255, 255, 255, 0.2);
-            text-align: center;
-        }
-        .cs-text {
-            font-size: 2.5em;
-            letter-spacing: 15px;
-            color: #bbb;
-            font-weight: bold;
-            opacity: 0.5;
-        }
-    </style>
+  .shiguan-egg {
+    position: absolute; 
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+    z-index: 100;
+    
+    /* 初始透明度设为0，配合动画实现淡入 */
+    opacity: 0; 
+    transition: opacity 1s ease-in-out, transform 0.4s ease;
+    
+    animation: eggFloat 4s ease-in-out infinite, fadeInEgg 1s forwards;
+}
+
+/* 新增：淡入动画 */
+@keyframes fadeInEgg {
+    from { opacity: 0; }
+    to { opacity: 0.8; } /* 最终透明度与你设定的保持一致 */
+}
+
+@keyframes eggFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+
+/* 悬停增强效果 */
+.shiguan-egg:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}    </style>
 </head>
 <body>
 
@@ -163,6 +166,7 @@
 </div>
 
 <script>
+    // 1. 数据定义 (放在最前面，确保函数能访问到)
     const quotes = {
         "0726": "0:00，又长大了一岁\n谢谢你们陪着我，爱着我，常常想起：我也记得你在心里撑起好多艰难时刻\n💗 \n谢谢你来.",
         "0727": "是... \n朝夕相伴触手可及的亲昵🍎 \n❤️❤️❤️❤️❤️❤️\n love u all❤️！",
@@ -181,161 +185,54 @@
         "1231": "环形时间里， \n我们奔跑，驻足，张望。 \n与旧我擦肩， \n牵起明天的手掌。 \n且歌且行，循着微光。 \n谢谢武汉，一起踏进新的一年。", 
         "0101": "新年~新的日光，新的希望。 \n愿你天真，充满想象。 \n勇敢出发，保持形状。 \n谢谢武汉！给我们新的力量~" 
     };
+// --- 修正后的顺序 ---
+const eggIcons = Array.from({length: 8}, (_, i) => `images/果实 (${i+1}).png`); // 1. 先定义路径
+
+const preloadedImages = []; // 2. 再进行预加载
+eggIcons.forEach(src => {
+    const img = new Image();
+    img.src = src;
+    preloadedImages.push(img);
+});
 
     const tourData = [
-        { 
-            id: "0726", city: "北京", time: "2025.07.26", part: 1, guest: "嘉宾：任贤齐", 
-            isSpecial: "生日场",
-            personalPics: Array.from({length: 17}, (_, i) => `images/0726 (${i+1}).jpg`),
-            guestPics: Array.from({length: 9}, (_, i) => `images/0726guest (${i+1}).jpg`),
-            songs: [{n:"近来可好feat任贤齐",t:"guest"},{n:"天涯",t:"guest"},{n:"我是一只鱼",t:"guest"},{n:"少年时代心目中的英雄",t:"request"},{n:"飞松",t:"request"},{n:"五言",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"七楼",t:"surprise"}] 
-        },
-        { 
-            id: "0727", city: "北京", time: "2025.07.27", part: 1, guest: "嘉宾：李宇春", 
-            personalPics: Array.from({length: 12}, (_, i) => `images/0727 (${i+1}).jpg`),
-            guestPics: Array.from({length: 6}, (_, i) => `images/0727guest (${i+1}).jpg`),
-            songs: [{n:"空空feat李宇春",t:"guest"},{n:"冬泳",t:"guest"},{n:"我们存在一刹那的喜欢",t:"request"},{n:"☆",t:"request"},{n:"七楼",t:"surprise"},{n:"远辰",t:"surprise"},{n:"五言",t:"surprise"},{n:"知洲",t:"surprise"}] 
-        },
-        { 
-            id: "0808", city: "上海", time: "2025.08.08", part: 1, guest: "嘉宾：张信哲", 
-            personalPics: Array.from({length: 12}, (_, i) => `images/0808 (${i+1}).jpg`),
-            guestPics: Array.from({length: 6}, (_, i) => `images/0808guest (${i+1}).jpg`),
-            songs: [{n:"搬走feat张信哲",t:"guest"},{n:"别怕我伤心",t:"guest"},{n:"无所求必满载而归",t:"request"},{n:"PONY",t:"request"}] 
-        },
-        { 
-            id: "0809", city: "上海", time: "2025.08.09", part: 1, guest: "嘉宾：魏如萱", 
-            personalPics: Array.from({length: 9}, (_, i) => `images/0809 (${i+1}).jpg`),
-            guestPics: Array.from({length: 4}, (_, i) => `images/0809guest (${i+1}).jpg`),
-            songs: [{n:"小半 feat 魏如萱",t:"guest"},{n:"have a nice day",t:"guest"},{n:"乔妍的心事",t:"request"},{n:"贪得",t:"request"},{n:"比如世界",t:"surprise"}] 
-        },
-        { 
-            id: "0920", city: "杭州", time: "2025.09.20", part: 1, guest: "嘉宾：萧敬腾", 
-            personalPics: Array.from({length: 10}, (_, i) => `images/0920 (${i+1}).jpg`),
-            guestPics: Array.from({length: 9}, (_, i) => `images/0920guest (${i+1}).jpg`),
-            songs: [{n:"奇妙能力歌feat萧敬腾",t:"guest"},{n:"慢慢蛮满",t:"guest"},{n:"海芋恋",t:"guest"},{n:"睡吧",t:"request"}] 
-        },
-        { 
-            id: "0921", city: "杭州", time: "2025.09.21", part: 1, guest: "嘉宾：莫文蔚", 
-            personalPics: Array.from({length: 10}, (_, i) => `images/0921 (${i+1}).jpg`),
-            guestPics: Array.from({length: 4}, (_, i) => `images/0921guest (${i+1}).jpg`),
-            songs: [{n:"阴天+走马feat莫文蔚 ",t:"guest"},{n:"寂寞的恋人啊",t:"guest"},{n:"难解风情",t:"request"},{n:"旋木",t:"request"}] 
-        },
-        { 
-            id: "1018", city: "南京", time: "2025.10.18", part: 1, guest: "嘉宾：许钧", 
-            personalPics: Array.from({length: 11}, (_, i) => `images/1018 (${i+1}).jpg`),
-            guestPics: Array.from({length: 9}, (_, i) => `images/1018guest (${i+1}).jpg`),
-            songs: [{n:"泛灵feat许钧",t:"guest"},{n:"烂情",t:"guest"},{n:"周游",t:"request"},{n:"太空",t:"request"},{n:"比如世界+飞松(清唱)",t:"surprise"}] 
-        },
-        { 
-            id: "1101", city: "西安", time: "2025.11.01", part: 1, guest: "嘉宾：尚雯婕", 
-            personalPics: Array.from({length: 10}, (_, i) => `images/1101 (${i+1}).jpg`),
-            guestPics: Array.from({length: 7}, (_, i) => `images/1101guest (${i+1}).jpg`),
-            songs: [{n:"交卷feat尚雯婕",t:"guest"},{n:"Atypical异类",t:"guest"},{n:"极端者",t:"guest"},{n:"且慢",t:"request"},{n:"有则抱抱无则笑笑",t:"request"},{n:"知洲",t:"surprise"}] 
-        },
-        { 
-            id: "1108", city: "济南", time: "2025.11.08", part: 1, guest: "嘉宾：郁可唯", 
-            personalPics: Array.from({length: 9}, (_, i) => `images/1108 (${i+1}).jpg`),
-            guestPics: Array.from({length: 6}, (_, i) => `images/1108guest (${i+1}).jpg`),
-            songs: [{n:"进化feat郁可唯",t:"guest"},{n:"路过人间",t:"guest"},{n:"从头",t:"request"},{n:"至少还有你",t:"request"},{n:"知洲",t:"surprise"},{n:"七楼",t:"surprise"}] 
-        },
-        { 
-            id: "1115", city: "重庆", time: "2025.11.15", part: 1, guest: "嘉宾：叶蓓", 
-            personalPics: Array.from({length: 9}, (_, i) => `images/1115 (${i+1}).jpg`),
-            guestPics: Array.from({length: 6}, (_, i) => `images/1115guest (${i+1}).jpg`),
-            songs: [{n:"爱完不完feat叶蓓",t:"guest"},{n:"蒲公英",t:"guest"},{n:"玉人歌",t:"request"},{n:"怪情歌",t:"request"},{n:"无烟区",t:"surprise"},{n:"知洲",t:"surprise"}] 
-        },
-        { 
-            id: "1129", city: "厦门", time: "2025.11.29", part: 1, guest: "独唱场", 
-            personalPics: Array.from({length: 9}, (_, i) => `images/1129 (${i+1}).jpg`),
-            guestPics: [], 
-            songs: [{n:"大裂缝",t:"request"},{n:"和平",t:"request"},{n:"沉迷",t:"surprise"},{n:"乱",t:"surprise"},{n:"飞松",t:"surprise"},{n:"在我的道路上",t:"surprise"},{n:"爱完不完",t:"surprise"}] 
-        },
-        { 
-            id: "1206", city: "深圳", time: "2025.12.06", part: 1, guest: "嘉宾：GAI", 
-            personalPics: Array.from({length: 12}, (_, i) => `images/1206 (${i+1}).jpg`),
-            guestPics: Array.from({length: 6}, (_, i) => `images/1206guest (${i+1}).jpg`),
-            songs: [{n:"历历万乡featGAI",t:"guest"},{n:"兰花草",t:"guest"},{n:"多多留意",t:"request"},{n:"被动",t:"request"},{n:"难解风情",t:"surprise"},{n:"乱",t:"surprise"}] 
-        },
-        { 
-            id: "1207", city: "深圳", time: "2025.12.07", part: 1, guest: "嘉宾：万妮达", 
-            personalPics: Array.from({length: 9}, (_, i) => `images/1207 (${i+1}).jpg`),
-            guestPics: Array.from({length: 5}, (_, i) => `images/1207guest (${i+1}).jpg`),
-            songs: [{n:"和平鸽feat万妮达",t:"guest"},{n:"算了",t:"guest"},{n:"colorful world",t:"guest"},{n:"四海",t:"request"},{n:"泪桥",t:"request"},{n:"沉迷",t:"surprise"},{n:"乱",t:"surprise"}] 
-        },
-        { 
-            id: "1220", city: "苏州", time: "2025.12.20", part: 1, guest: "嘉宾：杨乃文", 
-            personalPics: Array.from({length: 12}, (_, i) => `images/1220 (${i+1}).jpg`),
-            guestPics: Array.from({length: 3}, (_, i) => `images/1220guest (${i+1}).jpg`),
-            songs: [{n:"光feat杨乃文",t:"guest"},{n:"星星堆满天",t:"guest"},{n:"清透",t:"request"},{n:"人间",t:"request"},{n:"乱",t:"surprise"},{n:"难解风情",t:"surprise"},{n:"爱完不完",t:"surprise"},{n:"知洲",t:"surprise"}] 
-        },
-        { 
-            id: "1231", city: "武汉", time: "2025.12.31", part: 1, guest: "", 
-            isSpecial: "跨年场",
-            personalPics: Array.from({length: 11}, (_, i) => `images/1231 (${i+1}).jpg`),
-            guestPics: [], 
-            songs: [{n:"亲爱的你",t:"request"},{n:"Best Better Ever",t:"request"},{n:"庆祝",t:"request"},{n:"银泰",t:"request"},{n:"独行侠",t:"request"},{n:"乱",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"海市蜃楼",t:"surprise"}] 
-        },
-        { 
-            id: "0101", city: "武汉", time: "2026.01.01", part: 1, guest: "", 
-            isSpecial: "元旦场",
-            personalPics: Array.from({length: 12}, (_, i) => `images/0101 (${i+1}).jpg`),
-            guestPics: [], 
-            songs: [{n:"情景剧",t:"request"},{n:"远游",t:"request"},{n:"乐园",t:"request"},{n:"My Dear Art",t:"request"},{n:"再度重相逢",t:"request"},{n:"乱",t:"surprise"},{n:"剧烈",t:"surprise"}] 
-        },
-        { 
-            id: "0314", city: "成都", time: "2026.03.14", part: 2, status: "unplayed", 
-            guest: "",
-            personalPics: [], guestPics: [], songs: [] 
-        },
-        { 
-            id: "0315", city: "成都", time: "2026.03.15", part: 2, status: "unplayed", 
-            guest: "",
-            personalPics: [], guestPics: [], songs: [] 
-        },
-        { 
-            id: "1", city: "宁波", time: "coming soon", part: 2, status: "unplayed", 
-            guest: "",
-            personalPics: [], guestPics: [], songs: [] 
-        },
-        { 
-            id: "2", city: "青岛", time: "coming soon", part: 2, status: "unplayed", 
-            guest: "",
-            personalPics: [], guestPics: [], songs: [] 
-        },
-        { 
-            id: "3", city: "泉州", time: "coming soon", part: 2, status: "unplayed", 
-            guest: "",
-            personalPics: [], guestPics: [], songs: [] 
-        },
-        { 
-            id: "4", city: "合肥", time: "coming soon", part: 2, status: "unplayed", 
-            guest: "",
-            personalPics: [], guestPics: [], songs: [] 
-        },
-        { 
-            id: "5", city: "沈阳", time: "coming soon", part: 2, status: "unplayed", 
-            guest: "",
-            personalPics: [], guestPics: [], songs: [] 
-        },
-        { 
-            id: "6", city: "郑州", time: "coming soon", part: 2, status: "unplayed", 
-            guest: "",
-            personalPics: [], guestPics: [], songs: [] 
-        }
+        { id: "0726", city: "北京", time: "2025.07.26", part: 1, guest: "嘉宾：任贤齐", isSpecial: "生日场", personalPics: Array.from({length: 17}, (_, i) => `images/0726 (${i+1}).jpg`), guestPics: Array.from({length: 9}, (_, i) => `images/0726guest (${i+1}).jpg`), songs: [{n:"近来可好feat任贤齐",t:"guest"},{n:"天涯",t:"guest"},{n:"我是一只鱼",t:"guest"},{n:"少年时代心目中的英雄",t:"request"},{n:"飞松",t:"request"},{n:"五言",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"七楼",t:"surprise"}] },
+        { id: "0727", city: "北京", time: "2025.07.27", part: 1, guest: "嘉宾：李宇春", personalPics: Array.from({length: 12}, (_, i) => `images/0727 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/0727guest (${i+1}).jpg`), songs: [{n:"空空feat李宇春",t:"guest"},{n:"冬泳",t:"guest"},{n:"我们存在一刹那的喜欢",t:"request"},{n:"☆",t:"request"},{n:"七楼",t:"surprise"},{n:"远辰",t:"surprise"},{n:"五言",t:"surprise"},{n:"知洲",t:"surprise"}] },
+        { id: "0808", city: "上海", time: "2025.08.08", part: 1, guest: "嘉宾：张信哲", personalPics: Array.from({length: 12}, (_, i) => `images/0808 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/0808guest (${i+1}).jpg`), songs: [{n:"搬走feat张信哲",t:"guest"},{n:"别怕我伤心",t:"guest"},{n:"无所求必满载而归",t:"request"},{n:"PONY",t:"request"}] },
+        { id: "0809", city: "上海", time: "2025.08.09", part: 1, guest: "嘉宾：魏如萱", personalPics: Array.from({length: 9}, (_, i) => `images/0809 (${i+1}).jpg`), guestPics: Array.from({length: 4}, (_, i) => `images/0809guest (${i+1}).jpg`), songs: [{n:"小半 feat 魏如萱",t:"guest"},{n:"have a nice day",t:"guest"},{n:"乔妍的心事",t:"request"},{n:"贪得",t:"request"},{n:"比如世界",t:"surprise"}] },
+        { id: "0920", city: "杭州", time: "2025.09.20", part: 1, guest: "嘉宾：萧敬腾", personalPics: Array.from({length: 10}, (_, i) => `images/0920 (${i+1}).jpg`), guestPics: Array.from({length: 9}, (_, i) => `images/0920guest (${i+1}).jpg`), songs: [{n:"奇妙能力歌feat萧敬腾",t:"guest"},{n:"慢慢蛮满",t:"guest"},{n:"海芋恋",t:"guest"},{n:"睡吧",t:"request"}] },
+        { id: "0921", city: "杭州", time: "2025.09.21", part: 1, guest: "嘉宾：莫文蔚", personalPics: Array.from({length: 10}, (_, i) => `images/0921 (${i+1}).jpg`), guestPics: Array.from({length: 4}, (_, i) => `images/0921guest (${i+1}).jpg`), songs: [{n:"阴天+走马feat莫文蔚 ",t:"guest"},{n:"寂寞的恋人啊",t:"guest"},{n:"难解风情",t:"request"},{n:"旋木",t:"request"}] },
+        { id: "1018", city: "南京", time: "2025.10.18", part: 1, guest: "嘉宾：许钧", personalPics: Array.from({length: 11}, (_, i) => `images/1018 (${i+1}).jpg`), guestPics: Array.from({length: 9}, (_, i) => `images/1018guest (${i+1}).jpg`), songs: [{n:"泛灵feat许钧",t:"guest"},{n:"烂情",t:"guest"},{n:"周游",t:"request"},{n:"太空",t:"request"},{n:"比如世界+飞松(清唱)",t:"surprise"}] },
+        { id: "1101", city: "西安", time: "2025.11.01", part: 1, guest: "嘉宾：尚雯婕", personalPics: Array.from({length: 10}, (_, i) => `images/1101 (${i+1}).jpg`), guestPics: Array.from({length: 7}, (_, i) => `images/1101guest (${i+1}).jpg`), songs: [{n:"交卷feat尚雯婕",t:"guest"},{n:"Atypical异类",t:"guest"},{n:"极端者",t:"guest"},{n:"且慢",t:"request"},{n:"有则抱抱无则笑笑",t:"request"},{n:"知洲",t:"surprise"}] },
+        { id: "1108", city: "济南", time: "2025.11.08", part: 1, guest: "嘉宾：郁可唯", personalPics: Array.from({length: 9}, (_, i) => `images/1108 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/1108guest (${i+1}).jpg`), songs: [{n:"进化feat郁可唯",t:"guest"},{n:"路过人间",t:"guest"},{n:"从头",t:"request"},{n:"至少还有你",t:"request"},{n:"知洲",t:"surprise"},{n:"七楼",t:"surprise"}] },
+        { id: "1115", city: "重庆", time: "2025.11.15", part: 1, guest: "嘉宾：叶蓓", personalPics: Array.from({length: 9}, (_, i) => `images/1115 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/1115guest (${i+1}).jpg`), songs: [{n:"爱完不完feat叶蓓",t:"guest"},{n:"蒲公英",t:"guest"},{n:"玉人歌",t:"request"},{n:"怪情歌",t:"request"},{n:"无烟区",t:"surprise"},{n:"知洲",t:"surprise"}] },
+        { id: "1129", city: "厦门", time: "2025.11.29", part: 1, guest: "独唱场", personalPics: Array.from({length: 9}, (_, i) => `images/1129 (${i+1}).jpg`), guestPics: [], songs: [{n:"大裂缝",t:"request"},{n:"和平",t:"request"},{n:"沉迷",t:"surprise"},{n:"乱",t:"surprise"},{n:"飞松",t:"surprise"},{n:"在我的道路上",t:"surprise"},{n:"爱完不完",t:"surprise"}] },
+        { id: "1206", city: "深圳", time: "2025.12.06", part: 1, guest: "嘉宾：GAI", personalPics: Array.from({length: 12}, (_, i) => `images/1206 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/1206guest (${i+1}).jpg`), songs: [{n:"历历万乡featGAI",t:"guest"},{n:"兰花草",t:"guest"},{n:"多多留意",t:"request"},{n:"被动",t:"request"},{n:"难解风情",t:"surprise"},{n:"乱",t:"surprise"}] },
+        { id: "1207", city: "深圳", time: "2025.12.07", part: 1, guest: "嘉宾：万妮达", personalPics: Array.from({length: 9}, (_, i) => `images/1207 (${i+1}).jpg`), guestPics: Array.from({length: 5}, (_, i) => `images/1207guest (${i+1}).jpg`), songs: [{n:"和平鸽feat万妮达",t:"guest"},{n:"算了",t:"guest"},{n:"colorful world",t:"guest"},{n:"四海",t:"request"},{n:"泪桥",t:"request"},{n:"沉迷",t:"surprise"},{n:"乱",t:"surprise"}] },
+        { id: "1220", city: "苏州", time: "2025.12.20", part: 1, guest: "嘉宾：杨乃文", personalPics: Array.from({length: 12}, (_, i) => `images/1220 (${i+1}).jpg`), guestPics: Array.from({length: 3}, (_, i) => `images/1220guest (${i+1}).jpg`), songs: [{n:"光feat杨乃文",t:"guest"},{n:"星星堆满天",t:"guest"},{n:"清透",t:"request"},{n:"人间",t:"request"},{n:"乱",t:"surprise"},{n:"难解风情",t:"surprise"},{n:"爱完不完",t:"surprise"},{n:"知洲",t:"surprise"}] },
+        { id: "1231", city: "武汉", time: "2025.12.31", part: 1, guest: "", isSpecial: "跨年场", personalPics: Array.from({length: 11}, (_, i) => `images/1231 (${i+1}).jpg`), guestPics: [], songs: [{n:"亲爱的你",t:"request"},{n:"Best Better Ever",t:"request"},{n:"庆祝",t:"request"},{n:"银泰",t:"request"},{n:"独行侠",t:"request"},{n:"乱",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"海市蜃楼",t:"surprise"}] },
+        { id: "0101", city: "武汉", time: "2026.01.01", part: 1, guest: "", isSpecial: "元旦场", personalPics: Array.from({length: 12}, (_, i) => `images/0101 (${i+1}).jpg`), guestPics: [], songs: [{n:"情景剧",t:"request"},{n:"远游",t:"request"},{n:"乐园",t:"request"},{n:"My Dear Art",t:"request"},{n:"再度重相逢",t:"request"},{n:"乱",t:"surprise"},{n:"剧烈",t:"surprise"}] },
+        { id: "成都1", city: "成都", time: "2026.03.14", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "成都2", city: "成都", time: "2026.03.15", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "NB", city: "宁波", time: "coming soon", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "QD", city: "青岛", time: "coming soon", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "QZ", city: "泉州", time: "coming soon", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "HF", city: "合肥", time: "coming soon", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "SY", city: "沈阳", time: "coming soon", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "ZZ", city: "郑州", time: "coming soon", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] }
     ];
 
+    const eggQuotes = ["“歌手小陈，爱喝可乐，爱斩妖除魔”", "“孤独厉害，我更厉害”", "“不赶什么浪潮，也不搭什么船，我自己有海”", "“只要妳面向我，妳的希望就都能实现”", "“Here I Stand,I'm Not Going Anywhere”", "“偶尔愤怒，偶尔嫉妒，你是可爱生物”", "“抚摸妳的麻木，亲吻妳的眉目”", "“心怀啮雪大志愿！”"];
+
+    // 2. 核心函数
     function showQuote(id) {
         const modal = document.getElementById('quoteModal');
         const text = document.getElementById('modalText');
-        if (quotes[id]) {
-            text.innerText = quotes[id];
-            modal.style.display = 'flex';
-        }
+        if (quotes[id]) { text.innerText = quotes[id]; modal.style.display = 'flex'; }
     }
 
     function closeModal() {
-        const modal = document.getElementById('quoteModal');
-        modal.style.display = 'none';
+        document.getElementById('quoteModal').style.display = 'none';
         document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
     }
 
@@ -350,8 +247,7 @@
     function changeBGM(newSrc) {
         const music = document.getElementById('bgMusic');
         const source = document.getElementById('musicSource');
-        source.src = newSrc; music.load();
-        if (!music.paused) music.play();
+        source.src = newSrc; music.load(); if (!music.paused) music.play();
     }
 
     function switchPics(id, type) {
@@ -360,24 +256,21 @@
         if (!item) return;
         const pics = type === 'guest' ? item.guestPics : item.personalPics;
         if (pics && pics.length > 0) {
-            container.innerHTML = pics.map(src => `<img src="${src}" class="slider-img" alt="巡演图">`).join('');
+            container.innerHTML = pics.map(src => `<img src="${src}" class="slider-img" loading="lazy">`).join('');
         }
     }
 
     let currentPart = 1;
-
     function changePart(part, btn) {
         currentPart = part;
         document.querySelectorAll('.part-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        render();
-        window.scrollTo({ top: 400, behavior: 'smooth' });
+        btn.classList.add('active'); render(); window.scrollTo({ top: 400, behavior: 'smooth' });
     }
 
     function render() {
         const grid = document.getElementById('mainGrid');
-        if(!grid) return;
-        grid.innerHTML = '';
+        if(!grid) return; grid.innerHTML = '';
+        
         const filteredData = tourData.filter(item => item.part === currentPart);
         filteredData.forEach(item => {
             const card = document.createElement('div');
@@ -397,20 +290,51 @@
                 </div>
                 ${item.personalPics.length > 0 ? `
                     <div class="image-slider" id="slider-${item.id}">
-                        ${item.personalPics.map(src => `<img src="${src}" class="slider-img">`).join('')}
+                        ${item.personalPics.map(src => `<img src="${src}" class="slider-img" loading="lazy">`).join('')}
                     </div>` : '<div style="height:20px"></div>'}
                 <div class="special-songs-box">${tags}</div>
                 <div class="check-area">
-                    <label style="cursor: pointer;">
-                        <input type="checkbox" onchange="if(this.checked) showQuote('${item.id}')"> 我在现场
-                    </label>
-                </div>
-            `;
+                    <label style="cursor: pointer;"><input type="checkbox" onchange="if(this.checked) showQuote('${item.id}')"> 我在现场</label>
+                </div>`;
             grid.appendChild(card);
         });
 
-          }
+     // --- 修正后的随机撒果实逻辑 ---
+for(let i=0; i<10; i++) {
+    const egg = document.createElement('img');
+    egg.className = 'shiguan-egg';
+    egg.src = eggIcons[i%8];
 
+    // 逻辑：将页面宽度分为左右两部分
+    // 一半概率出现在左侧 (2% 到 15% 处)
+    // 一半概率出现在右侧 (85% 到 98% 处)
+    const isLeft = Math.random() > 0.5;
+    if (isLeft) {
+        egg.style.left = (Math.random() * 13 + 2) + "%"; 
+    } else {
+        egg.style.left = (Math.random() * 13 + 85) + "%"; 
+    }
+    
+    egg.style.top = (Math.random() * 90) + "%";
+    egg.style.animationDelay = (Math.random() * 2) + "s";
+
+    // 点击事件保持不变
+    egg.onclick = function(e) {
+        e.stopPropagation();
+        const randomQuote = eggQuotes[Math.floor(Math.random() * eggQuotes.length)];
+        const modal = document.getElementById('quoteModal');
+        document.getElementById('modalText').innerHTML = `
+            <div style="text-align:center; color:var(--tag-guest); margin-bottom:15px; font-weight:bold;">🍎捡到一粒果实🍎</div>
+            <div style="font-style:italic; text-align:center;">${randomQuote}</div>`;
+        modal.style.display = 'flex';
+        this.style.opacity = "0"; 
+        setTimeout(() => this.remove(), 500);
+    };
+    
+    grid.appendChild(egg);
+
+     }
+}
     window.onload = render;
 </script>
 </body>
