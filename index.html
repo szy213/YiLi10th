@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>一粒巡演全纪录</title>
     <style>
-      :root {
-    --tag-bg: #997A00;      /* 远山灰 */
-    --tag-guest: #2C3E50;   /* 墨青色 */
-    --tag-special: #2A6E63; /* 深古铜金 - 极易辨认 */
-    --paper-white: rgba(255, 255, 255, 0.5);
-}
+        :root {
+            /* 方案三：烟雨江南配色 */
+            --tag-bg: #B8860B;      
+            --tag-guest: #525A6B;   /* 远山紫 */
+            --tag-special: #2A6E63;
+            --paper-white: rgba(255, 255, 255, 0.5); 
+        }
 
         * { box-sizing: border-box; }
 
@@ -35,12 +36,12 @@
             padding: 120px 20px 60px;
         }
         .header h1 {
-            letter-spacing: 20px; 
+            letter-spacing: 25px; 
             font-size: 4.5em;    
             margin: 0;
             color: #262626;
             text-shadow: 1px 1px 2px rgba(255,255,255,1);
-            margin-right: -20px;
+            margin-right: -25px;
         }
         .header p {
             font-size: 1.5em; 
@@ -125,6 +126,7 @@
             font-style: italic;
         }
 
+        /* 弹窗样式优化 */
         #quoteModal {
             display: none;
             position: fixed;
@@ -150,6 +152,8 @@
             color: #222;
             border-top: 1px solid #eee;
             padding-top: 15px;
+            /* 关键修改：支持换行 */
+            white-space: pre-line; 
         }
         .close-btn {
             background: var(--tag-guest);
@@ -160,6 +164,62 @@
             width: 100%;
             letter-spacing: 5px;
         }
+
+        /* 音乐控制按钮样式 */
+        #musicControl {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 45px;
+            height: 45px;
+            background: var(--paper-white);
+            border: 1px solid var(--tag-guest);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        #musicIcon { font-size: 20px; }
+        .rotating { animation: rotate 3s linear infinite; }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+/* 图片滑动容器 */
+.image-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory; /* 核心：实现滑动吸附感 */
+    gap: 15px;
+    margin: 15px 0 25px 0;
+    padding-bottom: 10px;
+    scrollbar-width: thin; /* 窄滚动条 */
+}
+
+/* 隐藏滚动条（可选，让界面更干净） */
+.image-slider::-webkit-scrollbar { height: 4px; }
+.image-slider::-webkit-scrollbar-thumb { background: var(--tag-guest); border-radius: 10px; }
+
+.slider-img {
+    flex: 0 0 auto; /* 不压缩图片宽度 */
+    height: 200px;  /* 固定高度，宽度随比例自适应 */
+    scroll-snap-align: start;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+/* 点击嘉宾名的交互样式 */
+.tour-guest {
+    cursor: pointer;
+    text-decoration: underline dotted;
+    transition: color 0.3s;
+}
+.tour-guest:hover { color: var(--tag-special); }
     </style>
 </head>
 <body>
@@ -179,28 +239,37 @@
     </div>
 </div>
 
+<audio id="bgMusic" loop>
+    <source src="bgm.mp3" type="audio/mpeg">
+</audio>
+<div id="musicControl" onclick="toggleMusic()">
+    <span id="musicIcon">🎵</span>
+</div>
+
 <script>
+    // 语录数据
+    const quotes = {
+        "0726": "0:00，又长大了一岁\n谢谢你们陪着我，爱着我，常常想起：我也记得你在心里撑起好多艰难时刻(隐藏断句)\n💗 \n谢谢你来.",
+        "0727": "是... \n朝夕相伴触手可及的亲昵🍎 \n❤️❤️❤️❤️❤️❤️\n love u all❤️！",
+        "0808": "回到上海，曾经在这里 ，\n未满足的幻想和期盼\n求而不得的未知和迷幻\n希望今天能帮你短暂地填满\n希望你满载而归，\n而我也熟记了：求而不得未必是遗憾。\n🎈2025.8.8",
+        "0809": "I, love, Shanghai.",
+        "0920": "香香的一整夜🫧 \n 一起， \n在这城市游戏💕  \n睡吧杭州💤 \n 我会记得今天",
+        "0921": "从未想过能在我自己的演唱会上，与循环了无数遍的声音同台，开演唱会真好，谢谢大家，谢谢Karen，谢谢这个美好的晚上，幸福晕啦！",
+        "1018": "人潮，呼吸，声浪，共振 \n音乐填满了我们 \n我们填满了夜晚 \n祝你快乐，充满勇气。 \n🎈 \n 谢谢南京！",
+        "1101": "从南走到北， \n途径迁徙的飞鸟、翩跹的落叶、疾驰的列车， \n分别以各自的方式寻找某种适宜。 \n谢谢西安， \n愿你乘兴而来，满载而归。",
+        "1108": "来去匆匆之间， \n我们欣于所遇。 \n虽然伸手抓不住一阵风， \n但被风扬起的快乐却总是鲜活。 \n谢谢济南， \n摊开手掌，带走快乐回忆~",
+        "1115": "让内心驯化的秩序偶尔失控， \n允许自己坠落在音乐里。 \n柔软的羽毛， \n安全、怡人、丰盈。",
+        "1129": "谢谢厦门🌊  \n相拥短暂，但音乐永远温柔敞开。",
+        "1206": "日光晒透了海岸， \n洋流还在与风周旋。 \n我们是夜半不眠的人， \n听音乐耳语 ， \n陪荧火眨眼。 \n谢谢深圳，我们明天见~",
+        "1207": "屏住呼吸， \n闭上眼睛， \n让音乐像自由落体， \n在旷野，在人群，在心里。 \n谢谢深圳,冬日温暖的赠予。",
+        "1220": "四季流转， \n风吹、云动、一处草野。 \n时序更迭，夜长、昼短、几首音乐。 \n谢谢苏州，长夜好梦。",
+        "1231": "环形时间里， \n我们奔跑，驻足，张望。 \n与旧我擦肩， \n牵起明天的手掌。 \n且歌且行，循着微光。 \n谢谢武汉，一起踏进新的一年。",
+        "0101": "新年~新的日光，新的希望。 \n愿你天真，充满想象。 \n勇敢出发，保持形状。 \n谢谢武汉！给我们新的力量~"
+    };
+
     function showQuote(id) {
         const modal = document.getElementById('quoteModal');
         const text = document.getElementById('modalText');
-        const quotes = {
-            "0726": "0:00，又长大了一岁\n谢谢你们陪着我，爱着我，常常想起：我也记得你在心里撑起好多艰难时刻（隐藏断句）\n💗 \n谢谢你来.",
-            "0727": "是... \n朝夕相伴触手可及的亲昵🍎 \n❤️❤️❤️❤️❤️❤️\n love u all❤️！",
-            "0808": "回到上海，曾经在这里 ，未满足的幻想和期盼\n求而不得的未知和迷幻\n希望今天能帮你短暂地填满\n希望你满载而归，而我也熟记了：求而不得未必是遗憾。\n🎈2025.8.8",
-            "0809": "I, love, Shanghai.",
-            "0920": "香香的一整夜🫧 \n 一起， \n在这城市游戏💕  \n睡吧杭州💤 \n 我会记得今天",
-            "0921": "从未想过能在我自己的演唱会上，与循环了无数遍的声音同台，开演唱会真好，谢谢大家，谢谢Karen，谢谢这个美好的晚上，幸福晕啦！",
-            "1018": "人潮，呼吸，声浪，共振 \n音乐填满了我们 \n我们填满了夜晚 \n祝你快乐，充满勇气。 \n🎈 \n 谢谢南京！",
-            "1101": "从南走到北， \n途径迁徙的飞鸟、翩跹的落叶、疾驰的列车， \n分别以各自的方式寻找某种适宜。 \n谢谢西安， \n愿你乘兴而来，满载而归。",
-            "1108": "来去匆匆之间， \n我们欣于所遇。 \n虽然伸手抓不住一阵风， \n但被风扬起的快乐却总是鲜活。 \n谢谢济南， \n摊开手掌，带走快乐回忆~",
-            "1115": "让内心驯化的秩序偶尔失控， \n允许自己坠落在音乐里。 \n柔软的羽毛， \n安全、怡人、丰盈。",
-            "1129": "谢谢厦门🌊  \n相拥短暂，但音乐永远温柔敞开。",
-            "1206": "日光晒透了海岸， \n洋流还在与风周旋。 \n我们是夜半不眠的人， \n听音乐耳语 ， \n陪荧火眨眼。 \n谢谢深圳，我们明天见~",
-            "1207": "屏住呼吸， \n闭上眼睛， \n让音乐像自由落体， \n在旷野，在人群，在心里。 \n谢谢深圳,冬日温暖的赠予。",
-            "1220": "四季流转， \n风吹、云动、一处草野。 \n时序更迭，夜长、昼短、几首音乐。 \n谢谢苏州，长夜好梦。",
-            "1231": "环形时间里， \n我们奔跑，驻足，张望。 \n与旧我擦肩， \n牵起明天的手掌。 \n且歌且行，循着微光。 \n谢谢武汉，一起踏进新的一年。",
-            "0101": "新年~新的日光，新的希望。 \n愿你天真，充满想象。 \n勇敢出发，保持形状。 \n谢谢武汉！给我们新的力量~"
-        };
         text.innerText = quotes[id] || "谢谢你来听我的演唱会。";
         modal.style.display = 'flex';
     }
@@ -209,51 +278,167 @@
         document.getElementById('quoteModal').style.display = 'none';
     }
 
-    const tourData = [
-        { id: "0726", city: "北京", time: "2025.07.26", guest: "嘉宾：任贤齐", songs: [{n:"近来可好",t:"guest"},{n:"天涯",t:"guest"},{n:"我是一只鱼",t:"guest"},{n:"少年时代心目中的英雄",t:"request"},{n:"飞松",t:"request"},{n:"五言",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"七楼",t:"surprise"}] },
-        { id: "0727", city: "北京", time: "2025.07.27", guest: "嘉宾：李宇春", songs: [{n:"空空",t:"guest"},{n:"冬泳",t:"guest"},{n:"我们存在一刹那的喜欢",t:"request"},{n:"☆",t:"request"},{n:"七楼",t:"surprise"},{n:"远辰",t:"surprise"},{n:"五言",t:"surprise"},{n:"知洲",t:"surprise"}] },
-        { id: "0808", city: "上海", time: "2025.08.08", guest: "嘉宾：张信哲", songs: [{n:"搬走",t:"guest"},{n:"别怕我伤心",t:"guest"},{n:"无所求必满载而归",t:"request"},{n:"PONY",t:"request"}] },
-        { id: "0809", city: "上海", time: "2025.08.09", guest: "嘉宾：魏如萱", songs: [{n:"小半 feat 魏如萱",t:"guest"},{n:"have a nice day",t:"guest"},{n:"乔妍的心事",t:"request"},{n:"贪得",t:"request"},{n:"比如世界",t:"surprise"}] },
-        { id: "0920", city: "杭州", time: "2025.09.20", guest: "嘉宾：萧敬腾", songs: [{n:"奇妙能力歌",t:"guest"},{n:"慢慢蛮满",t:"guest"},{n:"海芋恋",t:"guest"},{n:"睡吧",t:"request"}] },
-        { id: "0921", city: "杭州", time: "2025.09.21", guest: "嘉宾：莫文蔚", songs: [{n:"阴天+走马 ",t:"guest"},{n:"寂寞的恋人啊",t:"guest"},{n:"难解风情",t:"request"},{n:"旋木",t:"request"}] },
-        { id: "1018", city: "南京", time: "2025.10.18", guest: "嘉宾：许钧", songs: [{n:"烂情",t:"guest"},{n:"泛灵",t:"guest"},{n:"周游",t:"request"},{n:"太空",t:"request"},{n:"比如世界+飞松(清唱)",t:"surprise"}] },
-        { id: "1101", city: "西安", time: "2025.11.01", guest: "嘉宾：尚雯婕", songs: [{n:"交卷",t:"guest"},{n:"Atypical异类",t:"guest"},{n:"极端者",t:"guest"},{n:"且慢",t:"request"},{n:"有则抱抱无则笑笑",t:"request"},{n:"知洲",t:"surprise"}] },
-        { id: "1108", city: "济南", time: "2025.11.08", guest: "嘉宾：郁可唯", songs: [{n:"进化",t:"guest"},{n:"路过人间",t:"guest"},{n:"从头",t:"request"},{n:"至少还有你",t:"request"},{n:"知洲",t:"surprise"},{n:"七楼",t:"surprise"}] },
-        { id: "1115", city: "重庆", time: "2025.11.15", guest: "嘉宾：叶蓓", songs: [{n:"爱完不完",t:"guest"},{n:"蒲公英",t:"guest"},{n:"玉人歌",t:"request"},{n:"怪情歌",t:"request"},{n:"无烟区",t:"surprise"},{n:"知洲",t:"surprise"}] },
-        { id: "1129", city: "厦门", time: "2025.11.29", guest: "独唱场", songs: [{n:"大裂缝",t:"request"},{n:"和平",t:"request"},{n:"沉迷",t:"surprise"},{n:"乱",t:"surprise"},{n:"飞松",t:"surprise"},{n:"在我的道路上",t:"surprise"},{n:"爱完不完",t:"surprise"}] },
-        { id: "1206", city: "深圳", time: "2025.12.06", guest: "嘉宾：GAI", songs: [{n:"历历万乡",t:"guest"},{n:"兰花草",t:"guest"},{n:"多多留意",t:"request"},{n:"被动",t:"request"},{n:"难解风情",t:"surprise"},{n:"乱",t:"surprise"}] },
-        { id: "1207", city: "深圳", time: "2025.12.07", guest: "嘉宾：万妮达", songs: [{n:"和平鸽",t:"guest"},{n:"算了",t:"guest"},{n:"colorful world",t:"guest"},{n:"四海",t:"request"},{n:"泪桥",t:"request"},{n:"沉迷",t:"surprise"},{n:"乱",t:"surprise"}] },
-        { id: "1220", city: "苏州", time: "2025.12.20", guest: "嘉宾：杨乃文", songs: [{n:"光",t:"guest"},{n:"星星堆满天",t:"guest"},{n:"清透",t:"request"},{n:"人间",t:"request"},{n:"乱",t:"surprise"},{n:"难解风情",t:"surprise"},{n:"爱完不完",t:"surprise"},{n:"知洲",t:"surprise"}] },
-        { id: "1231", city: "武汉", time: "2025.12.31", guest: "跨年场", songs: [{n:"亲爱的你",t:"request"},{n:"Best Better Ever",t:"request"},{n:"庆祝",t:"request"},{n:"银泰",t:"request"},{n:"独行侠",t:"request"},{n:"乱",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"海市蜃楼",t:"surprise"}] },
-        { id: "0101", city: "武汉", time: "2026.01.01", guest: "元旦场", songs: [{n:"情景剧",t:"request"},{n:"远游",t:"request"},{n:"乐园",t:"request"},{n:"My Dear Art",t:"request"},{n:"再度重相逢",t:"request"},{n:"乱",t:"surprise"},{n:"剧烈",t:"surprise"}] }
-    ];
-
-    function render() {
-        const grid = document.getElementById('mainGrid');
-        if(!grid) return;
-        grid.innerHTML = '';
-        tourData.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'tour-card';
-            const tags = item.songs.map(s => `<span class="song-tag ${s.t}">${s.n}</span>`).join('');
-            card.innerHTML = `
-                <div class="tour-info">
-                   <span class="tour-date">
-                       <span class="city-name">${item.city}</span> 
-                       <span class="date-num">${item.time}</span>
-                   </span>
-                   <span class="tour-guest">${item.guest}</span>
-                </div>
-                <div class="special-songs-box">${tags}</div>
-                <div class="check-area">
-                    <label style="cursor: pointer;">
-                        <input type="checkbox" onchange="if(this.checked) showQuote('${item.id}')"> 我在现场
-                    </label>
-                </div>
-            `;
-            grid.appendChild(card);
-        });
+    // 音乐控制逻辑
+    function toggleMusic() {
+        const music = document.getElementById('bgMusic');
+        const icon = document.getElementById('musicIcon');
+        const btn = document.getElementById('musicControl');
+        if (music.paused) {
+            music.volume = 0.3;
+            music.play();
+            icon.innerText = '🎵';
+            btn.classList.add('rotating');
+        } else {
+            music.pause();
+            icon.innerText = '🔇';
+            btn.classList.remove('rotating');
+        }
     }
+
+    // 巡演数据
+  // 巡演数据：已按 1-12 序列补全个人及嘉宾图片路径
+// 巡演数据：已根据真实文件名（括号前带空格）完全修正路径
+    const tourData = [
+        { 
+            id: "0726", city: "北京", time: "2025.07.26", guest: "嘉宾：任贤齐", 
+            personalPics: Array.from({length: 17},  (_, i) => `images/0726 (${i+1}).jpg`),
+            guestPics: Array.from({length: 9},  (_, i) => `images/0726guest (${i+1}).jpg`),
+            songs: [{n:"近来可好feat任贤齐",t:"guest"},{n:"天涯",t:"guest"},{n:"我是一只鱼",t:"guest"},{n:"少年时代心目中的英雄",t:"request"},{n:"飞松",t:"request"},{n:"五言",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"七楼",t:"surprise"}] 
+        },
+        { 
+            id: "0727", city: "北京", time: "2025.07.27", guest: "嘉宾：李宇春", 
+            personalPics: Array.from({length: 12},  (_, i) => `images/0727 (${i+1}).jpg`),
+            guestPics: Array.from({length: 6},  (_, i) => `images/0727guest (${i+1}).jpg`),
+            songs: [{n:"空空feat李宇春",t:"guest"},{n:"冬泳",t:"guest"},{n:"我们存在一刹那的喜欢",t:"request"},{n:"☆",t:"request"},{n:"七楼",t:"surprise"},{n:"远辰",t:"surprise"},{n:"五言",t:"surprise"},{n:"知洲",t:"surprise"}] 
+        },
+        { 
+            id: "0808", city: "上海", time: "2025.08.08", guest: "嘉宾：张信哲", 
+            personalPics: Array.from({length: 12},  (_, i) => `images/0808 (${i+1}).jpg`),
+            guestPics: Array.from({length: 6},  (_, i) => `images/0808guest (${i+1}).jpg`),
+            songs: [{n:"搬走feat张信哲",t:"guest"},{n:"别怕我伤心",t:"guest"},{n:"无所求必满载而归",t:"request"},{n:"PONY",t:"request"}] 
+        },
+        { 
+            id: "0809", city: "上海", time: "2025.08.09", guest: "嘉宾：魏如萱", 
+            personalPics: Array.from({length: 9},  (_, i) => `images/0809 (${i+1}).jpg`),
+            guestPics: Array.from({length: 4},  (_, i) => `images/0809guest (${i+1}).jpg`),
+            songs: [{n:"小半 feat 魏如萱",t:"guest"},{n:"have a nice day",t:"guest"},{n:"乔妍的心事",t:"request"},{n:"贪得",t:"request"},{n:"比如世界",t:"surprise"}] 
+        },
+        { 
+            id: "0920", city: "杭州", time: "2025.09.20", guest: "嘉宾：萧敬腾", 
+            personalPics: Array.from({length: 10},  (_, i) => `images/0920 (${i+1}).jpg`),
+            guestPics: Array.from({length: 9},  (_, i) => `images/0920guest (${i+1}).jpg`),
+            songs: [{n:"奇妙能力歌feat萧敬腾",t:"guest"},{n:"慢慢蛮满",t:"guest"},{n:"海芋恋",t:"guest"},{n:"睡吧",t:"request"}] 
+        },
+        { 
+            id: "0921", city: "杭州", time: "2025.09.21", guest: "嘉宾：莫文蔚", 
+            personalPics: Array.from({length: 10},  (_, i) => `images/0921 (${i+1}).jpg`),
+            guestPics: Array.from({length: 4},  (_, i) => `images/0921guest (${i+1}).jpg`),
+            songs: [{n:"阴天+走马feat莫文蔚 ",t:"guest"},{n:"寂寞的恋人啊",t:"guest"},{n:"难解风情",t:"request"},{n:"旋木",t:"request"}] 
+        },
+        { 
+            id: "1018", city: "南京", time: "2025.10.18", guest: "嘉宾：许钧", 
+            personalPics: Array.from({length: 11},  (_, i) => `images/1018 (${i+1}).jpg`),
+            guestPics: Array.from({length: 9},  (_, i) => `images/1018guest (${i+1}).jpg`),
+            songs: [{n:"泛灵feat许钧",t:"guest"},{n:"烂情",t:"guest"},{n:"周游",t:"request"},{n:"太空",t:"request"},{n:"比如世界+飞松(清唱)",t:"surprise"}] 
+        },
+        { 
+            id: "1101", city: "西安", time: "2025.11.01", guest: "嘉宾：尚雯婕", 
+            personalPics: Array.from({length: 10},  (_, i) => `images/1101 (${i+1}).jpg`),
+            guestPics: Array.from({length: 7},  (_, i) => `images/1101guest (${i+1}).jpg`),
+            songs: [{n:"交卷feat尚雯婕",t:"guest"},{n:"Atypical异类",t:"guest"},{n:"极端者",t:"guest"},{n:"且慢",t:"request"},{n:"有则抱抱无则笑笑",t:"request"},{n:"知洲",t:"surprise"}] 
+        },
+        { 
+            id: "1108", city: "济南", time: "2025.11.08", guest: "嘉宾：郁可唯", 
+            personalPics: Array.from({length: 9},  (_, i) => `images/1108 (${i+1}).jpg`),
+            guestPics: Array.from({length: 6},  (_, i) => `images/1108guest (${i+1}).jpg`),
+            songs: [{n:"进化feat郁可唯",t:"guest"},{n:"路过人间",t:"guest"},{n:"从头",t:"request"},{n:"至少还有你",t:"request"},{n:"知洲",t:"surprise"},{n:"七楼",t:"surprise"}] 
+        },
+        { 
+            id: "1115", city: "重庆", time: "2025.11.15", guest: "嘉宾：叶蓓", 
+            personalPics: Array.from({length: 9},  (_, i) => `images/1115 (${i+1}).jpg`),
+            guestPics: Array.from({length: 6},  (_, i) => `images/1115guest (${i+1}).jpg`),
+            songs: [{n:"爱完不完feat叶蓓",t:"guest"},{n:"蒲公英",t:"guest"},{n:"玉人歌",t:"request"},{n:"怪情歌",t:"request"},{n:"无烟区",t:"surprise"},{n:"知洲",t:"surprise"}] 
+        },
+        { 
+            id: "1129", city: "厦门", time: "2025.11.29", guest: "独唱场", 
+            personalPics: Array.from({length: 9},  (_, i) => `images/1129 (${i+1}).jpg`),
+            guestPics: [], 
+            songs: [{n:"大裂缝",t:"request"},{n:"和平",t:"request"},{n:"沉迷",t:"surprise"},{n:"乱",t:"surprise"},{n:"飞松",t:"surprise"},{n:"在我的道路上",t:"surprise"},{n:"爱完不完",t:"surprise"}] 
+        },
+        { 
+            id: "1206", city: "深圳", time: "2025.12.06", guest: "嘉宾：GAI", 
+            personalPics: Array.from({length: 12},  (_, i) => `images/1206 (${i+1}).jpg`),
+            guestPics: Array.from({length: 6},  (_, i) => `images/1206guest (${i+1}).jpg`),
+            songs: [{n:"历历万乡featGAI",t:"guest"},{n:"兰花草",t:"guest"},{n:"多多留意",t:"request"},{n:"被动",t:"request"},{n:"难解风情",t:"surprise"},{n:"乱",t:"surprise"}] 
+        },
+        { 
+            id: "1207", city: "深圳", time: "2025.12.07", guest: "嘉宾：万妮达", 
+            personalPics: Array.from({length: 9},  (_, i) => `images/1207 (${i+1}).jpg`),
+            guestPics: Array.from({length: 5},  (_, i) => `images/1207guest (${i+1}).jpg`),
+            songs: [{n:"和平鸽feat万妮达",t:"guest"},{n:"算了",t:"guest"},{n:"colorful world",t:"guest"},{n:"四海",t:"request"},{n:"泪桥",t:"request"},{n:"沉迷",t:"surprise"},{n:"乱",t:"surprise"}] 
+        },
+        { 
+            id: "1220", city: "苏州", time: "2025.12.20", guest: "嘉宾：杨乃文", 
+            personalPics: Array.from({length: 12},  (_, i) => `images/1220 (${i+1}).jpg`),
+            guestPics: Array.from({length: 3},  (_, i) => `images/1220guest (${i+1}).jpg`),
+            songs: [{n:"光feat杨乃文",t:"guest"},{n:"星星堆满天",t:"guest"},{n:"清透",t:"request"},{n:"人间",t:"request"},{n:"乱",t:"surprise"},{n:"难解风情",t:"surprise"},{n:"爱完不完",t:"surprise"},{n:"知洲",t:"surprise"}] 
+        },
+        { 
+            id: "1231", city: "武汉", time: "2025.12.31", guest: "跨年场", 
+            personalPics: Array.from({length: 11},  (_, i) => `images/1231 (${i+1}).jpg`),
+            guestPics: [], 
+            songs: [{n:"亲爱的你",t:"request"},{n:"Best Better Ever",t:"request"},{n:"庆祝",t:"request"},{n:"银泰",t:"request"},{n:"独行侠",t:"request"},{n:"乱",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"海市蜃楼",t:"surprise"}] 
+        },
+        { 
+            id: "0101", city: "武汉", time: "2026.01.01", guest: "元旦场", 
+            personalPics: Array.from({length: 12},  (_, i) => `images/0101 (${i+1}).jpg`),
+            guestPics: [], 
+            songs: [{n:"情景剧",t:"request"},{n:"远游",t:"request"},{n:"乐园",t:"request"},{n:"My Dear Art",t:"request"},{n:"再度重相逢",t:"request"},{n:"乱",t:"surprise"},{n:"剧烈",t:"surprise"}] 
+        }
+    ]; // 切换图片的逻辑
+function switchPics(id, type) {
+    const container = document.getElementById(`slider-${id}`);
+    const item = tourData.find(d => d.id === id);
+    const pics = type === 'guest' ? item.guestPics : item.personalPics;
+    
+    if (pics && pics.length > 0) {
+        container.innerHTML = pics.map(src => `<img src="${src}" class="slider-img" alt="巡演图">`).join('');
+    }
+}
+
+function render() {
+    const grid = document.getElementById('mainGrid');
+    if(!grid) return;
+    grid.innerHTML = '';
+    tourData.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'tour-card';
+        const tags = item.songs.map(s => `<span class="song-tag ${s.t}">${s.n}</span>`).join('');
+        
+        // 核心修改：在城市信息下方加入滑动容器
+        card.innerHTML = `
+            <div class="tour-info">
+               <span class="tour-date">
+                   <span class="city-name" onclick="switchPics('${item.id}', 'personal')">${item.city}</span> 
+                   <span class="date-num">${item.time}</span>
+               </span>
+               <span class="tour-guest" onclick="switchPics('${item.id}', 'guest')">${item.guest}</span>
+            </div>
+
+            <div class="image-slider" id="slider-${item.id}">
+                ${(item.personalPics || []).map(src => `<img src="${src}" class="slider-img">`).join('')}
+            </div>
+
+            <div class="special-songs-box">${tags}</div>
+            <div class="check-area">
+                <label style="cursor: pointer;">
+                    <input type="checkbox" onchange="if(this.checked) showQuote('${item.id}')"> 我在现场
+                </label>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
 
     window.onload = render;
 </script>
