@@ -71,10 +71,70 @@
             opacity: 0; transition: opacity 0.5s ease-in-out;
         }
         .slider-img[src] { opacity: 1; }
+/* 修改第 103 行起的弹窗样式 */
+#quoteModal { 
+    display: none; 
+    position: fixed; /* 锁定在屏幕视野，不随滚动条走 */
+    top: 0; left: 0; 
+    width: 100vw; height: 100vh; 
+    background: rgba(0, 0, 0, 0.6); 
+    z-index: 9999; 
+    
+    /* 核心：真正的视野垂直居中 */
+    justify-content: center; 
+    align-items: center; 
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
 
-        #quoteModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.7); z-index: 999; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
-        .modal-content { background: #fff; padding: 40px; max-width: 450px; border: 1px solid var(--tag-guest); }
-        .modal-text { display: block; margin-bottom: 30px; white-space: pre-line; }
+/* 激活状态 */
+#quoteModal.active { display: flex; opacity: 1; }
+
+/* 替换 .modal-content 为动态信封样式 */
+.modal-content { 
+    background: #fdfdfd;
+    padding: 45px 35px; 
+    width: 90%;
+    max-width: 420px; 
+    border-radius: 2px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    position: relative;
+    
+    /* 信封弹出动画：向下偏移并缩小 */
+    transform: translateY(40px) scale(0.9);
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    
+    /* 信纸质感 */
+    background-image: linear-gradient(to bottom, #fff 0%, #f9f9f9 100%);
+}
+
+/* 激活时飞入正中心 */
+#quoteModal.active .modal-content {
+    transform: translateY(0) scale(1);
+}
+
+/* 装饰：红色火漆印效果 */
+.modal-content::before {
+    content: "🍎";
+    position: absolute;
+    top: -20px; left: 50%;
+    transform: translateX(-50%);
+    width: 40px; height: 40px;
+    background: var(--tag-special);
+    border-radius: 50%;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.modal-text { 
+    display: block; 
+    margin: 20px 0 30px; 
+    color: #444; 
+    line-height: 1.8; 
+    text-align: center;
+    font-size: 1.1em;
+}
         .close-btn { background: var(--tag-guest); color: #fff; border: none; padding: 12px; cursor: pointer; width: 100%; }
         
         .music-wrapper { position: fixed; bottom: 30px; right: 30px; display: flex; align-items: center; gap: 10px; z-index: 1000; }
@@ -159,9 +219,11 @@
 
 <div id="quoteModal" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <div style="font-weight: bold; color: #4a4a4a; margin-bottom: 12px; font-size: 1.2em; letter-spacing: 3px;">小陈说：</div>
+        <div style="text-align:center; font-weight:bold; color:var(--tag-special); margin-bottom:15px; letter-spacing:2px; border-bottom:1px dashed #ddd; padding-bottom:10px;">
+            来自小陈的私信
+        </div>
         <span class="modal-text" id="modalText"></span>
-        <button class="close-btn" onclick="closeModal()">OK</button>
+        <button class="close-btn" onclick="closeModal()">收下了</button>
     </div>
 </div>
 
@@ -225,16 +287,33 @@ eggIcons.forEach(src => {
     const eggQuotes = ["“歌手小陈，爱喝可乐，爱斩妖除魔”", "“孤独厉害，我更厉害”", "“不赶什么浪潮，也不搭什么船，我自己有海”", "“只要妳面向我，妳的希望就都能实现”", "“Here I Stand,I'm Not Going Anywhere”", "“偶尔愤怒，偶尔嫉妒，你是可爱生物”", "“抚摸妳的麻木，亲吻妳的眉目”", "“心怀啮雪大志愿！”"];
 
     // 2. 核心函数
-    function showQuote(id) {
-        const modal = document.getElementById('quoteModal');
-        const text = document.getElementById('modalText');
-        if (quotes[id]) { text.innerText = quotes[id]; modal.style.display = 'flex'; }
+    // 替换第 216 行起的函数
+function showQuote(id) {
+    if (quotes[id]) { 
+        document.getElementById('modalText').innerText = quotes[id]; 
+        showModal();
     }
+}
 
-    function closeModal() {
-        document.getElementById('quoteModal').style.display = 'none';
-        document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-    }
+// 新增通用的显示函数，确保动画生效
+function showModal() {
+    const modal = document.getElementById('quoteModal');
+    modal.style.display = 'flex';
+    void modal.offsetWidth; // 强制刷新渲染，确保动画触发
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden'; // 锁定背景滚动
+}
+
+// 替换第 221 行起的 closeModal
+function closeModal() {
+    const modal = document.getElementById('quoteModal');
+    modal.classList.remove('active');
+    setTimeout(() => {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto'; // 恢复滚动
+        // 注意：如果你想保留“我在现场”的钩子，不要在这里重置 checkbox
+    }, 300);
+}
 
     function toggleMusic() {
         const music = document.getElementById('bgMusic');
@@ -319,17 +398,22 @@ for(let i=0; i<10; i++) {
     egg.style.animationDelay = (Math.random() * 2) + "s";
 
     // 点击事件保持不变
-    egg.onclick = function(e) {
-        e.stopPropagation();
-        const randomQuote = eggQuotes[Math.floor(Math.random() * eggQuotes.length)];
-        const modal = document.getElementById('quoteModal');
-        document.getElementById('modalText').innerHTML = `
-            <div style="text-align:center; color:var(--tag-guest); margin-bottom:15px; font-weight:bold;">🍎捡到一粒果实🍎</div>
-            <div style="font-style:italic; text-align:center;">${randomQuote}</div>`;
-        modal.style.display = 'flex';
-        this.style.opacity = "0"; 
-        setTimeout(() => this.remove(), 500);
-    };
+   // 找到 render() 里的 egg.onclick 逻辑进行替换
+egg.onclick = function(e) {
+    e.stopPropagation();
+    
+    // 1. 直接移除果实，不进行收缩动画
+    this.remove(); 
+
+    // 2. 准备语录内容
+    const randomQuote = eggQuotes[Math.floor(Math.random() * eggQuotes.length)];
+    document.getElementById('modalText').innerHTML = `
+        <div style="text-align:center; color:var(--tag-guest); margin-bottom:15px; font-weight:bold;">🍎捡到一粒果实🍎</div>
+        <div style="font-style:italic; text-align:center;">${randomQuote}</div>`;
+    
+    // 3. 调用之前定义的 showModal 函数（关键：这会添加 .active 类名，让弹窗显示）
+    showModal();
+};
     
     grid.appendChild(egg);
 
