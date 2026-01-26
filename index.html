@@ -445,5 +445,92 @@ function typewriter(element, text, speed = 50) {
 
     window.onload = render;
 </script>
+<script>
+(function() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.pointerEvents = 'none'; 
+    canvas.style.zIndex = '10000';
+    document.body.appendChild(canvas);
+
+    let particles = [];
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // 彩带粒子类
+    class Ribbon {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            // 黄色与蓝色系
+            const colors = ['#FFD700', '#1E90FF', '#FFDF00', '#87CEFA']; 
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            
+            // 随机长宽，模拟彩带碎片
+            this.w = Math.random() * 10 + 6;
+            this.h = Math.random() * 4 + 2;
+            
+            // 物理属性：强力向上喷射
+            this.vx = Math.random() * 10 - 5;
+            this.vy = Math.random() * -15 - 5; 
+            this.gravity = 0.3;
+            
+            // 旋转属性
+            this.rotation = Math.random() * 360;
+            this.rSpeed = Math.random() * 10 - 5;
+            
+            this.alpha = 1;
+        }
+        update() {
+            this.vy += this.gravity;
+            this.x += this.vx;
+            this.y += this.vy;
+            this.rotation += this.rSpeed;
+            this.alpha -= 0.008; // 消失速度
+        }
+        draw() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.rotation * Math.PI / 180);
+            ctx.globalAlpha = this.alpha;
+            ctx.fillStyle = this.color;
+            // 绘制长条形状
+            ctx.fillRect(-this.w/2, -this.h/2, this.w, this.h); 
+            ctx.restore();
+        }
+    }
+
+    // 核心逻辑：精准监听复选框点击
+    window.addEventListener('click', function(e) {
+        // 仅当点击的对象是 type 为 checkbox 的复选框时触发
+        if (e.target.type === 'checkbox') {
+            const count = 100; // 每次点击喷射 30 条彩带
+            for (let i = 0; i < count; i++) {
+                particles.push(new Ribbon(e.clientX, e.clientY));
+            }
+        }
+    });
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // 过滤掉不可见或掉出屏幕的粒子
+        particles = particles.filter(p => p.alpha > 0 && p.y < canvas.height);
+        particles.forEach(p => { 
+            p.update(); 
+            p.draw(); 
+        });
+        requestAnimationFrame(animate);
+    }
+    animate();
+})();
+</script>
 </body>
 </html>
