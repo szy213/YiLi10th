@@ -54,6 +54,30 @@
     /* 确保悬停时层级最高，不被果实遮挡 */
     z-index: 11;
 }
+
+/* 定义勋章发光呼吸动画 */
+@keyframes badgeGlow {
+    0% { 
+        box-shadow: 0 0 5px rgba(218, 165, 32, 0.2); 
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 0 20px rgba(218, 165, 32, 0.6), 0 0 30px rgba(184, 134, 11, 0.3); 
+        transform: scale(1.05); /* 微微放大 */
+    }
+    100% { 
+        box-shadow: 0 0 5px rgba(218, 165, 32, 0.2); 
+        transform: scale(1);
+    }
+}
+
+/* 点亮勋章的类名 */
+.badge-unlocked {
+    animation: badgeGlow 3s infinite ease-in-out;
+    border-color: #DAA520!important;
+    background: #fff !important;
+}
+
         .tour-info { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 25px; border-bottom: 1px solid rgba(0,0,0,0.08); padding-bottom: 12px; }
         .city-name { color: #4a4a4a; font-size: 2em; font-weight: bold; margin-right: 15px; cursor: pointer; }
         .date-num { color:#4a4a4a ; font-size: 1.5em; font-family: "Times New Roman", serif; }
@@ -197,7 +221,56 @@
 .shiguan-egg:hover {
     opacity: 1;
     transform: scale(1.2);
-}    </style>
+}   
+
+/* 票根卡片的基础样式 */
+.ticket-card {
+    background: #fff !important;
+    border: none !important;
+    position: relative;
+    padding: 40px 25px !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* 模拟左右两侧的撕口圆洞 */
+.ticket-card::before, .ticket-card::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 24px;
+    height: 24px;
+    background: #f2f2f2; /* 这里的颜色要和背景背景色一致 */
+    border-radius: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+}
+.ticket-card::before { left: -12px; }
+.ticket-card::after { right: -12px; }
+
+/* 装饰红印章 */
+.seal-stamp {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--seal-red);
+    border-radius: 50%;
+    color: var(--seal-red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 10px;
+    transform: rotate(-15deg);
+    opacity: 0.6;
+    border-style: double;
+    pointer-events: none;
+}
+
+
+
+</style>
 </head>
 <body>
 
@@ -405,24 +478,27 @@ function renderMyGrain(container) {
 
     // 3. 等级判定逻辑 (0场不亮，按区间点亮)
     const badges = [
-        { name: "初见果实", icon: "🍒", unlocked: myCount > 0 && ratio <= 1/3 },
-        { name: "共振频率", icon: "📻", unlocked: ratio > 1/3 && ratio <= 2/3 },
-        { name: "不灭证据", icon: "✨", unlocked: ratio > 2/3 && ratio < 1 },
-        { name: "全勤之约", icon: "🍎", unlocked: ratio === 1 && totalPlayedCount > 0 }
+        { name: "奇妙能力", icon: "🌱", unlocked: myCount > 0 && ratio <= 1/3 },
+        { name: "历历万乡", icon: "🍒", unlocked: ratio > 1/3 && ratio <= 2/3 },
+        { name: "世界正中", icon: "🍎", unlocked: ratio > 2/3 && ratio < 1 },
+        { name: "全勤之约", icon: "🌲", unlocked: ratio === 1 && totalPlayedCount > 0 }
     ];
 
     let badgesHTML = `<p style="font-size: 0.8em; color: #999; letter-spacing: 3px; margin-bottom: 20px;">一粒 · 荣誉勋章墙</p>
                       <div style="display: flex; justify-content: space-around; align-items: flex-start;">`;
     
     badges.forEach(b => {
-        badgesHTML += `
-            <div style="flex: 1; opacity: ${b.unlocked ? '1' : '0.15'}; filter: ${b.unlocked ? 'none' : 'grayscale(1)'}; transition: all 0.6s;">
-                <div style="font-size: 24px; width: 50px; height: 50px; line-height: 50px; border: 2px solid ${b.unlocked ? 'var(--tag-special)' : '#eee'}; border-radius: 50%; margin: 0 auto; background: #fdfdfd;">
-                    ${b.icon}
-                </div>
-                <div style="font-size: 11px; margin-top: 8px; font-weight: bold; color: ${b.unlocked ? '#333' : '#bbb'}">${b.name}</div>
-            </div>`;
-    });
+    // 如果已解锁，添加 'badge-unlocked' 类名
+    const glowClass = b.unlocked ? 'badge-unlocked' : '';
+    
+    badgesHTML += `
+        <div style="flex: 1; opacity: ${b.unlocked ? '1' : '0.15'}; filter: ${b.unlocked ? 'none' : 'grayscale(1)'}; transition: all 0.6s;">
+            <div class="${glowClass}" style="font-size: 24px; width: 50px; height: 50px; line-height: 50px; border: 2px solid #eee; border-radius: 50%; margin: 0 auto; background: #fdfdfd; display: flex; align-items: center; justify-content: center;">
+                ${b.icon}
+            </div>
+            <div style="font-size: 11px; margin-top: 8px; font-weight: bold; color: ${b.unlocked ? '#333' : '#bbb'}">${b.name}</div>
+        </div>`;
+});
     badgesHTML += `</div>`;
     badgeWall.innerHTML = badgesHTML;
     container.appendChild(badgeWall); // 先塞入勋章墙
@@ -433,34 +509,38 @@ function renderMyGrain(container) {
     const uniqueCities = [...new Set(myTours.map(item => item.city))].length;
 
     const myCard = document.createElement('div');
-    myCard.className = 'tour-card';
-    myCard.style.cssText = "width: 100%; max-width: 600px; margin: 0 auto; text-align: center; border: 1px solid var(--tag-bg); background: rgba(255,255,255,0.9);";
+    myCard.className = 'tour-card ticket-card'; // 加上我们新写的类名
+    myCard.style.cssText = "width: 100%; max-width: 500px; margin: 0 auto; text-align: center;";
     
     myCard.innerHTML = `
-        <div class="special-badge" style="right: -10px; top: 20px;">记忆存根</div>
-        <h2 style="letter-spacing:8px; color:var(--tag-special); margin-top:10px;">见面记录</h2>
-        <div style="margin: 30px 0; padding: 25px; border: 1px double #ddd; background: #fff;">
-            <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
-                <div>
-                    <div style="font-size: 0.8em; color: #999;">总观看场次</div>
-                    <div style="font-size: 1.8em; font-weight: bold; color: var(--tag-special);">${myCount}</div>
-                </div>
-                <div style="border-left: 1px solid #eee;"></div>
-                <div>
-                    <div style="font-size: 0.8em; color: #999;">踏足城市</div>
-                    <div style="font-size: 1.8em; font-weight: bold; color: var(--tag-special);">${uniqueCities}</div>
-                </div>
+        <div class="special-badge" style="right: 15px; top: -10px;">编号: 0726</div>
+        
+        <div style="font-size: 0.7em; color: #999; letter-spacing: 5px; margin-bottom: 5px;">LIVE TOUR MEMORY</div>
+        <h2 style="letter-spacing:10px; color: #333; margin: 10px 0; border-bottom: 1px solid #eee; padding-bottom: 15px;">一粒 · 存根</h2>
+        
+        <div style="display: flex; justify-content: space-around; padding: 20px 0;">
+            <div style="border-right: 1px dashed #ddd; flex: 1;">
+                <div style="font-size: 2.2em; font-family: 'Times New Roman'; color: var(--tag-special);">${myCount}</div>
+                <div style="font-size: 0.7em; color: #999;">累计场次 / SHOWS</div>
             </div>
-            <div style="text-align: left; padding-top: 15px; border-top: 1px dashed #eee;">
-                ${myCount > 0 ? `
-                    <p style="font-size: 0.95em; margin: 5px 0;">✨ <strong>初次见面：</strong> ${firstMeeting.time} · ${firstMeeting.city}</p>
-                    <p style="font-size: 0.95em; margin: 5px 0;">📍 <strong>足迹记录：</strong> ${[...new Set(myTours.map(t => t.city))].join(' 、 ')}</p>
-                ` : `<p style="color: #999; text-align: center; font-style: italic;">尚未点亮现场，期待相遇</p>`}
+            <div style="flex: 1;">
+                <div style="font-size: 2.2em; font-family: 'Times New Roman'; color: var(--tag-special);">${uniqueCities}</div>
+                <div style="font-size: 0.7em; color: #999;">城市足迹 / CITIES</div>
             </div>
         </div>
-        <p style="font-size: 0.85em; color: var(--tag-bg); font-style: italic;">“你去，我等，不灭。”</p>
+
+        <div style="text-align: left; padding: 15px; margin: 10px 0; border: 1px dashed #ccc; border-radius: 4px; font-size: 0.85em; background: #fafafa;">
+            ${myCount > 0 ? `
+                <div style="margin-bottom: 8px;">✨ <b style="color:#555">初次相遇:</b> <span style="color:#888">${firstMeeting.time} · ${firstMeeting.city}</span></div>
+                <div>📍 <b style="color:#555">漫游轨迹:</b> <span style="color:#888">${[...new Set(myTours.map(t => t.city))].join(' / ')}</span></div>
+            ` : `<p style="text-align:center; color: #ccc;">还没有留下属于妳的存根</p>`}
+        </div>
+
+        ${myCount > 0 ? `<div class="seal-stamp">COLLECTED<br>MEMORIES</div>` : ''}
+        
+        <p style="margin-top: 25px; font-size: 0.75em; color: #bbb; font-style: italic;">“ 你去，我等，不灭”</p>
     `;
-    container.appendChild(myCard); // 再塞入统计卡片
+    container.appendChild(myCard);
 }
 
 
