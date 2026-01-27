@@ -268,6 +268,86 @@
     pointer-events: none;
 }
 
+/* 垂直刻度尺容器 */
+.time-ruler {
+    position: fixed;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 45px;
+    display: none; 
+    flex-direction: column;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* 刻度线：始终显示为红色 */
+.ruler-tick {
+    width: 15px; 
+    height: 2px;
+    background: var(--tag-special); 
+    margin: 12px 0;
+    position: relative;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+/* 激活或悬停时：线条加长 */
+.ruler-tick:hover, .ruler-tick.active {
+    width: 25px;
+}
+
+/* 月份文字：默认隐藏 (opacity: 0) */
+.ruler-tick::after {
+    content: attr(data-month);
+    position: absolute;
+    right: 35px;
+    top: -6px;
+    font-size: 11px;
+    font-family: 'Times New Roman', serif;
+    color: var(--tag-special);
+    opacity: 0; /* 平时隐藏文字 */
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    font-weight: bold;
+}
+
+/* 关键改动：只有鼠标碰到 (hover) 或者 处于激活态 (active) 时显示文字 */
+.ruler-tick:hover::after, 
+.ruler-tick.active::after {
+    opacity: 1; /* 显示文字 */
+    transform: translateX(-5px); /* 增加一点滑入动画 */
+}
+
+/* 激活态额外效果：给线条加一个发光感 */
+.ruler-tick.active {
+    box-shadow: 0 0 8px var(--tag-special);
+}
+/* 舞台光扫过特效 */
+.tour-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+    transform: skewX(-25deg);
+    z-index: 1;
+}
+
+.tour-card:hover::after {
+    left: 150%;
+    transition: all 0.6s ease;
+}
+
+.tour-card {
+    overflow: hidden; /* 确保光影不会溢出卡片 */
+}
+
+
+
 
 
 </style>
@@ -310,6 +390,8 @@
         <button class="close-btn" onclick="closeModal()">收下了</button>
     </div>
 </div>
+
+<div id="monthRuler" class="time-ruler"></div>
 
 <script>
     // 1. 数据定义 (放在最前面，确保函数能访问到)
@@ -511,7 +593,7 @@ function renderMyGrain(container) {
     badgeWall.style.cssText = "width: 100%; max-width: 600px; margin: 0 auto 30px; background: #fff; border: 1px solid #ddd; padding: 25px 15px; text-align: center;";
 
     const badges = [
-        { name: "奇妙能力", icon: "🌱", unlocked: myCount > 0 },
+        { name: "奇妙能力", icon: "🌸", unlocked: myCount > 0 },
         { name: "历历万乡", icon: "🍒", unlocked: ratio > 0.3 },
         { name: "世界正中", icon: "🍎", unlocked: ratio > 0.7 },
         { name: "全勤之约", icon: "🌲", unlocked: ratio === 1 && totalPlayedCount > 0 }
@@ -570,89 +652,105 @@ function renderMyGrain(container) {
 }
 
 
-    function render() {
-        const grid = document.getElementById('mainGrid');
-        if(!grid) return; grid.innerHTML = '';
+   function render() {
+    const grid = document.getElementById('mainGrid');
+    const ruler = document.getElementById('monthRuler');
+    if(!grid) return; grid.innerHTML = '';
 
-        if (currentPart === 3) {
+    // 板块 3 处理
+    if (currentPart === 3) {
         renderMyGrain(grid);
+        if(ruler) ruler.style.display = 'none';
         return;
     }
-        
-        const filteredData = tourData.filter(item => item.part === currentPart);
-        filteredData.forEach(item => {
-            const card = document.createElement('div');
-            card.className = `tour-card ${item.status === 'unplayed' ? 'unplayed' : ''}`;
-            const badgeHTML = item.isSpecial ? `<div class="special-badge">${item.isSpecial}</div>` : '';
-            const unplayedHTML = item.status === 'unplayed' ? `<span class="unplayed-label">(已官宣·未开演)</span>` : '';
-            const tags = item.songs.map(s => `<span class="song-tag ${s.t}">${s.n}</span>`).join('');
-            card.innerHTML = `
-    ${badgeHTML} 
-    <div class="tour-info">
-       <span class="tour-date">
-           <span class="city-name" onclick="switchPics('${item.id}', 'personal')">${item.city}</span> 
-           <span class="date-num">${item.time}</span>
-           ${unplayedHTML}
-       </span>
-       <span class="tour-guest" onclick="switchPics('${item.id}', 'guest')">${item.guest}</span>
-    </div>
-    ${item.personalPics.length > 0 ? `
-        <div class="image-slider" id="slider-${item.id}">
-            ${item.personalPics.map(src => `<img src="${src}" class="slider-img" loading="lazy">`).join('')}
-        </div>` : '<div style="height:20px"></div>'}
-    <div class="special-songs-box">${tags}</div>
-    
-    <div class="check-area">
-        <label style="cursor: pointer;">
-            <input type="checkbox" 
-                   ${localStorage.getItem('checked_' + item.id) === 'true' ? 'checked' : ''} 
-                   onchange="saveCheckState('${item.id}', this.checked)"> 
-            我在现场
-        </label>
-    </div>`;
-            grid.appendChild(card);
-        });
 
-     // --- 修正后的随机撒果实逻辑 ---
-for(let i=0; i<10; i++) {
-    const egg = document.createElement('img');
-    egg.className = 'shiguan-egg';
-    egg.src = eggIcons[i%8];
-
-    // 逻辑：将页面宽度分为左右两部分
-    // 一半概率出现在左侧 (2% 到 15% 处)
-    // 一半概率出现在右侧 (85% 到 98% 处)
-    const isLeft = Math.random() > 0.5;
-    if (isLeft) {
-        egg.style.left = (Math.random() * 13 + 2) + "%"; 
-    } else {
-        egg.style.left = (Math.random() * 13 + 85) + "%"; 
+    // 刻度尺初始化
+    if(ruler) {
+        ruler.innerHTML = '';
+        ruler.style.display = 'flex';
     }
     
-    egg.style.top = (Math.random() * 90) + "%";
-    egg.style.animationDelay = (Math.random() * 2) + "s";
-
-    // 点击事件保持不变
-   // 找到 render() 里的 egg.onclick 逻辑进行替换
-egg.onclick = function(e) {
-    e.stopPropagation();
+    const filteredData = tourData.filter(item => item.part === currentPart);
     
-    // 1. 直接移除果实，不进行收缩动画
-    this.remove(); 
+    // 提取不重复的月份用于生成刻度
+    const uniqueMonths = [...new Set(filteredData.map(item => {
+        const m = item.time.split('.')[1];
+        return m && m !== "coming soon" ? m : null;
+    }))].filter(Boolean);
 
-    // 2. 准备语录内容
-    const randomQuote = eggQuotes[Math.floor(Math.random() * eggQuotes.length)];
-    document.getElementById('modalText').innerHTML = `
-        <div style="text-align:left; color:var(--tag-guest); margin-bottom:15px; font-weight:bold;">🍎捡到一粒果实🍎</div>
-        <div style="font-style:italic; text-align:left;">${randomQuote}</div>`;
-    
-    // 3. 调用之前定义的 showModal 函数（关键：这会添加 .active 类名，让弹窗显示）
-    showModal();
-};
-    
-    grid.appendChild(egg);
+    uniqueMonths.forEach(m => {
+        const tick = document.createElement('div');
+        tick.className = 'ruler-tick';
+        tick.setAttribute('data-month', m + '月');
+        tick.id = 'tick-' + m;
+        
+        // 点击跳转逻辑
+        tick.onclick = function() {
+            const allCards = document.querySelectorAll('.tour-card');
+            for (let card of allCards) {
+                const dateElement = card.querySelector('.date-num');
+                if (dateElement && dateElement.innerText.split('.')[1] === m) {
+                    const topOffset = card.getBoundingClientRect().top + window.pageYOffset - 100;
+                    window.scrollTo({ top: topOffset, behavior: 'smooth' });
+                    break;
+                }
+            }
+        };
+        ruler.appendChild(tick);
+    });
 
-     }
+    // 渲染卡片
+    filteredData.forEach(item => {
+        const card = document.createElement('div');
+        card.className = `tour-card ${item.status === 'unplayed' ? 'unplayed' : ''}`;
+        const badgeHTML = item.isSpecial ? `<div class="special-badge">${item.isSpecial}</div>` : '';
+        const unplayedHTML = item.status === 'unplayed' ? `<span class="unplayed-label">(已官宣·未开演)</span>` : '';
+        const tags = item.songs.map(s => `<span class="song-tag ${s.t}">${s.n}</span>`).join('');
+        card.innerHTML = `
+            ${badgeHTML} 
+            <div class="tour-info">
+               <span class="tour-date">
+                   <span class="city-name" onclick="switchPics('${item.id}', 'personal')">${item.city}</span> 
+                   <span class="date-num">${item.time}</span>
+                   ${unplayedHTML}
+               </span>
+               <span class="tour-guest" onclick="switchPics('${item.id}', 'guest')">${item.guest}</span>
+            </div>
+            ${item.personalPics.length > 0 ? `
+                <div class="image-slider" id="slider-${item.id}">
+                    ${item.personalPics.map(src => `<img src="${src}" class="slider-img" loading="lazy">`).join('')}
+                </div>` : '<div style="height:20px"></div>'}
+            <div class="special-songs-box">${tags}</div>
+            <div class="check-area">
+                <label style="cursor: pointer;">
+                    <input type="checkbox" 
+                           ${localStorage.getItem('checked_' + item.id) === 'true' ? 'checked' : ''} 
+                           onchange="saveCheckState('${item.id}', this.checked)"> 
+                    我在现场
+                </label>
+            </div>`;
+        grid.appendChild(card);
+    });
+
+    // 随机果实逻辑保持不变...
+    for(let i=0; i<10; i++) {
+        const egg = document.createElement('img');
+        egg.className = 'shiguan-egg';
+        egg.src = eggIcons[i%8];
+        const isLeft = Math.random() > 0.5;
+        if (isLeft) { egg.style.left = (Math.random() * 13 + 2) + "%"; } 
+        else { egg.style.left = (Math.random() * 13 + 85) + "%"; }
+        egg.style.top = (Math.random() * 90) + "%";
+        egg.style.animationDelay = (Math.random() * 2) + "s";
+        egg.onclick = function(e) {
+            e.stopPropagation();
+            this.remove(); 
+            const randomQuote = eggQuotes[Math.floor(Math.random() * eggQuotes.length)];
+            document.getElementById('modalText').innerHTML = `<div style="text-align:left; color:var(--tag-guest); margin-bottom:15px; font-weight:bold;">🍎捡到一粒果实🍎</div><div style="font-style:italic; text-align:left;">${randomQuote}</div>`;
+            showModal();
+        };
+        grid.appendChild(egg);
+    }
 }
 
 function typewriter(element, text, speed = 50) {
@@ -672,7 +770,36 @@ function typewriter(element, text, speed = 50) {
 
 
     window.onload = render;
+
+    window.addEventListener('scroll', () => {
+    if (currentPart === 3) return;
+
+    const cards = document.querySelectorAll('.tour-card');
+    let activeMonth = "";
+
+    cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        // 当卡片进入视口上半部分时激活对应刻度
+        if (rect.top < 200 && rect.bottom > 200) {
+            const dateElement = card.querySelector('.date-num');
+            if (dateElement) {
+                const m = dateElement.innerText.split('.')[1];
+                if (m) activeMonth = m;
+            }
+        }
+    });
+
+    document.querySelectorAll('.ruler-tick').forEach(tick => {
+        tick.classList.remove('active');
+        if (tick.id === 'tick-' + activeMonth) {
+            tick.classList.add('active');
+        }
+    });
+});
 </script>
+
+
+
 <script>
 (function() {
     const canvas = document.createElement('canvas');
@@ -750,5 +877,9 @@ function typewriter(element, text, speed = 50) {
     animate();
 })();
 </script>
+
+
+
+
 </body>
 </html>
