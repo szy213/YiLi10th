@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>一粒巡演全纪录</title>
@@ -20,6 +21,7 @@
             background-image: linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 25%, transparent 40%), url('images/033de8f0d6622db97e42ea88b4770bba.jpg');
             background-size: 100% auto; background-repeat: no-repeat; background-attachment: scroll; background-position: top center; background-color: #f2f2f2;
             font-family: "STSong", "SimSun", serif; color: #333; line-height: 1.6;
+            transition: background-image 0.8s ease-in-out;
         }
         .header { text-align: center; padding: 120px 20px 60px; }
         .header h1 { letter-spacing: 25px; font-size: 4.5em; margin: 0; color: #262626; margin-right: -25px; }
@@ -352,10 +354,91 @@ function closeModal() {
 
     let currentPart = 1;
     function changePart(part, btn) {
-        currentPart = part;
-        document.querySelectorAll('.part-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active'); render(); window.scrollTo({ top: 400, behavior: 'smooth' });
+    currentPart = part;
+    // 切换按钮高亮状态
+    document.querySelectorAll('.part-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // --- 背景切换核心逻辑 ---
+    if (part === 3) {
+        // “我的一粒”板块专属背景：使用浅色渐变叠加一张特定的背景图
+        // 你可以将 'images/my_grain_bg.jpg' 换成你准备好的樱桃或其他主题图片路径
+        document.body.style.backgroundImage = "linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0.6)), url('images/my_grain_bg.jpg')";
+        document.body.style.backgroundSize = "cover"; // 确保背景铺满
+    } else {
+        // 还原 PART I 和 PART II 的巡演主背景
+        document.body.style.backgroundImage = "linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 25%, transparent 40%), url('images/033de8f0d6622db97e42ea88b4770bba.jpg')";
+        document.body.style.backgroundSize = "100% auto";
     }
+
+    render(); 
+    window.scrollTo({ top: 400, behavior: 'smooth' });
+}
+
+function saveCheckState(id, isChecked) {
+    // 1. 将勾选状态存入本地存储，确保刷新不丢失
+    localStorage.setItem('checked_' + id, isChecked);
+    
+    // 2. 如果是勾选动作，触发原有的语录弹窗
+    if (isChecked) {
+        showQuote(id);
+    }
+    
+    // 3. 如果当前处于“我的一粒”板块，立即刷新页面显示最新统计
+    if (currentPart === 3) {
+        render();
+    }
+}
+
+function renderMyGrain(container) {
+    // 获取所有已保存勾选状态的场次
+    const myTours = tourData.filter(item => localStorage.getItem('checked_' + item.id) === 'true');
+    
+    const totalShows = myTours.length;
+    // 使用 Set 自动去重城市名
+    const uniqueCities = [...new Set(myTours.map(item => item.city))].length;
+    
+    // 按时间先后排序，找出最早的一场作为“初次见面”
+    const sortedTours = [...myTours].sort((a, b) => {
+        return new Date(a.time.replace(/\./g, '/')) - new Date(b.time.replace(/\./g, '/'));
+    });
+    const firstMeeting = sortedTours[0];
+
+    const myCard = document.createElement('div');
+    myCard.className = 'tour-card';
+    myCard.style.cssText = "width: 100%; max-width: 600px; margin: 0 auto; text-align: center; border: 1px solid var(--tag-bg); background: rgba(255,255,255,0.9);";
+    
+    myCard.innerHTML = `
+        <div class="special-badge" style="right: -10px; top: 20px;">记忆存根</div>
+        <h2 style="letter-spacing:8px; color:var(--tag-special); margin-top:10px;">见面记录</h2>
+        
+        <div style="margin: 30px 0; padding: 25px; border: 1px double #ddd; background: #fff;">
+            <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
+                <div>
+                    <div style="font-size: 0.8em; color: #999;">总观看场次</div>
+                    <div style="font-size: 1.8em; font-weight: bold; color: var(--tag-special);">${totalShows}</div>
+                </div>
+                <div style="border-left: 1px solid #eee;"></div>
+                <div>
+                    <div style="font-size: 0.8em; color: #999;">踏足城市</div>
+                    <div style="font-size: 1.8em; font-weight: bold; color: var(--tag-special);">${uniqueCities}</div>
+                </div>
+            </div>
+            
+            <div style="text-align: left; padding-top: 15px; border-top: 1px dashed #eee;">
+                ${totalShows > 0 ? `
+                    <p style="font-size: 0.95em; margin: 5px 0;">✨ <strong>初次见面：</strong> ${firstMeeting.time} · ${firstMeeting.city}</p>
+                    <p style="font-size: 0.95em; margin: 5px 0;">📍 <strong>足迹记录：</strong> ${[...new Set(myTours.map(t => t.city))].join(' 、 ')}</p>
+                ` : `
+                    <p style="color: #999; text-align: center; font-style: italic;">尚未点亮现场，期待相遇</p>
+                `}
+            </div>
+        </div>
+        <p style="font-size: 0.85em; color: var(--tag-bg); font-style: italic;">“你去，我等，不灭。”</p>
+    `;
+    container.appendChild(myCard);
+}
+
 
     function render() {
         const grid = document.getElementById('mainGrid');
@@ -374,23 +457,29 @@ function closeModal() {
             const unplayedHTML = item.status === 'unplayed' ? `<span class="unplayed-label">(已官宣·未开演)</span>` : '';
             const tags = item.songs.map(s => `<span class="song-tag ${s.t}">${s.n}</span>`).join('');
             card.innerHTML = `
-                ${badgeHTML} 
-                <div class="tour-info">
-                   <span class="tour-date">
-                       <span class="city-name" onclick="switchPics('${item.id}', 'personal')">${item.city}</span> 
-                       <span class="date-num">${item.time}</span>
-                       ${unplayedHTML}
-                   </span>
-                   <span class="tour-guest" onclick="switchPics('${item.id}', 'guest')">${item.guest}</span>
-                </div>
-                ${item.personalPics.length > 0 ? `
-                    <div class="image-slider" id="slider-${item.id}">
-                        ${item.personalPics.map(src => `<img src="${src}" class="slider-img" loading="lazy">`).join('')}
-                    </div>` : '<div style="height:20px"></div>'}
-                <div class="special-songs-box">${tags}</div>
-                <div class="check-area">
-                    <label style="cursor: pointer;"><input type="checkbox" onchange="if(this.checked) showQuote('${item.id}')"> 我在现场</label>
-                </div>`;
+    ${badgeHTML} 
+    <div class="tour-info">
+       <span class="tour-date">
+           <span class="city-name" onclick="switchPics('${item.id}', 'personal')">${item.city}</span> 
+           <span class="date-num">${item.time}</span>
+           ${unplayedHTML}
+       </span>
+       <span class="tour-guest" onclick="switchPics('${item.id}', 'guest')">${item.guest}</span>
+    </div>
+    ${item.personalPics.length > 0 ? `
+        <div class="image-slider" id="slider-${item.id}">
+            ${item.personalPics.map(src => `<img src="${src}" class="slider-img" loading="lazy">`).join('')}
+        </div>` : '<div style="height:20px"></div>'}
+    <div class="special-songs-box">${tags}</div>
+    
+    <div class="check-area">
+        <label style="cursor: pointer;">
+            <input type="checkbox" 
+                   ${localStorage.getItem('checked_' + item.id) === 'true' ? 'checked' : ''} 
+                   onchange="saveCheckState('${item.id}', this.checked)"> 
+            我在现场
+        </label>
+    </div>`;
             grid.appendChild(card);
         });
 
@@ -448,6 +537,9 @@ function typewriter(element, text, speed = 50) {
         }
     }, speed);
 }
+
+
+
 
     window.onload = render;
 </script>
