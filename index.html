@@ -368,6 +368,36 @@ eggIcons.forEach(src => {
         { id: "ZZ", city: "郑州", time: "coming soon", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] }
     ];
 
+// 城市经纬度坐标库（用于计算两地距离）
+const CITY_COORDS = {
+    "北京": [116.40, 39.90], "上海": [121.47, 31.23], "广州": [113.26, 23.13],
+    "成都": [104.06, 30.67], "深圳": [114.05, 22.54], "杭州": [120.15, 30.28],
+    "武汉": [114.30, 30.58], "西安": [108.93, 34.27], "南京": [118.79, 32.06],
+    "重庆": [106.55, 29.56], "厦门": [118.08, 24.47], "苏州": [120.58, 31.30],
+    "济南": [117.00, 36.65], "宁波": [121.54, 29.86], "沈阳": [123.43, 41.80],
+    "郑州": [113.62, 34.74], "青岛": [120.38, 36.06], "泉州": [118.67, 24.87],
+    "合肥": [117.22, 31.82]
+};
+
+// 自动里程计算函数 (Haversine算法)
+function calcTotalKM(list) {
+    if (list.length < 2) return 0;
+    let totalD = 0;
+    const R = 6371; // 地球半径
+    for (let i = 0; i < list.length - 1; i++) {
+        const p1 = CITY_COORDS[list[i].city];
+        const p2 = CITY_COORDS[list[i+1].city];
+        if (!p1 || !p2) continue;
+        const dLat = (p2[1] - p1[1]) * Math.PI / 180;
+        const dLon = (p2[0] - p1[0]) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                  Math.cos(p1[1] * Math.PI / 180) * Math.cos(p2[1] * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        totalD += R * c;
+    }
+    return Math.round(totalD);
+}
+
     const eggQuotes = ["“歌手小陈，爱喝可乐，爱斩妖除魔”", "“孤独厉害，我更厉害”", "“不赶什么浪潮，也不搭什么船，我自己有海”", "“只要妳面向我，妳的希望就都能实现”", "“Here I Stand,I'm Not Going Anywhere”", "“偶尔愤怒，偶尔嫉妒，你是可爱生物”", "“抚摸妳的麻木，亲吻妳的眉目”", "“心怀啮雪大志愿！”"];
 
     // 2. 核心函数
@@ -465,56 +495,52 @@ function saveCheckState(id, isChecked) {
 
 function renderMyGrain(container) {
     // 1. 基础数据准备
-    const allPlayedTours = tourData.filter(item => item.status !== 'unplayed'); // 分母：已开演总数
-    const myTours = tourData.filter(item => localStorage.getItem('checked_' + item.id) === 'true'); // 分子：我看过的
+    const allPlayedTours = tourData.filter(item => item.status !== 'unplayed');
+    const myTours = tourData.filter(item => localStorage.getItem('checked_' + item.id) === 'true');
+    const sortedTours = [...myTours].sort((a, b) => new Date(a.time.replace(/\./g, '/')) - new Date(b.time.replace(/\./g, '/')));
     
-    const totalPlayedCount = allPlayedTours.length; 
     const myCount = myTours.length;
+    const totalPlayedCount = allPlayedTours.length;
     const ratio = totalPlayedCount > 0 ? myCount / totalPlayedCount : 0;
+    
+    // 计算总里程
+    const totalKM = calcTotalKM(sortedTours);
 
-    // 2. 建立勋章容器
+    // 2. 勋章墙模块 (保持原有逻辑)
     const badgeWall = document.createElement('div');
     badgeWall.style.cssText = "width: 100%; max-width: 600px; margin: 0 auto 30px; background: #fff; border: 1px solid #ddd; padding: 25px 15px; text-align: center;";
 
-    // 3. 等级判定逻辑 (0场不亮，按区间点亮)
     const badges = [
-        { name: "奇妙能力", icon: "🌱", unlocked: myCount > 0 && ratio <= 1/3 },
-        { name: "历历万乡", icon: "🍒", unlocked: ratio > 1/3 && ratio <= 2/3 },
-        { name: "世界正中", icon: "🍎", unlocked: ratio > 2/3 && ratio < 1 },
+        { name: "奇妙能力", icon: "🌱", unlocked: myCount > 0 },
+        { name: "历历万乡", icon: "🍒", unlocked: ratio > 0.3 },
+        { name: "世界正中", icon: "🍎", unlocked: ratio > 0.7 },
         { name: "全勤之约", icon: "🌲", unlocked: ratio === 1 && totalPlayedCount > 0 }
     ];
 
     let badgesHTML = `<p style="font-size: 0.8em; color: #999; letter-spacing: 3px; margin-bottom: 20px;">一粒 · 荣誉勋章墙</p>
                       <div style="display: flex; justify-content: space-around; align-items: flex-start;">`;
-    
     badges.forEach(b => {
-    // 如果已解锁，添加 'badge-unlocked' 类名
-    const glowClass = b.unlocked ? 'badge-unlocked' : '';
-    
-    badgesHTML += `
-        <div style="flex: 1; opacity: ${b.unlocked ? '1' : '0.15'}; filter: ${b.unlocked ? 'none' : 'grayscale(1)'}; transition: all 0.6s;">
-            <div class="${glowClass}" style="font-size: 24px; width: 50px; height: 50px; line-height: 50px; border: 2px solid #eee; border-radius: 50%; margin: 0 auto; background: #fdfdfd; display: flex; align-items: center; justify-content: center;">
-                ${b.icon}
-            </div>
-            <div style="font-size: 11px; margin-top: 8px; font-weight: bold; color: ${b.unlocked ? '#333' : '#bbb'}">${b.name}</div>
-        </div>`;
-});
+        const glowClass = b.unlocked ? 'badge-unlocked' : '';
+        badgesHTML += `
+            <div style="flex: 1; opacity: ${b.unlocked ? '1' : '0.15'}; filter: ${b.unlocked ? 'none' : 'grayscale(1)'}; transition: all 0.6s;">
+                <div class="${glowClass}" style="font-size: 24px; width: 50px; height: 50px; line-height: 50px; border: 2px solid #eee; border-radius: 50%; margin: 0 auto; background: #fdfdfd; display: flex; align-items: center; justify-content: center;">
+                    ${b.icon}
+                </div>
+                <div style="font-size: 11px; margin-top: 8px; font-weight: bold; color: ${b.unlocked ? '#333' : '#bbb'}">${b.name}</div>
+            </div>`;
+    });
     badgesHTML += `</div>`;
     badgeWall.innerHTML = badgesHTML;
-    container.appendChild(badgeWall); // 先塞入勋章墙
+    container.appendChild(badgeWall);
 
-    // 4. 保持原来的“记忆存根”模块不变
-    const sortedTours = [...myTours].sort((a, b) => new Date(a.time.replace(/\./g, '/')) - new Date(b.time.replace(/\./g, '/')));
-    const firstMeeting = sortedTours[0];
+    // 3. 记忆存根模块 (集成里程计算)
     const uniqueCities = [...new Set(myTours.map(item => item.city))].length;
-
     const myCard = document.createElement('div');
-    myCard.className = 'tour-card ticket-card'; // 加上我们新写的类名
+    myCard.className = 'tour-card ticket-card';
     myCard.style.cssText = "width: 100%; max-width: 500px; margin: 0 auto; text-align: center;";
     
     myCard.innerHTML = `
         <div class="special-badge" style="right: 15px; top: -10px;">编号: 0726</div>
-        
         <div style="font-size: 0.7em; color: #999; letter-spacing: 5px; margin-bottom: 5px;">LIVE TOUR MEMORY</div>
         <h2 style="letter-spacing:10px; color: #333; margin: 10px 0; border-bottom: 1px solid #eee; padding-bottom: 15px;">一粒 · 存根</h2>
         
@@ -529,16 +555,16 @@ function renderMyGrain(container) {
             </div>
         </div>
 
-        <div style="text-align: left; padding: 15px; margin: 10px 0; border: 1px dashed #ccc; border-radius: 4px; font-size: 0.85em; background: #fafafa;">
+        <div style="text-align: left; padding: 18px; margin: 10px 0; border: 1px dashed #ccc; border-radius: 4px; font-size: 0.85em; background: #fafafa; line-height: 1.8;">
             ${myCount > 0 ? `
-                <div style="margin-bottom: 8px;">✨ <b style="color:#555">初次相遇:</b> <span style="color:#888">${firstMeeting.time} · ${firstMeeting.city}</span></div>
-                <div>📍 <b style="color:#555">漫游轨迹:</b> <span style="color:#888">${[...new Set(myTours.map(t => t.city))].join(' / ')}</span></div>
+                <div>✨ <b style="color:#555">初次相遇:</b> <span style="color:#888">${sortedTours[0].time} · ${sortedTours[0].city}</span></div>
+                <div style="margin-top: 5px;">📍 <b style="color:#555">漫游轨迹:</b> <span style="color:#888">${[...new Set(sortedTours.map(t => t.city))].join(' → ')}</span></div>
+                <div style="margin-top: 5px; border-top: 1px solid #eee; padding-top: 5px;">✈️ <b style="color:#555">累计里程:</b> <span style="color:var(--tag-special); font-weight:bold; font-family:'Times New Roman'; font-size:1.1em;">${totalKM.toLocaleString()}</span> <span style="color:#999; font-size:0.8em;">KM</span></div>
             ` : `<p style="text-align:center; color: #ccc;">还没有留下属于妳的存根</p>`}
         </div>
 
         ${myCount > 0 ? `<div class="seal-stamp">COLLECTED<br>MEMORIES</div>` : ''}
-        
-        <p style="margin-top: 25px; font-size: 0.75em; color: #bbb; font-style: italic;">“ 你去，我等，不灭”</p>
+        <p style="margin-top: 25px; font-size: 0.75em; color: #bbb; font-style: italic;">“ 你去，我等，不灭 ”</p>
     `;
     container.appendChild(myCard);
 }
