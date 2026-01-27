@@ -371,6 +371,8 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
+
+
 </style>
 </head>
 <body>
@@ -617,13 +619,35 @@ function renderMyGrain(container) {
         { name: "全勤之约", icon: "🌲", unlocked: ratio === 1 && totalPlayedCount > 0 }
     ];
     let badgesHTML = `<p style="font-size: 0.8em; color: #999; letter-spacing: 3px; margin-bottom: 15px;">一粒 · 荣誉勋章墙</p><div style="display: flex; justify-content: space-around;">`;
+    
     badges.forEach(b => {
-        badgesHTML += `<div style="flex: 1; opacity: ${b.unlocked ? '1' : '0.15'};"><div style="font-size: 24px;">${b.icon}</div><div style="font-size: 11px; margin-top: 5px; font-weight:bold;">${b.name}</div></div>`;
+        // --- 核心修改：如果是解锁状态，添加 'badge-unlocked' 类名 ---
+        const unlockedClass = b.unlocked ? 'badge-unlocked' : '';
+        badgesHTML += `
+            <div style="flex: 1; transition: all 0.5s;">
+                <div class="${unlockedClass}" style="
+                    width: 50px; 
+                    height: 50px; 
+                    margin: 0 auto; 
+                    border-radius: 50%; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    font-size: 24px; 
+                    border: 2px solid #eee; 
+                    background: rgba(255,255,255,0.3);
+                    opacity: ${b.unlocked ? '1' : '0.2'};
+                ">
+                    ${b.icon}
+                </div>
+                <div style="font-size: 11px; margin-top: 8px; font-weight:bold; color: ${b.unlocked ? '#333' : '#ccc'};">
+                    ${b.name}
+                </div>
+            </div>`;
     });
     badgesHTML += `</div>`;
     badgeWall.innerHTML = badgesHTML;
     container.appendChild(badgeWall);
-
     // --- 第二部分：📍 手动标记大地图 ---
     const mapBox = document.createElement('div');
     mapBox.style.cssText = `
