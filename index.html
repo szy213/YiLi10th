@@ -78,6 +78,62 @@
     background: #fff !important;
 }
 
+/* 1. 调整容器，确保右对齐且不影响原本布局 */
+.check-area {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+.check-area label {
+    display: flex !important;
+    align-items: center;
+    cursor: pointer;
+    font-size: 13px;
+    color: #888;
+    transition: all 0.3s;
+}
+
+/* 2. 改造复选框为圆形印章 */
+.check-area input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none; /* 兼容 Safari */
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid #ccc;
+    border-radius: 50%;
+    margin-right: 8px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* 3. 选中后的火漆红效果 */
+.check-area input[type="checkbox"]:checked {
+    background: var(--tag-special); /* 使用你代码中定义的 #8C2222 */
+    border-color: var(--tag-special);
+    transform: scale(1.1) rotate(-10deg); /* 模拟手动盖章的歪斜感 */
+}
+
+/* 4. 绘制中心对钩 ✓ */
+.check-area input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* 5. 选中后文字变红加粗 */
+.check-area label:has(input:checked) {
+    color: var(--tag-special);
+    font-weight: bold;
+}
+
         .tour-info { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 25px; border-bottom: 1px solid rgba(0,0,0,0.08); padding-bottom: 12px; }
         .city-name { color: #4a4a4a; font-size: 2em; font-weight: bold; margin-right: 15px; cursor: pointer; }
         .date-num { color:#4a4a4a ; font-size: 1.5em; font-family: "Times New Roman", serif; }
