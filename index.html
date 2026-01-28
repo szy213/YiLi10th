@@ -496,7 +496,7 @@ document.head.appendChild(style);
 <div id="quoteModal" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <div style="text-align:center; font-weight:bold; color:var(--tag-special); margin-bottom:15px; letter-spacing:2px; border-bottom:1px dashed #ddd; padding-bottom:10px;">
-            来自小陈的私信
+            来自小兔的私信
         </div>
         <span class="modal-text" id="modalText"></span>
         <button class="close-btn" onclick="closeModal()">收下了</button>
@@ -705,7 +705,7 @@ function renderMyGrain(container) {
         { name: "奇妙能力", icon: "🌸", unlocked: myCount > 0 },
         { name: "历历万乡", icon: "🍒", unlocked: ratio > 0.3 },
         { name: "世界正中", icon: "🍎", unlocked: ratio > 0.7 },
-        { name: "全勤之约", icon: "🌲", unlocked: ratio === 1 && totalPlayedCount > 0 }
+        { name: "全勤之约", icon: "🌳", unlocked: ratio === 1 && totalPlayedCount > 0 }
     ];
     let badgesHTML = `<p style="font-size: 0.8em; color: #999; letter-spacing: 3px; margin-bottom: 15px;">一粒 · 荣誉勋章墙</p><div style="display: flex; justify-content: space-around;">`;
     
@@ -820,13 +820,17 @@ function renderMyGrain(container) {
 
 
 
-    // --- 第三部分：记忆存根 ---
+// --- 第三部分：记忆存根 ---
     const uniqueCities = [...new Set(myTours.map(item => item.city))].length;
+    
+    // 【核心新增】：提取并格式化漫游轨迹
+    // sortedTours 已经是按时间排好序的已勾选场次
+    const travelPath = sortedTours.map(item => item.city).join(' → ');
+
     const myCard = document.createElement('div');
     myCard.className = 'tour-card ticket-card';
     myCard.style.cssText = "width: 100%; max-width: 500px; margin: 0 auto; text-align: center;";
     myCard.innerHTML = `
-       
         <div style="font-size: 0.7em; color: #999; letter-spacing: 5px; margin-bottom: 5px;">LIVE TOUR MEMORY</div>
         <h2 style="letter-spacing:10px; color: #333; margin: 10px 0; border-bottom: 1px solid #eee; padding-bottom: 15px;">一粒 · 存根</h2>
         <div style="display: flex; justify-content: space-around; padding: 20px 0;">
@@ -839,10 +843,17 @@ function renderMyGrain(container) {
                 <div style="font-size: 0.7em; color: #999;">城市足迹</div>
             </div>
         </div>
-        <div style="text-align: left; padding: 18px; margin: 10px 0; border: 1px dashed #ccc; border-radius: 4px; font-size: 0.85em; background: #fafafa;">
+        <div style="text-align: left; padding: 18px; margin: 10px 0; border: 1px dashed #ccc; border-radius: 4px; font-size: 0.85em; background: #fafafa; line-height: 1.8;">
             ${myCount > 0 ? `
                 <div>✨ <b>初次相遇:</b> ${sortedTours[0].time} · ${sortedTours[0].city}</div>
-                <div style="margin-top: 5px; border-top: 1px solid #eee; padding-top: 5px;">✈️ <b>累计里程:</b> <span style="color:var(--tag-special); font-weight:bold;">${totalKM.toLocaleString()}</span> KM</div>
+                
+                <div style="margin-top: 5px; border-top: 1px solid #eee; padding-top: 5px; color: #666;">
+                    🧭 <b>漫游轨迹:</b> <span style="color:#333;">${travelPath}</span>
+                </div>
+
+                <div style="margin-top: 5px; border-top: 1px solid #eee; padding-top: 5px;">
+                    ✈️ <b>累计里程:</b> <span style="color:var(--tag-special); font-weight:bold;">${totalKM.toLocaleString()}</span> KM
+                </div>
             ` : `<p style="text-align:center; color: #ccc;">还没有留下属于妳的存根</p>`}
         </div>
         ${myCount > 0 ? `<div class="seal-stamp">COLLECTED</div>` : ''}
