@@ -492,6 +492,28 @@ document.head.appendChild(style);
     </div>
 </div>
 
+<div id="back-to-top" title="回到顶部" style="
+    position: fixed;
+    bottom: 20px;
+    left: 20px; /* 与右侧音乐按钮对称 */
+    width: 40px;
+    height: 40px;
+    background: var(--paper-white);
+    border: 1px solid rgba(140, 34, 34, 0.2);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 9999;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    visibility: hidden; /* 初始隐藏，滚动后显示 */
+    opacity: 0;
+">
+    <span style="font-size: 20px; color: var(--tag-special);">🎈</span>
+</div>
+
 <audio id="bgMusic" loop><source id="musicSource" src="bgm.mp3" type="audio/mpeg"></audio>
 
 <div id="quoteModal" onclick="closeModal()">
@@ -1015,7 +1037,38 @@ function typewriter(element, text, speed = 50) {
     }, speed);
 }
 
+// 回到顶部功能
+const backToTopBtn = document.getElementById('back-to-top');
 
+window.addEventListener('scroll', () => {
+    // 当页面向下滚动超过 300px 时显示按钮
+    if (window.scrollY > 300) {
+        backToTopBtn.style.visibility = 'visible';
+        backToTopBtn.style.opacity = '1';
+    } else {
+        backToTopBtn.style.opacity = '0';
+        setTimeout(() => {
+            if (window.scrollY <= 300) backToTopBtn.style.visibility = 'hidden';
+        }, 300);
+    }
+});
+
+backToTopBtn.onclick = () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth' // 平滑滚动
+    });
+};
+
+// 增加鼠标悬停效果
+backToTopBtn.onmouseenter = () => {
+    backToTopBtn.style.transform = 'scale(1.1)';
+    backToTopBtn.style.background = 'white';
+};
+backToTopBtn.onmouseleave = () => {
+    backToTopBtn.style.transform = 'scale(1)';
+    backToTopBtn.style.background = 'var(--paper-white)';
+};
 
 
     window.onload = render;
