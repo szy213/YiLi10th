@@ -947,17 +947,17 @@ function renderMyGrain(container) {
         
         <div class="tab-header">
             <div class="tab-btn active" onclick="switchAchTab(event, 'ach-special')">特殊场次</div>
-            <div class="tab-btn" onclick="switchAchTab(event, 'ach-weather')">天气</div>
-            <div class="tab-btn" onclick="switchAchTab(event, 'ach-season')">季节</div>
-            <div class="tab-btn" onclick="switchAchTab(event, 'ach-others')">其他</div>
+            <div class="tab-btn" onclick="switchAchTab(event, 'ach-weather')">天气收集</div>
+            <div class="tab-btn" onclick="switchAchTab(event, 'ach-season')">季节收集</div>
+            <div class="tab-btn" onclick="switchAchTab(event, 'ach-others')">其他成就</div>
         </div>
 
         <div id="ach-special" class="achievement-grid active">
             <div class="medal-item ${myIds.includes('0726') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🎂</div><div class="name">生日限定</div>
+                <div class="icon-wrapper">🎂</div><div class="name">生日场</div>
             </div>
             <div class="medal-item ${myIds.includes('1231') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🎇</div><div class="name">跨年之约</div>
+                <div class="icon-wrapper">🎇</div><div class="name">跨年场</div>
             </div>
             <div class="medal-item ${myIds.includes('0101') ? 'unlocked' : ''}">
                 <div class="icon-wrapper">🧨</div><div class="name">元旦场</div>
@@ -965,35 +965,45 @@ function renderMyGrain(container) {
         </div>
 
         <div id="ach-weather" class="achievement-grid">
-            <div class="medal-item ${myWeathers.has('🌧️') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🌧️</div><div class="name">雨中相见</div>
-            </div>
             <div class="medal-item ${myWeathers.has('☀️') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">☀️</div><div class="name">明媚阳光</div>
+                <div class="icon-wrapper">☀️</div><div class="name">晴</div>
+            </div>
+            <div class="medal-item ${myWeathers.has('🌤️') ? 'unlocked' : ''}">
+                <div class="icon-wrapper">🌤️</div><div class="name">云</div>
+            </div>
+            <div class="medal-item ${myWeathers.has('☁️') ? 'unlocked' : ''}">
+                <div class="icon-wrapper">☁️</div><div class="name">阴</div>
+            </div>
+            <div class="medal-item ${myWeathers.has('🌧️') ? 'unlocked' : ''}">
+                <div class="icon-wrapper">🌧️</div><div class="name">雨</div>
             </div>
             <div class="medal-item ${myWeathers.has('❄️') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">❄️</div><div class="name">雪落无声</div>
+                <div class="icon-wrapper">❄️</div><div class="name">雪</div>
             </div>
         </div>
 
         <div id="ach-season" class="achievement-grid">
+            <div class="medal-item ${mySeasons.has('spring') ? 'unlocked' : ''}">
+                <div class="icon-wrapper">🪁</div><div class="name">春</div>
+            </div>
             <div class="medal-item ${mySeasons.has('summer') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🍦</div><div class="name">盛夏光年</div>
+                <div class="icon-wrapper">🍉</div><div class="name">夏</div>
             </div>
             <div class="medal-item ${mySeasons.has('autumn') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🍂</div><div class="name">初秋微风</div>
+                <div class="icon-wrapper">🍂</div><div class="name">秋</div>
             </div>
             <div class="medal-item ${mySeasons.has('winter') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🧣</div><div class="name">冬日取暖</div>
+                <div class="icon-wrapper">🧣</div><div class="name">冬</div>
             </div>
         </div>
 
         <div id="ach-others" class="achievement-grid">
-            <div class="medal-item ${myCount >= 5 ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🎫</div><div class="name">五场留念</div>
+            <div class="medal-item ${myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101') ? 'unlocked' : ''}">
+                <div class="icon-wrapper">🎫</div>
+                <div class="name">单人现场</div>
             </div>
             <div class="medal-item ${hasLongVacation ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🏖️</div><div class="name">悠长假期</div>
+                <div class="icon-wrapper">🍹</div><div class="name">悠长假期</div>
             </div>
             <div class="medal-item ${totalKM >= 2000 ? 'unlocked' : ''}">
                 <div class="icon-wrapper">✈️</div><div class="name">里程达人</div>
