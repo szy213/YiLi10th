@@ -707,7 +707,7 @@ function renderMyGrain(container) {
         { name: "世界正中", icon: "🍎", unlocked: ratio > 0.7 },
         { name: "全勤之约", icon: "🌳", unlocked: ratio === 1 && totalPlayedCount > 0 }
     ];
-    let badgesHTML = `<p style="font-size: 0.8em; color: #999; letter-spacing: 3px; margin-bottom: 15px;">一粒 · 荣誉勋章墙</p><div style="display: flex; justify-content: space-around;">`;
+    let badgesHTML = `<p style="font-size: 1.2em; color: #666; letter-spacing: 3px; margin-bottom: 15px;">一粒 · 荣誉勋章墙</p><div style="display: flex; justify-content: space-around;">`;
     
     badges.forEach(b => {
         // --- 核心修改：如果是解锁状态，添加 'badge-unlocked' 类名 ---
@@ -752,8 +752,9 @@ function renderMyGrain(container) {
     `;
 
     // 重点：padding-top 决定了地图高度，80% 通常适合中国地图比例
+    // --- 在 renderMyGrain 函数内修改地图容器的 HTML ---
     mapBox.innerHTML = `
-        <p style="font-size: 0.9em; color: #666; letter-spacing: 5px; margin-bottom: 15px; text-align:center; font-family: serif;">历历万乡 · 足迹地图</p>
+        <p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 15px; text-align:center; font-family: serif;">历历万乡 · 足迹地图</p>
         <div id="map-wrapper" style="
             position: relative; 
             width: 100%; 
@@ -765,7 +766,12 @@ function renderMyGrain(container) {
         ">
             <div id="pins-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
         </div>
-        
+
+        <div style="text-align: center; margin-top: 20px; padding: 0 10px;">
+            <p style="font-size: 0.9em; color: var(--tag-special); letter-spacing: 3px; font-weight: 500;">
+                踏遍万水千山总有一地故乡
+            </p>
+        </div>
     `;
     container.appendChild(mapBox);
 
