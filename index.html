@@ -475,6 +475,85 @@ document.head.appendChild(style);
 
 
 
+/* 成就模块总容器 */
+.achievement-box {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 20px;
+    background: rgba(255,255,255,0.8);
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 12px;
+    padding: 20px 15px;
+    text-align: center;
+}
+
+/* 切换选项卡 */
+.tab-header {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(140, 34, 34, 0.05);
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 8px 5px;
+    cursor: pointer;
+    font-size: 11px;
+    color: #888;
+    border-radius: 6px;
+    transition: all 0.3s;
+    font-weight: bold;
+}
+
+.tab-btn.active {
+    background: var(--tag-special);
+    color: white;
+}
+
+/* 成就图标网格 */
+.achievement-grid {
+    display: none;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    animation: fadeIn 0.4s ease;
+}
+
+.achievement-grid.active { display: grid; }
+
+/* 勋章单体 */
+.medal-item {
+    text-align: center;
+    filter: grayscale(100%);
+    opacity: 0.2;
+    transition: all 0.5s ease;
+}
+
+.medal-item.unlocked {
+    filter: grayscale(0%);
+    opacity: 1;
+}
+
+.medal-item .icon {
+    font-size: 24px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.medal-item .name {
+    font-size: 10px;
+    color: #444;
+    white-space: nowrap;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
 </style>
 </head>
 <body>
@@ -575,30 +654,30 @@ eggIcons.forEach(src => {
 });
 
     const tourData = [
-        { id: "0726", city: "北京", time: "2025.07.26", part: 1, guest: "嘉宾：任贤齐🐟", isSpecial: "生日场🎂", personalPics: Array.from({length: 17}, (_, i) => `images/0726 (${i+1}).jpg`), guestPics: Array.from({length: 9}, (_, i) => `images/0726guest (${i+1}).jpg`), songs: [{n:"近来可好feat任贤齐",t:"guest"},{n:"天涯",t:"guest"},{n:"我是一只鱼",t:"guest"},{n:"少年时代心目中的英雄",t:"request"},{n:"飞松",t:"request"},{n:"五言",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"七楼",t:"surprise"}] },
-        { id: "0727", city: "北京", time: "2025.07.27", part: 1, guest: "嘉宾：李宇春👑", personalPics: Array.from({length: 12}, (_, i) => `images/0727 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/0727guest (${i+1}).jpg`), songs: [{n:"空空feat李宇春",t:"guest"},{n:"冬泳",t:"guest"},{n:"我们存在一刹那的喜欢",t:"request"},{n:"☆",t:"request"},{n:"七楼",t:"surprise"},{n:"远辰",t:"surprise"},{n:"五言",t:"surprise"},{n:"知洲",t:"surprise"}] },
-        { id: "0808", city: "上海", time: "2025.08.08", part: 1, guest: "嘉宾：张信哲🤴", personalPics: Array.from({length: 12}, (_, i) => `images/0808 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/0808guest (${i+1}).jpg`), songs: [{n:"搬走feat张信哲",t:"guest"},{n:"别怕我伤心",t:"guest"},{n:"无所求必满载而归",t:"request"},{n:"PONY",t:"request"}] },
-        { id: "0809", city: "上海", time: "2025.08.09", part: 1, guest: "嘉宾：魏如萱🪩", personalPics: Array.from({length: 9}, (_, i) => `images/0809 (${i+1}).jpg`), guestPics: Array.from({length: 4}, (_, i) => `images/0809guest (${i+1}).jpg`), songs: [{n:"小半 feat 魏如萱",t:"guest"},{n:"have a nice day",t:"guest"},{n:"乔妍的心事",t:"request"},{n:"贪得",t:"request"},{n:"比如世界",t:"surprise"}] },
-        { id: "0920", city: "杭州", time: "2025.09.20", part: 1, guest: "嘉宾：萧敬腾🎾", personalPics: Array.from({length: 10}, (_, i) => `images/0920 (${i+1}).jpg`), guestPics: Array.from({length: 9}, (_, i) => `images/0920guest (${i+1}).jpg`), songs: [{n:"奇妙能力歌feat萧敬腾",t:"guest"},{n:"慢慢蛮满",t:"guest"},{n:"海芋恋",t:"guest"},{n:"睡吧",t:"request"}] },
-        { id: "0921", city: "杭州", time: "2025.09.21", part: 1, guest: "嘉宾：莫文蔚🐱", personalPics: Array.from({length: 10}, (_, i) => `images/0921 (${i+1}).jpg`), guestPics: Array.from({length: 4}, (_, i) => `images/0921guest (${i+1}).jpg`), songs: [{n:"阴天+走马feat莫文蔚 ",t:"guest"},{n:"寂寞的恋人啊",t:"guest"},{n:"难解风情",t:"request"},{n:"旋木",t:"request"}] },
-        { id: "1018", city: "南京", time: "2025.10.18", part: 1, guest: "嘉宾：许钧🥄", personalPics: Array.from({length: 11}, (_, i) => `images/1018 (${i+1}).jpg`), guestPics: Array.from({length: 9}, (_, i) => `images/1018guest (${i+1}).jpg`), songs: [{n:"泛灵feat许钧",t:"guest"},{n:"烂情",t:"guest"},{n:"周游",t:"request"},{n:"太空",t:"request"},{n:"比如世界+飞松(清唱)",t:"surprise"}] },
-        { id: "1101", city: "西安", time: "2025.11.01", part: 1, guest: "嘉宾：尚雯婕🐼", personalPics: Array.from({length: 10}, (_, i) => `images/1101 (${i+1}).jpg`), guestPics: Array.from({length: 7}, (_, i) => `images/1101guest (${i+1}).jpg`), songs: [{n:"交卷feat尚雯婕",t:"guest"},{n:"Atypical异类",t:"guest"},{n:"极端者",t:"guest"},{n:"且慢",t:"request"},{n:"有则抱抱无则笑笑",t:"request"},{n:"知洲",t:"surprise"}] },
-        { id: "1108", city: "济南", time: "2025.11.08", part: 1, guest: "嘉宾：郁可唯🌻", personalPics: Array.from({length: 9}, (_, i) => `images/1108 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/1108guest (${i+1}).jpg`), songs: [{n:"进化feat郁可唯",t:"guest"},{n:"路过人间",t:"guest"},{n:"从头",t:"request"},{n:"至少还有你",t:"request"},{n:"知洲",t:"surprise"},{n:"七楼",t:"surprise"}] },
-        { id: "1115", city: "重庆", time: "2025.11.15", part: 1, guest: "嘉宾：叶蓓🍁", personalPics: Array.from({length: 9}, (_, i) => `images/1115 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/1115guest (${i+1}).jpg`), songs: [{n:"爱完不完feat叶蓓",t:"guest"},{n:"蒲公英",t:"guest"},{n:"玉人歌",t:"request"},{n:"怪情歌",t:"request"},{n:"无烟区",t:"surprise"},{n:"知洲",t:"surprise"}] },
-        { id: "1129", city: "厦门", time: "2025.11.29", part: 1, guest: "独唱场🐰", personalPics: Array.from({length: 9}, (_, i) => `images/1129 (${i+1}).jpg`), guestPics: [], songs: [{n:"大裂缝",t:"request"},{n:"和平",t:"request"},{n:"沉迷",t:"surprise"},{n:"乱",t:"surprise"},{n:"飞松",t:"surprise"},{n:"在我的道路上",t:"surprise"},{n:"爱完不完",t:"surprise"}] },
-        { id: "1206", city: "深圳", time: "2025.12.06", part: 1, guest: "嘉宾：GAI😎", personalPics: Array.from({length: 12}, (_, i) => `images/1206 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/1206guest (${i+1}).jpg`), songs: [{n:"历历万乡featGAI",t:"guest"},{n:"兰花草",t:"guest"},{n:"多多留意",t:"request"},{n:"被动",t:"request"},{n:"难解风情",t:"surprise"},{n:"乱",t:"surprise"}] },
-        { id: "1207", city: "深圳", time: "2025.12.07", part: 1, guest: "嘉宾：万妮达🫅🏻", personalPics: Array.from({length: 9}, (_, i) => `images/1207 (${i+1}).jpg`), guestPics: Array.from({length: 5}, (_, i) => `images/1207guest (${i+1}).jpg`), songs: [{n:"和平鸽feat万妮达",t:"guest"},{n:"算了",t:"guest"},{n:"colorful world",t:"guest"},{n:"四海",t:"request"},{n:"泪桥",t:"request"},{n:"沉迷",t:"surprise"},{n:"乱",t:"surprise"}] },
-        { id: "1220", city: "苏州", time: "2025.12.20", part: 1, guest: "嘉宾：杨乃文", personalPics: Array.from({length: 12}, (_, i) => `images/1220 (${i+1}).jpg`), guestPics: Array.from({length: 3}, (_, i) => `images/1220guest (${i+1}).jpg`), songs: [{n:"光feat杨乃文",t:"guest"},{n:"星星堆满天",t:"guest"},{n:"清透",t:"request"},{n:"人间",t:"request"},{n:"乱",t:"surprise"},{n:"难解风情",t:"surprise"},{n:"爱完不完",t:"surprise"},{n:"知洲",t:"surprise"}] },
-        { id: "1231", city: "武汉", time: "2025.12.31", part: 1, guest: "", isSpecial: "跨年场🎆", personalPics: Array.from({length: 11}, (_, i) => `images/1231 (${i+1}).jpg`), guestPics: [], songs: [{n:"亲爱的你",t:"request"},{n:"Best Better Ever",t:"request"},{n:"庆祝",t:"request"},{n:"银泰",t:"request"},{n:"独行侠",t:"request"},{n:"乱",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"海市蜃楼",t:"surprise"}] },
-        { id: "0101", city: "武汉", time: "2026.01.01", part: 1, guest: "", isSpecial: "元旦场🧨", personalPics: Array.from({length: 12}, (_, i) => `images/0101 (${i+1}).jpg`), guestPics: [], songs: [{n:"情景剧",t:"request"},{n:"远游",t:"request"},{n:"乐园",t:"request"},{n:"My Dear Art",t:"request"},{n:"再度重相逢",t:"request"},{n:"乱",t:"surprise"},{n:"剧烈",t:"surprise"}] },
-        { id: "CD1", city: "成都", time: "2026.03.14", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
-        { id: "CD2", city: "成都", time: "2026.03.15", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
-        { id: "NB", city: "宁波", time: "coming soon", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
-        { id: "QD", city: "青岛", time: "coming soon", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
-        { id: "QZ", city: "泉州", time: "coming soon", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
-        { id: "HF", city: "合肥", time: "coming soon", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
-        { id: "SY", city: "沈阳", time: "coming soon", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
-        { id: "ZZ", city: "郑州", time: "coming soon", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] }
+        { id: "0726", city: "北京", time: "2025.07.26",weather: "☁️", season: "summer", part: 1, guest: "嘉宾：任贤齐🐟", isSpecial: "生日场🎂", personalPics: Array.from({length: 17}, (_, i) => `images/0726 (${i+1}).jpg`), guestPics: Array.from({length: 9}, (_, i) => `images/0726guest (${i+1}).jpg`), songs: [{n:"近来可好feat任贤齐",t:"guest"},{n:"天涯",t:"guest"},{n:"我是一只鱼",t:"guest"},{n:"少年时代心目中的英雄",t:"request"},{n:"飞松",t:"request"},{n:"五言",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"七楼",t:"surprise"}] },
+        { id: "0727", city: "北京", time: "2025.07.27", weather: "🌧️", season: "summer",part: 1, guest: "嘉宾：李宇春👑", personalPics: Array.from({length: 12}, (_, i) => `images/0727 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/0727guest (${i+1}).jpg`), songs: [{n:"空空feat李宇春",t:"guest"},{n:"冬泳",t:"guest"},{n:"我们存在一刹那的喜欢",t:"request"},{n:"☆",t:"request"},{n:"七楼",t:"surprise"},{n:"远辰",t:"surprise"},{n:"五言",t:"surprise"},{n:"知洲",t:"surprise"}] },
+        { id: "0808", city: "上海", time: "2025.08.08", weather: "🌤️", season: "summer",part: 1, guest: "嘉宾：张信哲🤴", personalPics: Array.from({length: 12}, (_, i) => `images/0808 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/0808guest (${i+1}).jpg`), songs: [{n:"搬走feat张信哲",t:"guest"},{n:"别怕我伤心",t:"guest"},{n:"无所求必满载而归",t:"request"},{n:"PONY",t:"request"}] },
+        { id: "0809", city: "上海", time: "2025.08.09", weather: "☁️", season: "summer",part: 1, guest: "嘉宾：魏如萱🪩", personalPics: Array.from({length: 9}, (_, i) => `images/0809 (${i+1}).jpg`), guestPics: Array.from({length: 4}, (_, i) => `images/0809guest (${i+1}).jpg`), songs: [{n:"小半 feat 魏如萱",t:"guest"},{n:"have a nice day",t:"guest"},{n:"乔妍的心事",t:"request"},{n:"贪得",t:"request"},{n:"比如世界",t:"surprise"}] },
+        { id: "0920", city: "杭州", time: "2025.09.20", weather: "🌧️", season: "autumn",part: 1, guest: "嘉宾：萧敬腾🎾", personalPics: Array.from({length: 10}, (_, i) => `images/0920 (${i+1}).jpg`), guestPics: Array.from({length: 9}, (_, i) => `images/0920guest (${i+1}).jpg`), songs: [{n:"奇妙能力歌feat萧敬腾",t:"guest"},{n:"慢慢蛮满",t:"guest"},{n:"海芋恋",t:"guest"},{n:"睡吧",t:"request"}] },
+        { id: "0921", city: "杭州", time: "2025.09.21", weather: "☀️", season: "autumn",part: 1, guest: "嘉宾：莫文蔚🐱", personalPics: Array.from({length: 10}, (_, i) => `images/0921 (${i+1}).jpg`), guestPics: Array.from({length: 4}, (_, i) => `images/0921guest (${i+1}).jpg`), songs: [{n:"阴天+走马feat莫文蔚 ",t:"guest"},{n:"寂寞的恋人啊",t:"guest"},{n:"难解风情",t:"request"},{n:"旋木",t:"request"}] },
+        { id: "1018", city: "南京", time: "2025.10.18", weather: "🌧️", season: "autumn",part: 1, guest: "嘉宾：许钧🥄", personalPics: Array.from({length: 11}, (_, i) => `images/1018 (${i+1}).jpg`), guestPics: Array.from({length: 9}, (_, i) => `images/1018guest (${i+1}).jpg`), songs: [{n:"泛灵feat许钧",t:"guest"},{n:"烂情",t:"guest"},{n:"周游",t:"request"},{n:"太空",t:"request"},{n:"比如世界+飞松(清唱)",t:"surprise"}] },
+        { id: "1101", city: "西安", time: "2025.11.01", weather: "🌤️", season: "autumn",part: 1, guest: "嘉宾：尚雯婕🐼", personalPics: Array.from({length: 10}, (_, i) => `images/1101 (${i+1}).jpg`), guestPics: Array.from({length: 7}, (_, i) => `images/1101guest (${i+1}).jpg`), songs: [{n:"交卷feat尚雯婕",t:"guest"},{n:"Atypical异类",t:"guest"},{n:"极端者",t:"guest"},{n:"且慢",t:"request"},{n:"有则抱抱无则笑笑",t:"request"},{n:"知洲",t:"surprise"}] },
+        { id: "1108", city: "济南", time: "2025.11.08", weather: "🌤️", season: "winter",part: 1, guest: "嘉宾：郁可唯🌻", personalPics: Array.from({length: 9}, (_, i) => `images/1108 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/1108guest (${i+1}).jpg`), songs: [{n:"进化feat郁可唯",t:"guest"},{n:"路过人间",t:"guest"},{n:"从头",t:"request"},{n:"至少还有你",t:"request"},{n:"知洲",t:"surprise"},{n:"七楼",t:"surprise"}] },
+        { id: "1115", city: "重庆", time: "2025.11.15", weather: "🌧️", season: "winter",part: 1, guest: "嘉宾：叶蓓🍁", personalPics: Array.from({length: 9}, (_, i) => `images/1115 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/1115guest (${i+1}).jpg`), songs: [{n:"爱完不完feat叶蓓",t:"guest"},{n:"蒲公英",t:"guest"},{n:"玉人歌",t:"request"},{n:"怪情歌",t:"request"},{n:"无烟区",t:"surprise"},{n:"知洲",t:"surprise"}] },
+        { id: "1129", city: "厦门", time: "2025.11.29", weather: "☀️", season: "winter",part: 1, guest: "独唱场🐰", personalPics: Array.from({length: 9}, (_, i) => `images/1129 (${i+1}).jpg`), guestPics: [], songs: [{n:"大裂缝",t:"request"},{n:"和平",t:"request"},{n:"沉迷",t:"surprise"},{n:"乱",t:"surprise"},{n:"飞松",t:"surprise"},{n:"在我的道路上",t:"surprise"},{n:"爱完不完",t:"surprise"}] },
+        { id: "1206", city: "深圳", time: "2025.12.06", weather: "☀️", season: "winter",part: 1, guest: "嘉宾：GAI😎", personalPics: Array.from({length: 12}, (_, i) => `images/1206 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/1206guest (${i+1}).jpg`), songs: [{n:"历历万乡featGAI",t:"guest"},{n:"兰花草",t:"guest"},{n:"多多留意",t:"request"},{n:"被动",t:"request"},{n:"难解风情",t:"surprise"},{n:"乱",t:"surprise"}] },
+        { id: "1207", city: "深圳", time: "2025.12.07", weather: "☀️", season: "winter",part: 1, guest: "嘉宾：万妮达🫅🏻", personalPics: Array.from({length: 9}, (_, i) => `images/1207 (${i+1}).jpg`), guestPics: Array.from({length: 5}, (_, i) => `images/1207guest (${i+1}).jpg`), songs: [{n:"和平鸽feat万妮达",t:"guest"},{n:"算了",t:"guest"},{n:"colorful world",t:"guest"},{n:"四海",t:"request"},{n:"泪桥",t:"request"},{n:"沉迷",t:"surprise"},{n:"乱",t:"surprise"}] },
+        { id: "1220", city: "苏州", time: "2025.12.20", weather: "🌧️", season: "winter",part: 1, guest: "嘉宾：杨乃文", personalPics: Array.from({length: 12}, (_, i) => `images/1220 (${i+1}).jpg`), guestPics: Array.from({length: 3}, (_, i) => `images/1220guest (${i+1}).jpg`), songs: [{n:"光feat杨乃文",t:"guest"},{n:"星星堆满天",t:"guest"},{n:"清透",t:"request"},{n:"人间",t:"request"},{n:"乱",t:"surprise"},{n:"难解风情",t:"surprise"},{n:"爱完不完",t:"surprise"},{n:"知洲",t:"surprise"}] },
+        { id: "1231", city: "武汉", time: "2025.12.31", weather: "🌧️", season: "winter", part: 1, guest: "", isSpecial: "跨年场🎆", personalPics: Array.from({length: 11}, (_, i) => `images/1231 (${i+1}).jpg`), guestPics: [], songs: [{n:"亲爱的你",t:"request"},{n:"Best Better Ever",t:"request"},{n:"庆祝",t:"request"},{n:"银泰",t:"request"},{n:"独行侠",t:"request"},{n:"乱",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"海市蜃楼",t:"surprise"}] },
+        { id: "0101", city: "武汉", time: "2026.01.01", weather: "☀️", season: "winter",part: 1, guest: "", isSpecial: "元旦场🧨", personalPics: Array.from({length: 12}, (_, i) => `images/0101 (${i+1}).jpg`), guestPics: [], songs: [{n:"情景剧",t:"request"},{n:"远游",t:"request"},{n:"乐园",t:"request"},{n:"My Dear Art",t:"request"},{n:"再度重相逢",t:"request"},{n:"乱",t:"surprise"},{n:"剧烈",t:"surprise"}] },
+        { id: "0314", city: "成都", time: "2026.03.14", weather: "", season: "spring",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "0315", city: "成都", time: "2026.03.15", weather: "", season: "spring",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "NB", city: "宁波", time: "coming soon", weather: "", season: "",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "QD", city: "青岛", time: "coming soon", weather: "", season: "",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "QZ", city: "泉州", time: "coming soon", weather: "", season: "",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "HF", city: "合肥", time: "coming soon", weather: "", season: "",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "SY", city:"沈阳" , time:"coming soon" , weather:"" , season:"" , part : 2 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ ]},
+        { id:"ZZ" , city:"郑州" , time:"coming soon" , weather:"" , season:"" , part : 2 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ ] }
     ];
 
 // 城市经纬度坐标库（用于计算两地距离）
@@ -738,106 +817,107 @@ function saveCheckState(id, isChecked) {
     
 
 function renderMyGrain(container) {
-    // 1. 基础数据准备
+    // 1. 数据准备
     const allPlayedTours = tourData.filter(item => item.status !== 'unplayed');
     const myTours = tourData.filter(item => localStorage.getItem('checked_' + item.id) === 'true');
     const sortedTours = [...myTours].sort((a, b) => new Date(a.time.replace(/\./g, '/')) - new Date(b.time.replace(/\./g, '/')));
     const myCount = myTours.length;
     const totalPlayedCount = allPlayedTours.length;
     const ratio = totalPlayedCount > 0 ? myCount / totalPlayedCount : 0;
-    const totalKM = calcTotalKM(sortedTours);
+    const totalKM = (typeof calcTotalKM === 'function') ? calcTotalKM(sortedTours) : 0;
+
+    const myCityList = myTours.map(t => t.city);
+
+// 2. 统计每个城市出现的次数
+const cityCounts = {};
+myCityList.forEach(city => {
+    cityCounts[city] = (cityCounts[city] || 0) + 1;
+});
+
+// 3. 判断是否有任何一个城市场次 >= 2
+const hasLongVacation = Object.values(cityCounts).some(count => count >= 2);
+    // 成就判定变量
+    const myIds = myTours.map(t => t.id);
+    const myWeathers = new Set(myTours.map(t => t.weather));
+    const mySeasons = new Set(myTours.map(t => t.season));
 
     // --- 第一部分：荣誉勋章墙 ---
     const badgeWall = document.createElement('div');
     badgeWall.style.cssText = "width: 100%; max-width: 600px; margin: 0 auto 20px; background: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.5); border-radius:12px; padding: 20px 15px; text-align: center;";
     const badges = [
         { name: "奇妙能力", icon: "🌸", unlocked: myCount > 0 },
-        { name: "历历万乡", icon: "🍒", unlocked: ratio > 0.3 },
+        { name: "自然环境", icon: "🍒", unlocked: ratio > 0.3 },
         { name: "世界正中", icon: "🍎", unlocked: ratio > 0.7 },
         { name: "全勤之约", icon: "🌳", unlocked: ratio === 1 && totalPlayedCount > 0 }
     ];
     let badgesHTML = `<p style="font-size: 1.2em; color: #666; letter-spacing: 3px; margin-bottom: 15px;">一粒 · 荣誉勋章墙</p><div style="display: flex; justify-content: space-around;">`;
-    
     badges.forEach(b => {
-        // --- 核心修改：如果是解锁状态，添加 'badge-unlocked' 类名 ---
         const unlockedClass = b.unlocked ? 'badge-unlocked' : '';
         badgesHTML += `
             <div style="flex: 1; transition: all 0.5s;">
-                <div class="${unlockedClass}" style="
-                    width: 50px; 
-                    height: 50px; 
-                    margin: 0 auto; 
-                    border-radius: 50%; 
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: center; 
-                    font-size: 24px; 
-                    border: 2px solid #eee; 
-                    background: rgba(255,255,255,0.3);
-                    opacity: ${b.unlocked ? '1' : '0.2'};
-                ">
+                <div class="${unlockedClass}" style="width: 50px; height: 50px; margin: 0 auto; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 2px solid #eee; background: rgba(255,255,255,0.3); opacity: ${b.unlocked ? '1' : '0.2'};">
                     ${b.icon}
                 </div>
-                <div style="font-size: 11px; margin-top: 8px; font-weight:bold; color: ${b.unlocked ? '#333' : '#ccc'};">
-                    ${b.name}
-                </div>
+                <div style="font-size: 11px; margin-top: 8px; font-weight:bold; color: ${b.unlocked ? '#333' : '#ccc'};">${b.name}</div>
             </div>`;
     });
     badgesHTML += `</div>`;
     badgeWall.innerHTML = badgesHTML;
     container.appendChild(badgeWall);
-    // --- 第二部分：📍 手动标记大地图 ---
-    const mapBox = document.createElement('div');
-    mapBox.style.cssText = `
-        width: 100%; 
-        max-width: 800px; 
-        margin: 0 auto 30px; 
-        background: rgba(255,255,255,0.8); 
-        backdrop-filter: blur(10px); 
-        border-radius: 20px; 
-        padding: 30px 10px; 
-        border: 1px solid rgba(255,255,255,0.5); 
-        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-    `;
 
-    // 重点：padding-top 决定了地图高度，80% 通常适合中国地图比例
-    // --- 在 renderMyGrain 函数内修改地图容器的 HTML ---
+    // --- 新增内容：成就模块 ---
+    const achBox = document.createElement('div');
+    achBox.className = 'achievement-box';
+    achBox.innerHTML = `
+        <div class="tab-header">
+            <div class="tab-btn active" onclick="switchAchTab(event, 'ach-special')">特殊场次</div>
+            <div class="tab-btn" onclick="switchAchTab(event, 'ach-weather')">天气收集</div>
+            <div class="tab-btn" onclick="switchAchTab(event, 'ach-season')">季节收集</div>
+            <div class="tab-btn" onclick="switchAchTab(event, 'ach-others')">其他成就</div>
+        </div>
+        <div id="ach-special" class="achievement-grid active">
+            <div class="medal-item ${myIds.includes('0726') ? 'unlocked' : ''}"><span class="icon">🎂</span><span class="name">生日场</span></div>
+            <div class="medal-item ${myIds.includes('1231') ? 'unlocked' : ''}"><span class="icon">🎇</span><span class="name">跨年场</span></div>
+            <div class="medal-item ${myIds.includes('0101') ? 'unlocked' : ''}"><span class="icon">🧨</span><span class="name">元旦场</span></div>
+        </div>
+        <div id="ach-weather" class="achievement-grid">
+            <div class="medal-item ${myWeathers.has('☀️') ? 'unlocked' : ''}"><span class="icon">☀️</span><span class="name">晴</span></div>
+            <div class="medal-item ${myWeathers.has('🌤️') ? 'unlocked' : ''}"><span class="icon">🌤️</span><span class="name">云</span></div>
+            <div class="medal-item ${myWeathers.has('☁️') ? 'unlocked' : ''}"><span class="icon">☁️</span><span class="name">阴</span></div>
+            <div class="medal-item ${myWeathers.has('🌧️') ? 'unlocked' : ''}"><span class="icon">🌧️</span><span class="name">雨</span></div>
+        </div>
+        <div id="ach-season" class="achievement-grid">
+            <div class="medal-item ${mySeasons.has('spring') ? 'unlocked' : ''}"><span class="icon">🪁</span><span class="name">春</span></div>
+            <div class="medal-item ${mySeasons.has('summer') ? 'unlocked' : ''}"><span class="icon">🍉</span><span class="name">夏</span></div>
+            <div class="medal-item ${mySeasons.has('autumn') ? 'unlocked' : ''}"><span class="icon">🍂</span><span class="name">秋</span></div>
+            <div class="medal-item ${mySeasons.has('winter') ? 'unlocked' : ''}"><span class="icon">🧣</span><span class="name">冬</span></div>
+        </div>
+        <div id="ach-others" class="achievement-grid">
+            <div class="medal-item ${totalKM > 2000 ? 'unlocked' : ''}"><span class="icon">✈️</span><span class="name">里程达人</span></div>
+            <div class="medal-item ${hasLongVacation ? 'unlocked' : ''}"><span class="icon">🍹</span><span class="name">悠长假期</span></div>
+        </div>
+    `;
+    container.appendChild(achBox);
+
+    // --- 第二部分：足迹地图 ---
+    const mapBox = document.createElement('div');
+    mapBox.style.cssText = `width: 100%; max-width: 800px; margin: 0 auto 30px; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border-radius: 20px; padding: 30px 10px; border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 15px 35px rgba(0,0,0,0.1);`;
     mapBox.innerHTML = `
         <p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 15px; text-align:center; font-family: serif;">历历万乡 · 足迹地图</p>
-        <div id="map-wrapper" style="
-            position: relative; 
-            width: 100%; 
-            height: 0; 
-            padding-top: 80%; 
-            background: url('images/china_outline.jpg') no-repeat center; 
-            background-size: contain; 
-            cursor: crosshair;
-        ">
+        <div id="map-wrapper" style="position: relative; width: 100%; height: 0; padding-top: 80%; background: url('images/china_outline.jpg') no-repeat center; background-size: contain;">
             <div id="pins-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
         </div>
-
         <div style="text-align: center; margin-top: 20px; padding: 0 10px;">
-            <p style="font-size: 0.9em; color: var(--tag-special); letter-spacing: 3px; font-weight: 500;">
-                踏遍万水千山总有一地故乡
-            </p>
+            <p style="font-size: 0.9em; color: var(--tag-special); letter-spacing: 3px; font-weight: 500;">踏遍万水千山总有一地故乡</p>
         </div>
     `;
     container.appendChild(mapBox);
 
-    // 【坐标库】当你用取点器测出数值后，修改下面的 left 和 top
     const pinCoords = {
-        "北京": { left: "66.4%", top: "40.3%" },
-        "上海": { left: "75.2%", top: "58.2%" },
-        "成都": { left: "49.0%", top: "60.8%" },
-        "济南": { left: "68.6%", top: "47.3%" },
-        "西安": { left: "57.2%", top: "53.1%" },
-        "重庆": { left: "54.0%", top: "63.7%" },
-        "武汉": { left: "64.6%", top: "60.7%" },
-        "杭州": { left: "73.7%", top: "60.5%" },
-        "深圳": { left: "66.3%", top: "77.8%" },
-        "南京": { left: "71.7%", top: "56.7%" },
-        "郑州": { left: "63.6%", top: "52.0%" }
-        // ... 继续手动添加更多城市
+        "北京": { left: "66.4%", top: "40.3%" }, "上海": { left: "75.2%", top: "58.2%" }, "成都": { left: "49.0%", top: "60.8%" },
+        "济南": { left: "68.6%", top: "47.3%" }, "西安": { left: "57.2%", top: "53.1%" }, "重庆": { left: "54.0%", top: "63.7%" },
+        "武汉": { left: "64.6%", top: "60.7%" }, "杭州": { left: "73.7%", top: "60.5%" }, "深圳": { left: "66.3%", top: "77.8%" },
+        "南京": { left: "71.7%", top: "56.7%" }, "郑州": { left: "63.6%", top: "52.0%" }
     };
 
     const pinsLayer = mapBox.querySelector('#pins-layer');
@@ -847,55 +927,18 @@ function renderMyGrain(container) {
         if (litCities.has(city)) {
             const pos = pinCoords[city];
             const pin = document.createElement('div');
-            pin.style.cssText = `
-                position: absolute; 
-                left: ${pos.left}; 
-                top: ${pos.top}; 
-                transform: translate(-50%, -100%); 
-                z-index: 10;
-                text-align: center;
+            pin.style.cssText = `position: absolute; left: ${pos.left}; top: ${pos.top}; transform: translate(-50%, -100%); z-index: 10; text-align: center;`;
+            pin.innerHTML = `
+                <div style="font-size: 18px; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); line-height:1;">📍</div>
+                <div style="font-size: 9px; color: #fff; background: var(--tag-special); padding: 0px 3px; border-radius: 3px; margin-top: -3px; white-space: nowrap; font-weight: bold;">${city}</div>
             `;
-            // 在 pin.innerHTML 这一行进行以下数值调整
-pin.innerHTML = `
-    <div style="
-        font-size: 18px; /* 原为 28px，大幅缩小大头钉 */
-        filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); 
-        line-height:1;
-    ">📍</div>
-    <div style="
-        font-size: 9px; /* 原为 10px，微调文字大小 */
-        color: #fff; 
-        background: var(--tag-special); 
-        padding: 0px 3px; /* 原为 1px 5px，缩小背景框 */
-        border-radius: 3px; 
-        margin-top: -3px; /* 原为 -5px，向上提拉靠近大头钉 */
-        white-space: nowrap; 
-        font-weight: bold; 
-        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    ">${city}</div>
-`;
             pinsLayer.appendChild(pin);
         }
     });
 
-    // 【自带取点器逻辑】直接点击页面上的地图即可看到坐标
-/*     const wrapper = mapBox.querySelector('#map-wrapper');
-    wrapper.onclick = function(e) {
-        const rect = this.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1) + '%';
-        const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1) + '%';
-        alert(`测得坐标如下，请填入代码中：\nleft: "${x}", top: "${y}"`);
-        console.log(`"${city}": { left: "${x}", top: "${y}" },`);
-    }; */
-
-
-
-// --- 第三部分：记忆存根 ---
-    const uniqueCities = [...new Set(myTours.map(item => item.city))].length;
-    
-    // 【修改后的逻辑】：去重漫游轨迹中的重复城市
-    const uniquePathCities = [...new Set(sortedTours.map(item => item.city))];
-    const travelPath = uniquePathCities.join(' → ');
+    // --- 第三部分：记忆存根 ---
+    const uniqueCitiesCount = [...new Set(myTours.map(item => item.city))].length;
+    const travelPath = [...new Set(sortedTours.map(item => item.city))].join(' → ');
 
     const myCard = document.createElement('div');
     myCard.className = 'tour-card ticket-card';
@@ -909,18 +952,16 @@ pin.innerHTML = `
                 <div style="font-size: 0.7em; color: #999;">累计场次</div>
             </div>
             <div style="flex: 1;">
-                <div style="font-size: 2.2em; font-family: 'Times New Roman'; color: var(--tag-special);">${uniqueCities}</div>
+                <div style="font-size: 2.2em; font-family: 'Times New Roman'; color: var(--tag-special);">${uniqueCitiesCount}</div>
                 <div style="font-size: 0.7em; color: #999;">城市足迹</div>
             </div>
         </div>
         <div style="text-align: left; padding: 18px; margin: 10px 0; border: 1px dashed #ccc; border-radius: 4px; font-size: 0.85em; background: #fafafa; line-height: 1.8;">
             ${myCount > 0 ? `
                 <div>✨ <b>初次相遇:</b> ${sortedTours[0].time} · ${sortedTours[0].city}</div>
-                
                 <div style="margin-top: 5px; border-top: 1px solid #eee; padding-top: 5px; color: #666;">
                     🧭 <b>漫游轨迹:</b> <span style="color:#333;">${travelPath}</span>
                 </div>
-
                 <div style="margin-top: 5px; border-top: 1px solid #eee; padding-top: 5px;">
                     ✈️ <b>累计里程:</b> <span style="color:var(--tag-special); font-weight:bold;">${totalKM.toLocaleString()}</span> KM
                 </div>
@@ -1071,6 +1112,7 @@ function typewriter(element, text, speed = 50) {
 // 回到顶部功能
 const backToTopBtn = document.getElementById('back-to-top');
 
+
 window.addEventListener('scroll', () => {
     // 当页面向下滚动超过 300px 时显示按钮
     if (window.scrollY > 300) {
@@ -1129,6 +1171,16 @@ backToTopBtn.onmouseleave = () => {
         }
     });
 });
+
+function switchAchTab(evt, tabId) {
+    const box = evt.currentTarget.closest('.achievement-box');
+    box.querySelectorAll('.achievement-grid').forEach(g => g.classList.remove('active'));
+    box.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    evt.currentTarget.classList.add('active');
+}
+
+
 </script>
 
 
