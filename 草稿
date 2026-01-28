@@ -1,0 +1,22 @@
+</div>
+        <div id="ach-special" class="achievement-grid active">
+            <div class="medal-item ${myIds.includes('0726') ? 'unlocked' : ''}"><span class="icon">🎂</span><span class="name">生日场</span></div>
+            <div class="medal-item ${myIds.includes('1231') ? 'unlocked' : ''}"><span class="icon">🎇</span><span class="name">跨年场</span></div>
+            <div class="medal-item ${myIds.includes('0101') ? 'unlocked' : ''}"><span class="icon">🧨</span><span class="name">元旦场</span></div>
+        </div>
+        <div id="ach-weather" class="achievement-grid">
+            <div class="medal-item ${myWeathers.has('☀️') ? 'unlocked' : ''}"><span class="icon">☀️</span><span class="name">晴</span></div>
+            <div class="medal-item ${myWeathers.has('🌤️') ? 'unlocked' : ''}"><span class="icon">🌤️</span><span class="name">云</span></div>
+            <div class="medal-item ${myWeathers.has('☁️') ? 'unlocked' : ''}"><span class="icon">☁️</span><span class="name">阴</span></div>
+            <div class="medal-item ${myWeathers.has('🌧️') ? 'unlocked' : ''}"><span class="icon">🌧️</span><span class="name">雨</span></div>
+        </div>
+        <div id="ach-season" class="achievement-grid">
+            <div class="medal-item ${mySeasons.has('spring') ? 'unlocked' : ''}"><span class="icon">🪁</span><span class="name">春</span></div>
+            <div class="medal-item ${mySeasons.has('summer') ? 'unlocked' : ''}"><span class="icon">🍉</span><span class="name">夏</span></div>
+            <div class="medal-item ${mySeasons.has('autumn') ? 'unlocked' : ''}"><span class="icon">🍂</span><span class="name">秋</span></div>
+            <div class="medal-item ${mySeasons.has('winter') ? 'unlocked' : ''}"><span class="icon">🧣</span><span class="name">冬</span></div>
+        </div>
+        <div id="ach-others" class="achievement-grid">
+            <div class="medal-item ${totalKM > 2000 ? 'unlocked' : ''}"><span class="icon">✈️</span><span class="name">里程达人</span></div>
+            <div class="medal-item ${hasLongVacation ? 'unlocked' : ''}"><span class="icon">🍹</span><span class="name">悠长假期</span></div>
+        </div>

@@ -476,15 +476,34 @@ document.head.appendChild(style);
 
 
 /* 成就模块总容器 */
+/* 统一：勋章墙与成就板块背景框样式 (完全同步地图模块) */
+/* 统一：勋章墙、成就、地图的共同外壳 */
 .achievement-box {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto 20px;
-    background: rgba(255,255,255,0.8);
-    border: 1px solid rgba(255,255,255,0.5);
-    border-radius: 12px;
-    padding: 20px 15px;
+    width: 100% !important;
+    max-width: 800px !important; /* 必须与地图的 800px 一致 */
+    margin: 0 auto 30px !important;
+    
+    /* 提取自你地图的参数 */
+    background: rgba(255, 255, 255, 0.8) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
+    
+    padding: 30px 10px !important; /* 对齐地图的 30px 10px */
     text-align: center;
+    box-sizing: border-box !important;
+}
+
+/* 标题样式：对齐地图标题的 serif 字体 */
+.achievement-box .module-title {
+    font-size: 1.5em;
+    color: #666;
+    letter-spacing: 5px;
+    margin-bottom: 25px;
+    text-align: center;
+    font-family: serif;
 }
 
 /* 切换选项卡 */
@@ -551,6 +570,62 @@ document.head.appendChild(style);
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(5px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* 成就板块总容器：复刻勋章墙边框与背景 */
+.achievement-box {
+    width: 100%;
+    max-width: 600px; /* 宽度与勋章墙保持一致 */
+    margin: 0 auto 30px;
+    background: rgba(255, 255, 255, 0.8); /* 同样的半透明白 */
+    border: 1px solid rgba(255, 255, 255, 0.5); /* 同样的边框 */
+    border-radius: 12px;
+    padding: 20px 15px;
+    text-align: center;
+}
+
+/* 成就板块标题：复刻勋章墙标题样式 */
+.achievement-header {
+    font-size: 1.2em;
+    color: #666;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+}
+
+/* 图标容器：复刻勋章墙图标的圆圈、边框与光晕 */
+.medal-item .icon-wrapper {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    border: 2px solid #eee; /* 初始灰色边框 */
+    background: rgba(255, 255, 255, 0.3);
+    transition: all 0.5s ease;
+    opacity: 0.2; /* 未解锁透明度 */
+}
+
+/* 已解锁状态的光晕与边框变化 */
+.medal-item.unlocked .icon-wrapper {
+    opacity: 1;
+    border-color: #DAA520; /* 解锁后变为火漆红边框 */
+    background: #fff;
+    box-shadow: 0 0 15px #DAA520; /* 增加火漆红呼吸光晕 */
+}
+
+/* 成就名称文字 */
+.medal-item .name {
+    font-size: 11px;
+    font-weight: bold;
+    color: #ccc;
+    transition: color 0.5s;
+}
+
+.medal-item.unlocked .name {
+    color: #333;
 }
 
 
@@ -827,30 +902,28 @@ function renderMyGrain(container) {
     const totalKM = (typeof calcTotalKM === 'function') ? calcTotalKM(sortedTours) : 0;
 
     const myCityList = myTours.map(t => t.city);
-
-// 2. 统计每个城市出现的次数
-const cityCounts = {};
-myCityList.forEach(city => {
-    cityCounts[city] = (cityCounts[city] || 0) + 1;
-});
-
-// 3. 判断是否有任何一个城市场次 >= 2
-const hasLongVacation = Object.values(cityCounts).some(count => count >= 2);
-    // 成就判定变量
+    const cityCounts = {};
+    myCityList.forEach(city => {
+        cityCounts[city] = (cityCounts[city] || 0) + 1;
+    });
+    const hasLongVacation = Object.values(cityCounts).some(count => count >= 2);
+    
     const myIds = myTours.map(t => t.id);
     const myWeathers = new Set(myTours.map(t => t.weather));
     const mySeasons = new Set(myTours.map(t => t.season));
 
     // --- 第一部分：荣誉勋章墙 ---
     const badgeWall = document.createElement('div');
-    badgeWall.style.cssText = "width: 100%; max-width: 600px; margin: 0 auto 20px; background: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.5); border-radius:12px; padding: 20px 15px; text-align: center;";
+    badgeWall.className = 'achievement-box'; // 穿上统一外衣
+    
     const badges = [
         { name: "奇妙能力", icon: "🌸", unlocked: myCount > 0 },
         { name: "自然环境", icon: "🍒", unlocked: ratio > 0.3 },
         { name: "世界正中", icon: "🍎", unlocked: ratio > 0.7 },
         { name: "全勤之约", icon: "🌳", unlocked: ratio === 1 && totalPlayedCount > 0 }
     ];
-    let badgesHTML = `<p style="font-size: 1.2em; color: #666; letter-spacing: 3px; margin-bottom: 15px;">一粒 · 荣誉勋章墙</p><div style="display: flex; justify-content: space-around;">`;
+    
+    let badgesHTML = `<p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 25px; text-align:center; font-family: serif;">一粒 · 荣誉勋章墙</p><div style="display: flex; justify-content: space-around;">`;
     badges.forEach(b => {
         const unlockedClass = b.unlocked ? 'badge-unlocked' : '';
         badgesHTML += `
@@ -865,45 +938,76 @@ const hasLongVacation = Object.values(cityCounts).some(count => count >= 2);
     badgeWall.innerHTML = badgesHTML;
     container.appendChild(badgeWall);
 
-    // --- 新增内容：成就模块 ---
+    // --- 第二部分：成就模块 ---
     const achBox = document.createElement('div');
-    achBox.className = 'achievement-box';
+    achBox.className = 'achievement-box'; 
+    
     achBox.innerHTML = `
+        <p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 25px; text-align:center; font-family: serif;">一粒 · 成就收集</p>
+        
         <div class="tab-header">
             <div class="tab-btn active" onclick="switchAchTab(event, 'ach-special')">特殊场次</div>
-            <div class="tab-btn" onclick="switchAchTab(event, 'ach-weather')">天气收集</div>
-            <div class="tab-btn" onclick="switchAchTab(event, 'ach-season')">季节收集</div>
-            <div class="tab-btn" onclick="switchAchTab(event, 'ach-others')">其他成就</div>
+            <div class="tab-btn" onclick="switchAchTab(event, 'ach-weather')">天气</div>
+            <div class="tab-btn" onclick="switchAchTab(event, 'ach-season')">季节</div>
+            <div class="tab-btn" onclick="switchAchTab(event, 'ach-others')">其他</div>
         </div>
+
         <div id="ach-special" class="achievement-grid active">
-            <div class="medal-item ${myIds.includes('0726') ? 'unlocked' : ''}"><span class="icon">🎂</span><span class="name">生日场</span></div>
-            <div class="medal-item ${myIds.includes('1231') ? 'unlocked' : ''}"><span class="icon">🎇</span><span class="name">跨年场</span></div>
-            <div class="medal-item ${myIds.includes('0101') ? 'unlocked' : ''}"><span class="icon">🧨</span><span class="name">元旦场</span></div>
+            <div class="medal-item ${myIds.includes('0726') ? 'unlocked' : ''}">
+                <div class="icon-wrapper">🎂</div><div class="name">生日限定</div>
+            </div>
+            <div class="medal-item ${myIds.includes('1231') ? 'unlocked' : ''}">
+                <div class="icon-wrapper">🎇</div><div class="name">跨年之约</div>
+            </div>
+            <div class="medal-item ${myIds.includes('0101') ? 'unlocked' : ''}">
+                <div class="icon-wrapper">🧨</div><div class="name">元旦场</div>
+            </div>
         </div>
+
         <div id="ach-weather" class="achievement-grid">
-            <div class="medal-item ${myWeathers.has('☀️') ? 'unlocked' : ''}"><span class="icon">☀️</span><span class="name">晴</span></div>
-            <div class="medal-item ${myWeathers.has('🌤️') ? 'unlocked' : ''}"><span class="icon">🌤️</span><span class="name">云</span></div>
-            <div class="medal-item ${myWeathers.has('☁️') ? 'unlocked' : ''}"><span class="icon">☁️</span><span class="name">阴</span></div>
-            <div class="medal-item ${myWeathers.has('🌧️') ? 'unlocked' : ''}"><span class="icon">🌧️</span><span class="name">雨</span></div>
+            <div class="medal-item ${myWeathers.has('🌧️') ? 'unlocked' : ''}">
+                <div class="icon-wrapper">🌧️</div><div class="name">雨中相见</div>
+            </div>
+            <div class="medal-item ${myWeathers.has('☀️') ? 'unlocked' : ''}">
+                <div class="icon-wrapper">☀️</div><div class="name">明媚阳光</div>
+            </div>
+            <div class="medal-item ${myWeathers.has('❄️') ? 'unlocked' : ''}">
+                <div class="icon-wrapper">❄️</div><div class="name">雪落无声</div>
+            </div>
         </div>
+
         <div id="ach-season" class="achievement-grid">
-            <div class="medal-item ${mySeasons.has('spring') ? 'unlocked' : ''}"><span class="icon">🪁</span><span class="name">春</span></div>
-            <div class="medal-item ${mySeasons.has('summer') ? 'unlocked' : ''}"><span class="icon">🍉</span><span class="name">夏</span></div>
-            <div class="medal-item ${mySeasons.has('autumn') ? 'unlocked' : ''}"><span class="icon">🍂</span><span class="name">秋</span></div>
-            <div class="medal-item ${mySeasons.has('winter') ? 'unlocked' : ''}"><span class="icon">🧣</span><span class="name">冬</span></div>
+            <div class="medal-item ${mySeasons.has('summer') ? 'unlocked' : ''}">
+                <div class="icon-wrapper">🍦</div><div class="name">盛夏光年</div>
+            </div>
+            <div class="medal-item ${mySeasons.has('autumn') ? 'unlocked' : ''}">
+                <div class="icon-wrapper">🍂</div><div class="name">初秋微风</div>
+            </div>
+            <div class="medal-item ${mySeasons.has('winter') ? 'unlocked' : ''}">
+                <div class="icon-wrapper">🧣</div><div class="name">冬日取暖</div>
+            </div>
         </div>
+
         <div id="ach-others" class="achievement-grid">
-            <div class="medal-item ${totalKM > 2000 ? 'unlocked' : ''}"><span class="icon">✈️</span><span class="name">里程达人</span></div>
-            <div class="medal-item ${hasLongVacation ? 'unlocked' : ''}"><span class="icon">🍹</span><span class="name">悠长假期</span></div>
+            <div class="medal-item ${myCount >= 5 ? 'unlocked' : ''}">
+                <div class="icon-wrapper">🎫</div><div class="name">五场留念</div>
+            </div>
+            <div class="medal-item ${hasLongVacation ? 'unlocked' : ''}">
+                <div class="icon-wrapper">🏖️</div><div class="name">悠长假期</div>
+            </div>
+            <div class="medal-item ${totalKM >= 2000 ? 'unlocked' : ''}">
+                <div class="icon-wrapper">✈️</div><div class="name">里程达人</div>
+            </div>
         </div>
     `;
     container.appendChild(achBox);
 
-    // --- 第二部分：足迹地图 ---
+    // --- 第三部分：足迹地图 (已切换为 achievement-box 类名) ---
     const mapBox = document.createElement('div');
-    mapBox.style.cssText = `width: 100%; max-width: 800px; margin: 0 auto 30px; background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border-radius: 20px; padding: 30px 10px; border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 15px 35px rgba(0,0,0,0.1);`;
+    mapBox.className = 'achievement-box'; // 移除内联 style.cssText，改为类名引用
+    
     mapBox.innerHTML = `
-        <p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 15px; text-align:center; font-family: serif;">历历万乡 · 足迹地图</p>
+        <p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 25px; text-align:center; font-family: serif;">历历万乡 · 足迹地图</p>
         <div id="map-wrapper" style="position: relative; width: 100%; height: 0; padding-top: 80%; background: url('images/china_outline.jpg') no-repeat center; background-size: contain;">
             <div id="pins-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
         </div>
@@ -913,16 +1017,15 @@ const hasLongVacation = Object.values(cityCounts).some(count => count >= 2);
     `;
     container.appendChild(mapBox);
 
+    // 渲染地图点位
     const pinCoords = {
         "北京": { left: "66.4%", top: "40.3%" }, "上海": { left: "75.2%", top: "58.2%" }, "成都": { left: "49.0%", top: "60.8%" },
         "济南": { left: "68.6%", top: "47.3%" }, "西安": { left: "57.2%", top: "53.1%" }, "重庆": { left: "54.0%", top: "63.7%" },
         "武汉": { left: "64.6%", top: "60.7%" }, "杭州": { left: "73.7%", top: "60.5%" }, "深圳": { left: "66.3%", top: "77.8%" },
         "南京": { left: "71.7%", top: "56.7%" }, "郑州": { left: "63.6%", top: "52.0%" }
     };
-
     const pinsLayer = mapBox.querySelector('#pins-layer');
     const litCities = new Set(myTours.map(t => t.city));
-
     Object.keys(pinCoords).forEach(city => {
         if (litCities.has(city)) {
             const pos = pinCoords[city];
@@ -936,13 +1039,12 @@ const hasLongVacation = Object.values(cityCounts).some(count => count >= 2);
         }
     });
 
-    // --- 第三部分：记忆存根 ---
+    // --- 第四部分：记忆存根 ---
     const uniqueCitiesCount = [...new Set(myTours.map(item => item.city))].length;
     const travelPath = [...new Set(sortedTours.map(item => item.city))].join(' → ');
-
     const myCard = document.createElement('div');
     myCard.className = 'tour-card ticket-card';
-    myCard.style.cssText = "width: 100%; max-width: 500px; margin: 0 auto; text-align: center;";
+    myCard.style.cssText = "width: 100%; max-width: 500px; margin: 30px auto; text-align: center;";
     myCard.innerHTML = `
         <div style="font-size: 0.7em; color: #999; letter-spacing: 5px; margin-bottom: 5px;">LIVE TOUR MEMORY</div>
         <h2 style="letter-spacing:10px; color: #333; margin: 10px 0; border-bottom: 1px solid #eee; padding-bottom: 15px;">一粒 · 存根</h2>
