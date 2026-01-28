@@ -237,8 +237,9 @@
 }
 
 /* 装饰：红色火漆印效果 */
+/* 找到 .modal-content::before 并修改 content */
 .modal-content::before {
-    content: "🍒";
+    content: var(--seal-emoji, "🍒"); /* 默认显示樱桃，或通过变量控制 */
     position: absolute;
     top: -20px; left: 50%;
     transform: translateX(-50%);
@@ -598,8 +599,15 @@ function calcTotalKM(list) {
     // 替换第 216 行起的函数
 function showQuote(id) {
     if (quotes[id]) { 
-        // 将原来的 innerText 改为调用打字机
         const target = document.getElementById('modalText');
+        const modalContent = document.querySelector('.modal-content');
+        
+        // 1. 设置火漆印为兔子
+        modalContent.style.setProperty('--seal-emoji', '"🐰"');
+        
+        // 2. 设置标题
+        modalContent.querySelector('div:first-child').innerHTML = "来自小兔的私信";
+        
         showModal();
         typewriter(target, quotes[id], 60); 
     }
@@ -970,11 +978,22 @@ function renderMyGrain(container) {
 ripple.style.cssText = `position:fixed; left:${e.clientX-25}px; top:${e.clientY-25}px; width:50px; height:50px; border:2px solid var(--tag-special); border-radius:50%; animation: rippleOut 0.5s ease-out; pointer-events:none; z-index:9999;`;
 document.body.appendChild(ripple);
 setTimeout(() => ripple.remove(), 500);
-            e.stopPropagation();
-            this.remove(); 
-            const randomQuote = eggQuotes[Math.floor(Math.random() * eggQuotes.length)];
-            document.getElementById('modalText').innerHTML = `<div style="text-align:left; color:var(--tag-guest); margin-bottom:15px; font-weight:bold;">🍎捡到一粒果实🍎</div><div style="font-style:italic; text-align:left;">${randomQuote}</div>`;
-            showModal();
+           e.stopPropagation();
+    this.remove(); 
+    
+    const randomQuote = eggQuotes[Math.floor(Math.random() * eggQuotes.length)];
+    const modalContent = document.querySelector('.modal-content');
+    
+    // 1. 设置火漆印为樱桃
+    modalContent.style.setProperty('--seal-emoji', '"🍒"');
+    
+    // 2. 设置标题（改为捡到果实）
+    modalContent.querySelector('div:first-child').innerHTML = "🍎 捡到一粒果实 🍎";
+    
+    // 3. 设置内容（注意：这里直接填入 randomQuote）
+    document.getElementById('modalText').innerHTML = `<div style="font-style:italic; text-align:left;">${randomQuote}</div>`;
+    
+    showModal();
         };
         grid.appendChild(egg);
     }
