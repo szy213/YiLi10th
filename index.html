@@ -817,14 +817,16 @@ function showModal() {
     document.body.style.overflow = 'hidden'; // 锁定背景滚动
 }
 
-// 替换第 221 行起的 closeModal
 function closeModal() {
     const modal = document.getElementById('quoteModal');
+    // 移除 active 类，让 CSS 的 display: none 生效
     modal.classList.remove('active');
+    
+    // 可选：为了保险，在 300ms 动画结束后清空文字，防止视觉残留
     setTimeout(() => {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto'; // 恢复滚动
-        // 注意：如果你想保留“我在现场”的钩子，不要在这里重置 checkbox
+        if(!modal.classList.contains('active')) {
+            document.getElementById('modalText').innerText = '';
+        }
     }, 300);
 }
 
@@ -889,7 +891,35 @@ function saveCheckState(id, isChecked) {
         render();
     }
 }
+  
+/**
+ * 弹出成就/勋章详细信息的弹窗
+ * @param {string} name 成就名称
+ * @param {string} icon 对应的 emoji 图标
+ */
+function showAchievementModal(name, icon) {
+    const modal = document.getElementById('quoteModal');
+    const modalText = document.getElementById('modalText');
+    const content = modal.querySelector('.modal-content');
+
+    // 1. 关键：先彻底关闭之前的状态，确保动画和显示逻辑重置
+    modal.classList.remove('active');
     
+    // 强制浏览器重绘：这行代码能解决“点第二次不弹”的问题
+    void modal.offsetWidth; 
+
+    // 2. 动态更换火漆印的图标
+    content.style.setProperty('--seal-emoji', `"${icon}"`);
+
+    // 3. 设置内容（保持你的成就名称不变）
+    let description = `恭喜你解锁了成就：\n【${name}】\n\n每一份荣誉，都是时间给你的回礼。`;
+    if(name === "全勤之约") description = "恭喜你解锁了最高荣誉：\n【全勤之约】\n\n无论晴雨，无论远近，你从未缺席。";
+
+    modalText.innerText = description;
+
+    // 4. 重新激活显示
+    modal.classList.add('active');
+}
 
 function renderMyGrain(container) {
     // 1. 数据准备
@@ -914,109 +944,117 @@ function renderMyGrain(container) {
     const isFourSeasonsComplete = mySeasons.has('spring') && mySeasons.has('summer') && mySeasons.has('autumn') && mySeasons.has('winter');
 
     // --- 第一部分：荣誉勋章墙 ---
-    const badgeWall = document.createElement('div');
-    badgeWall.className = 'achievement-box'; // 穿上统一外衣
+const badgeWall = document.createElement('div');
+badgeWall.className = 'achievement-box'; 
+
+const badges = [
+    { name: "奇妙能力", icon: "🌸", unlocked: myCount > 0 },
+    { name: "自然环境", icon: "🍒", unlocked: ratio > 0.3 },
+    { name: "世界正中", icon: "🍎", unlocked: ratio > 0.7 },
+    { name: "全勤之约", icon: "🌳", unlocked: ratio === 1 && totalPlayedCount > 0 }
+];
+
+let badgesHTML = `<p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 25px; text-align:center; font-family: serif;">一粒 · 荣誉勋章墙</p><div style="display: flex; justify-content: space-around;">`;
+
+badges.forEach(b => {
+    const unlockedClass = b.unlocked ? 'badge-unlocked' : '';
+    // 只有解锁了才能点开
+    const clickHandler = b.unlocked ? `onclick="showAchievementModal('${b.name}', '${b.icon}')"` : '';
+    const cursorStyle = b.unlocked ? 'cursor: pointer;' : 'cursor: default;';
+
+    badgesHTML += `
+        <div style="flex: 1; transition: all 0.5s; ${cursorStyle}" ${clickHandler}>
+            <div class="${unlockedClass}" style="width: 50px; height: 50px; margin: 0 auto; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 2px solid #eee; background: rgba(255,255,255,0.3); opacity: ${b.unlocked ? '1' : '0.2'};">
+                ${b.icon}
+            </div>
+            <div style="font-size: 11px; margin-top: 8px; font-weight:bold; color: ${b.unlocked ? '#333' : '#ccc'};">${b.name}</div>
+        </div>`;
+});
+badgesHTML += `</div>`;
+badgeWall.innerHTML = badgesHTML;
+container.appendChild(badgeWall);
+
+// --- 第二部分：成就模块 ---
+const achBox = document.createElement('div');
+achBox.className = 'achievement-box'; 
+
+// 辅助函数：判断是否解锁并返回点击事件和样式
+function getAchAttr(isUnlocked, name, icon) {
+    if (!isUnlocked) return 'style="cursor: default;"';
+    return `style="cursor: pointer;" onclick="showAchievementModal('${name}', '${icon}')"`;
+}
+
+achBox.innerHTML = `
+    <p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 25px; text-align:center; font-family: serif;">一粒 · 成就收集</p>
     
-    const badges = [
-        { name: "奇妙能力", icon: "🌸", unlocked: myCount > 0 },
-        { name: "自然环境", icon: "🍒", unlocked: ratio > 0.3 },
-        { name: "世界正中", icon: "🍎", unlocked: ratio > 0.7 },
-        { name: "全勤之约", icon: "🌳", unlocked: ratio === 1 && totalPlayedCount > 0 }
-    ];
-    
-    let badgesHTML = `<p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 25px; text-align:center; font-family: serif;">一粒 · 荣誉勋章墙</p><div style="display: flex; justify-content: space-around;">`;
-    badges.forEach(b => {
-        const unlockedClass = b.unlocked ? 'badge-unlocked' : '';
-        badgesHTML += `
-            <div style="flex: 1; transition: all 0.5s;">
-                <div class="${unlockedClass}" style="width: 50px; height: 50px; margin: 0 auto; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; border: 2px solid #eee; background: rgba(255,255,255,0.3); opacity: ${b.unlocked ? '1' : '0.2'};">
-                    ${b.icon}
-                </div>
-                <div style="font-size: 11px; margin-top: 8px; font-weight:bold; color: ${b.unlocked ? '#333' : '#ccc'};">${b.name}</div>
-            </div>`;
-    });
-    badgesHTML += `</div>`;
-    badgeWall.innerHTML = badgesHTML;
-    container.appendChild(badgeWall);
+    <div class="tab-header">
+        <div class="tab-btn active" onclick="switchAchTab(event, 'ach-special')">特殊场次</div>
+        <div class="tab-btn" onclick="switchAchTab(event, 'ach-weather')">天气收集</div>
+        <div class="tab-btn" onclick="switchAchTab(event, 'ach-season')">季节收集</div>
+        <div class="tab-btn" onclick="switchAchTab(event, 'ach-others')">其他成就</div>
+    </div>
 
-    // --- 第二部分：成就模块 ---
-    const achBox = document.createElement('div');
-    achBox.className = 'achievement-box'; 
-    
-    achBox.innerHTML = `
-        <p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 25px; text-align:center; font-family: serif;">一粒 · 成就收集</p>
-        
-        <div class="tab-header">
-            <div class="tab-btn active" onclick="switchAchTab(event, 'ach-special')">特殊场次</div>
-            <div class="tab-btn" onclick="switchAchTab(event, 'ach-weather')">天气收集</div>
-            <div class="tab-btn" onclick="switchAchTab(event, 'ach-season')">季节收集</div>
-            <div class="tab-btn" onclick="switchAchTab(event, 'ach-others')">其他成就</div>
+    <div id="ach-special" class="achievement-grid active">
+        <div class="medal-item ${myIds.includes('0726') ? 'unlocked' : ''}" ${getAchAttr(myIds.includes('0726'), '生日场', '🎂')}>
+            <div class="icon-wrapper">🎂</div><div class="name">生日场</div>
         </div>
-
-        <div id="ach-special" class="achievement-grid active">
-            <div class="medal-item ${myIds.includes('0726') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🎂</div><div class="name">生日场</div>
-            </div>
-            <div class="medal-item ${myIds.includes('1231') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🎇</div><div class="name">跨年场</div>
-            </div>
-            <div class="medal-item ${myIds.includes('0101') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🧨</div><div class="name">元旦场</div>
-            </div>
+        <div class="medal-item ${myIds.includes('1231') ? 'unlocked' : ''}" ${getAchAttr(myIds.includes('1231'), '跨年场', '🎇')}>
+            <div class="icon-wrapper">🎇</div><div class="name">跨年场</div>
         </div>
-
-        <div id="ach-weather" class="achievement-grid">
-            <div class="medal-item ${myWeathers.has('☀️') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">☀️</div><div class="name">晴</div>
-            </div>
-            <div class="medal-item ${myWeathers.has('🌤️') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🌤️</div><div class="name">云</div>
-            </div>
-            <div class="medal-item ${myWeathers.has('☁️') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">☁️</div><div class="name">阴</div>
-            </div>
-            <div class="medal-item ${myWeathers.has('🌧️') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🌧️</div><div class="name">雨</div>
-            </div>
-            <div class="medal-item ${myWeathers.has('❄️') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">❄️</div><div class="name">雪</div>
-            </div>
+        <div class="medal-item ${myIds.includes('0101') ? 'unlocked' : ''}" ${getAchAttr(myIds.includes('0101'), '元旦场', '🧨')}>
+            <div class="icon-wrapper">🧨</div><div class="name">元旦场</div>
         </div>
+    </div>
 
-        <div id="ach-season" class="achievement-grid">
-            <div class="medal-item ${mySeasons.has('spring') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🪁</div><div class="name">春</div>
-            </div>
-            <div class="medal-item ${mySeasons.has('summer') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🍉</div><div class="name">夏</div>
-            </div>
-            <div class="medal-item ${mySeasons.has('autumn') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🍂</div><div class="name">秋</div>
-            </div>
-            <div class="medal-item ${mySeasons.has('winter') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🧣</div><div class="name">冬</div>
-            </div>
+    <div id="ach-weather" class="achievement-grid">
+        <div class="medal-item ${myWeathers.has('☀️') ? 'unlocked' : ''}" ${getAchAttr(myWeathers.has('☀️'), '晴', '☀️')}>
+            <div class="icon-wrapper">☀️</div><div class="name">晴</div>
         </div>
-
-        <div id="ach-others" class="achievement-grid">
-            <div class="medal-item ${myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101') ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🎫</div>
-                <div class="name">单人现场</div>
-            </div>
-            <div class="medal-item ${hasLongVacation ? 'unlocked' : ''}">
-                <div class="icon-wrapper">🍹</div><div class="name">悠长假期</div>
-            </div>
-            <div class="medal-item ${totalKM >= 2000 ? 'unlocked' : ''}">
-                <div class="icon-wrapper">✈️</div><div class="name">里程达人</div>
-            </div>
-            <div class="medal-item ${isFourSeasonsComplete ? 'unlocked' : ''}">
-                <div class="icon-wrapper">💮</div>
-                <div class="name">四季流转</div>
-            </div>
+        <div class="medal-item ${myWeathers.has('🌤️') ? 'unlocked' : ''}" ${getAchAttr(myWeathers.has('🌤️'), '云', '🌤️')}>
+            <div class="icon-wrapper">🌤️</div><div class="name">云</div>
         </div>
-    `;
-    container.appendChild(achBox);
+        <div class="medal-item ${myWeathers.has('☁️') ? 'unlocked' : ''}" ${getAchAttr(myWeathers.has('☁️'), '阴', '☁️')}>
+            <div class="icon-wrapper">☁️</div><div class="name">阴</div>
+        </div>
+        <div class="medal-item ${myWeathers.has('🌧️') ? 'unlocked' : ''}" ${getAchAttr(myWeathers.has('🌧️'), '雨', '🌧️')}>
+            <div class="icon-wrapper">🌧️</div><div class="name">雨</div>
+        </div>
+        <div class="medal-item ${myWeathers.has('❄️') ? 'unlocked' : ''}" ${getAchAttr(myWeathers.has('❄️'), '雪', '❄️')}>
+            <div class="icon-wrapper">❄️</div><div class="name">雪</div>
+        </div>
+    </div>
 
+    <div id="ach-season" class="achievement-grid">
+        <div class="medal-item ${mySeasons.has('spring') ? 'unlocked' : ''}" ${getAchAttr(mySeasons.has('spring'), '春', '🪁')}>
+            <div class="icon-wrapper">🪁</div><div class="name">春</div>
+        </div>
+        <div class="medal-item ${mySeasons.has('summer') ? 'unlocked' : ''}" ${getAchAttr(mySeasons.has('summer'), '夏', '🍉')}>
+            <div class="icon-wrapper">🍉</div><div class="name">夏</div>
+        </div>
+        <div class="medal-item ${mySeasons.has('autumn') ? 'unlocked' : ''}" ${getAchAttr(mySeasons.has('autumn'), '秋', '🍂')}>
+            <div class="icon-wrapper">🍂</div><div class="name">秋</div>
+        </div>
+        <div class="medal-item ${mySeasons.has('winter') ? 'unlocked' : ''}" ${getAchAttr(mySeasons.has('winter'), '冬', '🧣')}>
+            <div class="icon-wrapper">🧣</div><div class="name">冬</div>
+        </div>
+    </div>
+
+    <div id="ach-others" class="achievement-grid">
+        <div class="medal-item ${myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101') ? 'unlocked' : ''}" ${getAchAttr(myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101'), '单人现场', '🎫')}>
+            <div class="icon-wrapper">🎫</div><div class="name">单人现场</div>
+        </div>
+        <div class="medal-item ${hasLongVacation ? 'unlocked' : ''}" ${getAchAttr(hasLongVacation, '悠长假期', '🍹')}>
+            <div class="icon-wrapper">🍹</div><div class="name">悠长假期</div>
+        </div>
+        <div class="medal-item ${totalKM >= 2000 ? 'unlocked' : ''}" ${getAchAttr(totalKM >= 2000, '里程达人', '✈️')}>
+            <div class="icon-wrapper">✈️</div><div class="name">里程达人</div>
+        </div>
+        <div class="medal-item ${isFourSeasonsComplete ? 'unlocked' : ''}" ${getAchAttr(isFourSeasonsComplete, '四季流转', '💮')}>
+            <div class="icon-wrapper">💮</div><div class="name">四季流转</div>
+        </div>
+    </div>
+`;
+container.appendChild(achBox);
     // --- 第三部分：足迹地图 (已切换为 achievement-box 类名) ---
     const mapBox = document.createElement('div');
     mapBox.className = 'achievement-box'; // 移除内联 style.cssText，改为类名引用
@@ -1354,7 +1392,14 @@ function switchAchTab(evt, tabId) {
             ctx.restore();
         }
     }
-
+    // 确保点击弹窗外部或关闭按钮可以关闭
+window.addEventListener('click', function(e) {
+    const modal = document.getElementById('quoteModal');
+    // 如果点击的是 modal 背景本身（或者是你设定的关闭按钮）
+    if (e.target === modal || e.target.className === 'close-btn') {
+        modal.classList.remove('active');
+    }
+});
     // --- 修改后的核心逻辑 ---
     window.addEventListener('click', function(e) {
         // 1. 判断点击的是否为 checkbox
