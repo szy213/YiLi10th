@@ -911,6 +911,7 @@ function renderMyGrain(container) {
     const myIds = myTours.map(t => t.id);
     const myWeathers = new Set(myTours.map(t => t.weather));
     const mySeasons = new Set(myTours.map(t => t.season));
+    const isFourSeasonsComplete = mySeasons.has('spring') && mySeasons.has('summer') && mySeasons.has('autumn') && mySeasons.has('winter');
 
     // --- 第一部分：荣誉勋章墙 ---
     const badgeWall = document.createElement('div');
@@ -1007,6 +1008,10 @@ function renderMyGrain(container) {
             </div>
             <div class="medal-item ${totalKM >= 2000 ? 'unlocked' : ''}">
                 <div class="icon-wrapper">✈️</div><div class="name">里程达人</div>
+            </div>
+            <div class="medal-item ${isFourSeasonsComplete ? 'unlocked' : ''}">
+                <div class="icon-wrapper">💮</div>
+                <div class="name">四季流转</div>
             </div>
         </div>
     `;
