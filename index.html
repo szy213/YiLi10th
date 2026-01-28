@@ -552,8 +552,8 @@ eggIcons.forEach(src => {
         { id: "1220", city: "苏州", time: "2025.12.20", part: 1, guest: "嘉宾：杨乃文", personalPics: Array.from({length: 12}, (_, i) => `images/1220 (${i+1}).jpg`), guestPics: Array.from({length: 3}, (_, i) => `images/1220guest (${i+1}).jpg`), songs: [{n:"光feat杨乃文",t:"guest"},{n:"星星堆满天",t:"guest"},{n:"清透",t:"request"},{n:"人间",t:"request"},{n:"乱",t:"surprise"},{n:"难解风情",t:"surprise"},{n:"爱完不完",t:"surprise"},{n:"知洲",t:"surprise"}] },
         { id: "1231", city: "武汉", time: "2025.12.31", part: 1, guest: "", isSpecial: "跨年场", personalPics: Array.from({length: 11}, (_, i) => `images/1231 (${i+1}).jpg`), guestPics: [], songs: [{n:"亲爱的你",t:"request"},{n:"Best Better Ever",t:"request"},{n:"庆祝",t:"request"},{n:"银泰",t:"request"},{n:"独行侠",t:"request"},{n:"乱",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"海市蜃楼",t:"surprise"}] },
         { id: "0101", city: "武汉", time: "2026.01.01", part: 1, guest: "", isSpecial: "元旦场", personalPics: Array.from({length: 12}, (_, i) => `images/0101 (${i+1}).jpg`), guestPics: [], songs: [{n:"情景剧",t:"request"},{n:"远游",t:"request"},{n:"乐园",t:"request"},{n:"My Dear Art",t:"request"},{n:"再度重相逢",t:"request"},{n:"乱",t:"surprise"},{n:"剧烈",t:"surprise"}] },
-        { id: "成都1", city: "成都", time: "2026.03.14", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
-        { id: "成都2", city: "成都", time: "2026.03.15", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "CD1", city: "成都", time: "2026.03.14", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "CD2", city: "成都", time: "2026.03.15", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
         { id: "NB", city: "宁波", time: "coming soon", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
         { id: "QD", city: "青岛", time: "coming soon", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
         { id: "QZ", city: "泉州", time: "coming soon", part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
@@ -673,15 +673,15 @@ function closeModal() {
 }
 
 function saveCheckState(id, isChecked) {
-    // 1. 将勾选状态存入本地存储，确保刷新不丢失
+    // 使用 tourData 中的 id 作为存储键名，确保唯一性
     localStorage.setItem('checked_' + id, isChecked);
     
-    // 2. 如果是勾选动作，触发原有的语录弹窗
+    // 如果是勾选（点亮），显示语录
     if (isChecked) {
         showQuote(id);
     }
     
-    // 3. 如果当前处于“我的一粒”板块，立即刷新页面显示最新统计
+    // 如果在“我的一粒”页面，立即刷新以同步足迹图和统计数据
     if (currentPart === 3) {
         render();
     }
@@ -900,12 +900,18 @@ function renderMyGrain(container) {
     });
 
     // 渲染卡片
+    // 渲染卡片
     filteredData.forEach(item => {
         const card = document.createElement('div');
         card.className = `tour-card ${item.status === 'unplayed' ? 'unplayed' : ''}`;
+        
+        // 【核心修改点】：渲染前先去“保险柜”查一下这个 ID 之前有没有被勾选过
+        const isChecked = localStorage.getItem('checked_' + item.id) === 'true';
+        
         const badgeHTML = item.isSpecial ? `<div class="special-badge">${item.isSpecial}</div>` : '';
         const unplayedHTML = item.status === 'unplayed' ? `<span class="unplayed-label">(已官宣·未开演)</span>` : '';
         const tags = item.songs.map(s => `<span class="song-tag ${s.t}">${s.n}</span>`).join('');
+        
         card.innerHTML = `
             ${badgeHTML} 
             <div class="tour-info">
@@ -924,7 +930,7 @@ function renderMyGrain(container) {
             <div class="check-area">
                 <label style="cursor: pointer;">
                     <input type="checkbox" 
-                           ${localStorage.getItem('checked_' + item.id) === 'true' ? 'checked' : ''} 
+                           ${isChecked ? 'checked' : ''} 
                            onchange="saveCheckState('${item.id}', this.checked)"> 
                     我在现场
                 </label>
@@ -1082,7 +1088,31 @@ function typewriter(element, text, speed = 50) {
 })();
 </script>
 
+<script>
+    // 1. 找到所有带 save-state 类的复选框
+    const checkboxes = document.querySelectorAll('.save-state');
 
+    // 2. 页面一打开：从浏览器“保险柜”恢复之前的勾选
+    checkboxes.forEach(cb => {
+        const isChecked = localStorage.getItem(cb.id) === 'true';
+        cb.checked = isChecked;
+
+        // 3. 监听点击：既要保存数据，又要喷彩带
+        cb.addEventListener('change', function() {
+            // 保存到内存
+            localStorage.setItem(this.id, this.checked);
+
+            // 如果是勾选，触发你原有的彩带特效
+            if (this.checked) {
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        });
+    });
+</script>
 
 
 </body>
