@@ -1344,8 +1344,8 @@ function renderMyGrain(container) {
     const pinCoords = {
         "北京": { left: "66.4%", top: "40.3%" }, "上海": { left: "75.2%", top: "58.2%" }, "成都": { left: "49.0%", top: "60.8%" },
         "济南": { left: "68.6%", top: "47.3%" }, "西安": { left: "57.2%", top: "53.1%" }, "重庆": { left: "54.0%", top: "63.7%" },
-        "武汉": { left: "64.6%", top: "60.7%" }, "杭州": { left: "73.7%", top: "60.5%" }, "深圳": { left: "66.3%", top: "77.8%" },
-        "南京": { left: "71.7%", top: "56.7%" }, "郑州": { left: "63.6%", top: "52.0%" }
+        "武汉": { left: "64.6%", top: "60.7%" }, "厦门": { left: "71.9%", top: "72.5%" }, "杭州": { left: "73.7%", top: "60.5%" }, 
+        "深圳": { left: "66.3%", top: "77.8%" },"南京": { left: "71.7%", top: "56.7%" }, "郑州": { left: "63.6%", top: "52.0%" }
     };
     const pinsLayer = mapBox.querySelector('#pins-layer');
     const litCities = new Set(myTours.map(t => t.city));
@@ -1361,6 +1361,15 @@ function renderMyGrain(container) {
             pinsLayer.appendChild(pin);
         }
     });
+    /* // 【自带取点器逻辑】直接点击页面上的地图即可看到坐标
+    const wrapper = mapBox.querySelector('#map-wrapper');
+    wrapper.onclick = function(e) {
+        const rect = this.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1) + '%';
+        const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1) + '%';
+        alert(`测得坐标如下，请填入代码中：\nleft: "${x}", top: "${y}"`);
+        console.log(`"${city}": { left: "${x}", top: "${y}" },`);
+    }; */
 
     // --- 第四部分：记忆存根 ---
     const uniqueCitiesCount = [...new Set(myTours.map(item => item.city))].length;
