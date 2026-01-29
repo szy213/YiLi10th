@@ -62,35 +62,40 @@
 
         /* --- 样式部分保持不变 --- */
         * { box-sizing: border-box; }
-       body {
+body {
     margin: 0; 
     padding: 0;
     
-    /* 核心修改：叠加三层背景 */
+    /* 核心修改：三层叠加逻辑 */
     background-image: 
-        /* 第一层：顶部全局遮罩（保持你原有的顶部透光感） */
-        linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 15%),
-        /* 第二层：接缝处理遮罩（在图片重复的交界处通过半透明底色过渡，消除硬接缝） */
-        linear-gradient(to bottom, rgba(242,242,242,0.8), rgba(242,242,242,0.8)),
+        /* 第一层：全局顶部遮罩，保留页面最上方的设计感 */
+        linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 10%),
+        
+        /* 第二层：关键！边缘柔和器。
+           在每张图的顶部和底部（0%和100%处）强制回归底色 #f2f2f2，
+           中间部分 40%-60% 透明，让原图透出来。*/
+        linear-gradient(to bottom, 
+            rgba(242,242,242,1) 0%, 
+            rgba(242,242,242,0) 15%, 
+            rgba(242,242,242,0) 85%, 
+            rgba(242,242,242,1) 100%),
+            
         /* 第三层：原始背景图 */
         url('images/033de8f0d6622db97e42ea88b4770bba.jpg');
-    
-    /* 混合模式：这是处理接缝的神技，让背景图与底色柔和融合 */
-    background-blend-mode: normal, overlay, normal;
+
+    /* 混合模式：使用 multiply（正片叠底）或 normal 都可以，建议 normal 配合上面的透明度 */
+    background-blend-mode: normal;
 
     /* 顺延设置 */
-    background-repeat: repeat-y;      /* 纵向无限重复 */
-    background-size: 100% auto;       /* 宽度适配屏幕，高度按比例自动 */
-    background-attachment: scroll;    /* 随内容滚动，背景随卡片结束而结束 */
+    background-repeat: repeat-y;
+    background-size: 100% auto; /* 必须是 auto，否则无法对齐渐变 */
+    background-attachment: scroll;
     background-position: top center;
-    
-    /* 基础底色：需与渐变层颜色 #f2f2f2 保持一致 */
-    background-color: #f2f2f2;
+    background-color: #f2f2f2; /* 确保背景底色一致 */
     
     font-family: "STSong", "SimSun", serif; 
     color: #333; 
     line-height: 1.6;
-    transition: background-image 0.8s ease-in-out;
 }
 
 /* 额外优化：确保背景在最后一张卡片后不要留太长 */
