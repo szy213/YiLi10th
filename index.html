@@ -62,13 +62,20 @@
 
         /* --- 样式部分保持不变 --- */
         * { box-sizing: border-box; }
-        body {
-            margin: 0; padding: 0;
-            background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 25%, transparent 40%), url('images/033de8f0d6622db97e42ea88b4770bba.jpg');
-            background-size: 100% auto; background-repeat: no-repeat; background-attachment: scroll; background-position: top center; background-color: #f2f2f2;
-            font-family: "STSong", "SimSun", serif; color: #333; line-height: 1.6;
-            transition: background-image 0.8s ease-in-out;
-        }
+       body {
+    margin: 0; padding: 0;
+    background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 25%, transparent 40%), url('images/033de8f0d6622db97e42ea88b4770bba.jpg');
+    
+    /* 核心修改点 */
+    background-repeat: repeat-y;      /* 关键：允许图片在垂直方向重复 */
+    background-size: 100% auto;       /* 宽度撑满，高度根据原图比例自动，这样重复时不会变形 */
+    background-attachment: scroll;    /* 随着页面滚动，图片自然衔接 */
+    
+    background-position: top center;
+    background-color: #f2f2f2;
+    font-family: "STSong", "SimSun", serif; color: #333; line-height: 1.6;
+    transition: background-image 0.8s ease-in-out;
+}
         .header { text-align: center; padding: 120px 20px 60px; }
         /* 找到代码中约第 59-63 行进行修改 */
 
