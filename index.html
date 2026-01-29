@@ -81,7 +81,7 @@ body {
             rgba(242,242,242,1) 100%),
             
         /* 第三层：原始背景图 */
-        url('images/033de8f0d6622db97e42ea88b4770bba.jpg');
+        url('images/bg.jpg');
 
     /* 混合模式：使用 multiply（正片叠底）或 normal 都可以，建议 normal 配合上面的透明度 */
     background-blend-mode: normal;
@@ -1078,7 +1078,7 @@ function closeModal() {
     /* document.body.style.backgroundAttachment = "fixed";  // 如果想要背景固定不随滚动条走，可以加这一行 */
 } else {
         // 还原 PART I 和 PART II 的巡演主背景
-        document.body.style.backgroundImage = "linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 25%, transparent 40%), url('images/033de8f0d6622db97e42ea88b4770bba.jpg')";
+        document.body.style.backgroundImage = "linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 25%, transparent 40%), url('images/bg.jpg')";
         document.body.style.backgroundSize = "100% auto";
     }
 
