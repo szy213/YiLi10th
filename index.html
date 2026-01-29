@@ -62,30 +62,13 @@
 
         /* --- 样式部分保持不变 --- */
         * { box-sizing: border-box; }
-       /* 修改前 */
-body {
-    margin: 0; padding: 0;
-    background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 25%, transparent 40%), url('images/033de8f0d6622db97e42ea88b4770bba.jpg');
-    background-size: 100% auto; background-repeat: no-repeat; background-attachment: scroll; background-position: top center; background-color: #f2f2f2;
-    font-family: "STSong", "SimSun", serif; color: #333; line-height: 1.6;
-    transition: background-image 0.8s ease-in-out;
-}
-
-/* 修改后：方案二（强制拉伸填充） */
-body {
-    margin: 0; padding: 0;
-    background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 25%, transparent 40%), url('images/033de8f0d6622db97e42ea88b4770bba.jpg');
-    
-    /* 核心修改点 */
-    background-size: 100% 100%;       /* 强制宽度 100%，高度也 100% 铺满整个 body */
-    background-repeat: no-repeat;     /* 不重复 */
-    background-attachment: scroll;   /* 随内容滚动 */
-    background-position: center;     /* 居中对齐 */
-    
-    background-color: #f2f2f2;
-    font-family: "STSong", "SimSun", serif; color: #333; line-height: 1.6;
-    transition: background-image 0.8s ease-in-out;
-}
+        body {
+            margin: 0; padding: 0;
+            background-image: linear-gradient(to bottom, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.3) 25%, transparent 40%), url('images/033de8f0d6622db97e42ea88b4770bba.jpg');
+            background-size: 100% auto; background-repeat: no-repeat; background-attachment: scroll; background-position: top center; background-color: #f2f2f2;
+            font-family: "STSong", "SimSun", serif; color: #333; line-height: 1.6;
+            transition: background-image 0.8s ease-in-out;
+        }
         .header { text-align: center; padding: 120px 20px 60px; }
         /* 找到代码中约第 59-63 行进行修改 */
 
@@ -110,12 +93,12 @@ body {
     color: #4a4a4a;
     font-weight: bold;
 }
-        .tour-grid { position: relative; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 160px; padding: 60px 20px 400px; }
+        .tour-grid { position: relative; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 80px; padding: 60px 20px 400px; }
       .tour-card {
     position: relative;
     background: var(--paper-white);
     backdrop-filter: blur(5px);
-    padding: 35px;
+    padding: 20px;
     border-left: 2px solid var(--tag-guest);
     z-index: 10;
     
@@ -233,7 +216,7 @@ body {
         .image-slider::-webkit-scrollbar-thumb { background: var(--tag-guest); border-radius: 10px; }
         
         .slider-img { 
-            flex: 0 0 auto; height: 300px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+            flex: 0 0 auto; height: 200px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
             opacity: 0; transition: opacity 0.5s ease-in-out;
         }
         .slider-img[src] { opacity: 1; }
