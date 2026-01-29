@@ -801,20 +801,7 @@ document.head.appendChild(style);
     background: #e0e0e0;
 }
 
-/* 方案三：针对手机端的专项优化 */
-@media screen and (max-width: 768px) {
-    body {
-        /* background-attachment: fixed 在某些移动端浏览器可能有兼容问题，
-           如果设置 fixed 后背景消失，请尝试改为 scroll */
-        background-attachment: fixed; 
-        
-        /* cover 会确保图片按比例缩放，直到完全覆盖手机屏幕，不会留白 */
-        background-size: cover;
-        
-        /* 确保图片中心点对齐，防止手机竖屏时只看到图片的左上角 */
-        background-position: center center;
-    }
-}
+
 
 </style>
 </head>
