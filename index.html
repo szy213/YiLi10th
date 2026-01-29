@@ -1191,10 +1191,10 @@ function renderMyGrain(container) {
     badgeWall.className = 'achievement-box'; 
     
     const badges = [
-        { name: "奇妙能力", icon: "🌸", unlocked: myCount > 0, desc: "开启一粒之旅" },
-        { name: "自然环境", icon: "🍒", unlocked: ratio > 0.3, desc: "已解锁超过 30% 现有场次。" },
-        { name: "世界正中", icon: "🍎", unlocked: ratio > 0.7, desc: "已解锁超过 60% 现有场次。" },
-        { name: "全勤之约", icon: "🌳", unlocked: ratio === 1 && totalPlayedCount > 0, desc: "已解锁100%现有场次。" }
+        { name: "奇妙能力", icon: "🍒", unlocked: myCount > 0, desc: "开启一粒之旅" },
+        { name: "自然环境", icon: "🥨", unlocked: ratio > 0.3, desc: "已解锁超过 30% 现有场次。" },
+        { name: "世界正中", icon: "🪽", unlocked: ratio > 0.7, desc: "已解锁超过 60% 现有场次。" },
+        { name: "全勤之约", icon: "🍎", unlocked: ratio === 1 && totalPlayedCount > 0, desc: "已解锁100%现有场次。" }
     ];
     
     let badgesHTML = `<p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 25px; text-align:center; font-family: serif;">场次勋章墙</p><div style="display: flex; justify-content: space-around;">`;
