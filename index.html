@@ -1445,40 +1445,40 @@ function renderMyGrain(container) {
         grid.appendChild(card);
     });
 
-    // 随机果实逻辑保持不变...
-    for(let i=0; i<10; i++) {
-        const egg = document.createElement('img');
-        egg.className = 'shiguan-egg';
-        egg.src = eggIcons[i%8];
-        const isLeft = Math.random() > 0.5;
-        if (isLeft) { egg.style.left = (Math.random() * 13 + 2) + "%"; } 
-        else { egg.style.left = (Math.random() * 13 + 85) + "%"; }
-        egg.style.top = (Math.random() * 90) + "%";
-        egg.style.animationDelay = (Math.random() * 2) + "s";
-        egg.onclick = function(e) {
-         let ripple = document.createElement('div');
-ripple.style.cssText = `position:fixed; left:${e.clientX-25}px; top:${e.clientY-25}px; width:50px; height:50px; border:2px solid var(--tag-special); border-radius:50%; animation: rippleOut 0.5s ease-out; pointer-events:none; z-index:9999;`;
-document.body.appendChild(ripple);
-setTimeout(() => ripple.remove(), 500);
-           e.stopPropagation();
-    this.remove(); 
+for(let i=0; i<10; i++) {
+    const egg = document.createElement('img');
+    egg.className = 'shiguan-egg';
+    egg.src = eggIcons[i%8];
+
+    // --- 修改这里：控制水平分布在中间 70% ---
+    // Math.random() * 70 得到 0~70 之间的数
+    // 再加上 15，范围就变成了 15% 到 85%
+    egg.style.left = (Math.random() * 80+ 15) + "%"; 
     
-    const randomQuote = eggQuotes[Math.floor(Math.random() * eggQuotes.length)];
-    const modalContent = document.querySelector('.modal-content');
+    // 垂直分布保持在 0% 到 90%
+    egg.style.top = (Math.random() * 90) + "%";
     
-    // 1. 设置火漆印为樱桃
-    modalContent.style.setProperty('--seal-emoji', '"🍒"');
+    egg.style.animationDelay = (Math.random() * 2) + "s";
     
-    // 2. 设置标题（改为捡到果实）
-    modalContent.querySelector('div:first-child').innerHTML = "🍎 捡到一粒果实 🍎";
-    
-    // 3. 设置内容（注意：这里直接填入 randomQuote）
-    document.getElementById('modalText').innerHTML = `<div style="font-style:italic; text-align:left;">${randomQuote}</div>`;
-    
-    showModal();
-        };
-        grid.appendChild(egg);
-    }
+    // 点击逻辑保持不变...
+    egg.onclick = function(e) {
+        // ... 原有的点击 ripple 和 modal 逻辑 ...
+        let ripple = document.createElement('div');
+        ripple.style.cssText = `position:fixed; left:${e.clientX-25}px; top:${e.clientY-25}px; width:50px; height:50px; border:2px solid var(--tag-special); border-radius:50%; animation: rippleOut 0.5s ease-out; pointer-events:none; z-index:9999;`;
+        document.body.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 500);
+        e.stopPropagation();
+        this.remove(); 
+        
+        const randomQuote = eggQuotes[Math.floor(Math.random() * eggQuotes.length)];
+        const modalContent = document.querySelector('.modal-content');
+        modalContent.style.setProperty('--seal-emoji', '"🍒"');
+        modalContent.querySelector('div:first-child').innerHTML = "🍎 捡到一粒果实 🍎";
+        document.getElementById('modalText').innerHTML = `<div style="font-style:italic; text-align:left;">${randomQuote}</div>`;
+        showModal();
+    };
+    grid.appendChild(egg);
+}
 }
 
 function typewriter(element, text, speed = 50) {
