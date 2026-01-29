@@ -1552,24 +1552,26 @@ function switchAchTab(evt, tabId) {
     const checkboxes = document.querySelectorAll('.save-state');
 
     // 2. 页面一打开：从浏览器“保险柜”恢复之前的勾选
-    checkboxes.forEach(cb => {
-        const isChecked = localStorage.getItem(cb.id) === 'true';
-        cb.checked = isChecked;
+    cb.addEventListener('change', (e) => {
+        // --- 新增：趣味音效 ---
+        if (e.target.checked) {
+            // 使用一个清脆的“盖章”或“咔哒”声，这里使用了一个公开的音效地址
+            // 你也可以换成你自己喜欢的 mp3 链接
+            const stampSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+            stampSound.volume = 0.4; // 音量调小一点，避免突兀
+            stampSound.play();
 
-        // 3. 监听点击：既要保存数据，又要喷彩带
-        cb.addEventListener('change', function() {
-            // 保存到内存
-            localStorage.setItem(this.id, this.checked);
-
-            // 如果是勾选，触发你原有的彩带特效
-            if (this.checked) {
-                confetti({
-                    particleCount: 150,
-                    spread: 70,
-                    origin: { y: 0.6 }
-                });
+            // --- 新增：触感反馈（仅限部分手机设备） ---
+            if (navigator.vibrate) {
+                // 震动 50 毫秒，模拟盖章下去的那种阻尼感
+                navigator.vibrate(50);
             }
-        });
+        }
+
+        // --- 原有逻辑：保存状态 ---
+        localStorage.setItem(cb.id, cb.checked);
+        
+        // 注意：彩带喷发逻辑在另一个 window 的 click 监听里，这里不用重复写
     });
 </script>
 
