@@ -106,26 +106,65 @@ body {
         .header { text-align: center; padding: 120px 20px 60px; }
         /* 找到代码中约第 59-63 行进行修改 */
 
+/* --- 头部标题美化 --- */
 .header h1 {
-    /* 替换字体：优先使用思源宋体，备选华文宋体 */
-    font-family: "STSong", "SimSun", serif; 
-    
+    /* 保持原有属性 */
+    font-family: "Noto Serif SC", "STSong", "SimSun", serif; 
     letter-spacing: 10px;
-    font-size: 2.2em; /* 保持原样 */
+    font-size: 2.2em;
     margin: 0;
     color: #4a4a4a;
-    margin-right: -25px;
+    margin-right: -10px; /* 修正：原本-25px在手机端会导致标题偏右，-10px更平衡 */
+
+    /* 新增：增加文字质感 */
+    font-weight: 900;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.05); /* 极轻微的投影增加立体感 */
+    position: relative;
+    display: inline-block;
+}
+
+/* 装饰：在标题下方增加一个极淡的装饰线，增加视觉重心 */
+.header h1::after {
+    content: "";
+    display: block;
+    width: 40px;
+    height: 2px;
+    background: var(--tag-special); /* 使用火漆红作为点缀 */
+    margin: 15px auto 0;
+    opacity: 0.6;
 }
 
 .header p {
-    /* 替换字体：使用楷体或仿宋，增加人文感 */
-    font-family: ""KaiTi", "STFangsong", serif;
-    
-    font-size: 1em; /* 保持原样 */
+    /* 保持原有属性 */
+    font-family: "KaiTi", "STFangsong", serif;
+    font-size: 1em;
     letter-spacing: 5px;
-    margin-top: 20px;
+    margin-top: 25px; /* 稍微拉开一点距离 */
     color: #666;
     font-weight: bold;
+
+    /* 新增：人文感优化 */
+    font-style: italic; /* 楷体加斜体更有书写感 */
+    opacity: 0.8;
+    margin-right: -5px; /* 抵消 letter-spacing 带来的末尾空白 */
+}
+
+/* --- 关键：手机端适配优化 --- */
+@media (max-width: 600px) {
+    .header {
+        padding: 80px 15px 40px; /* 缩小顶部间距，让内容上移 */
+    }
+    .header h1 {
+        font-size: 1.8em; /* 手机端稍微缩小，防止长标题换行 */
+        letter-spacing: 6px; /* 缩小间距，更适合窄屏阅读 */
+        margin-right: -6px;
+    }
+    .header p {
+        font-size: 0.9em;
+        letter-spacing: 3px;
+        margin-right: -3px;
+        padding: 0 10px; /* 防止副标题贴边 */
+    }
 }
         .tour-grid { position: relative; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 50px; padding: 60px 20px 400px; }
       .tour-card {
