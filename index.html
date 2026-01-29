@@ -69,7 +69,7 @@
             transition: background-image 0.8s ease-in-out;
         }
         .header { text-align: center; padding: 120px 20px 60px; }
-        .header h1 { letter-spacing: 25px; font-size: 4.5em; margin: 0; color: #262626; margin-right: -25px; }
+        .header h1 { letter-spacing: 10px; font-size: 2em; margin: 0; color: #262626; margin-right: -25px; }
         .header p { font-size: 1.5em; letter-spacing: 5px; margin-top: 20px; color: #4a4a4a; font-weight: bold; }
         .tour-grid { position: relative; max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 160px; padding: 60px 20px 400px; }
       .tour-card {
@@ -779,52 +779,6 @@ document.head.appendChild(style);
     background: #e0e0e0;
 }
 
-/* --- 响应式尺寸调整 --- */
-
-/* 电脑端（大屏幕）：让卡片不要铺得太满，保持精致感 */
-@media (min-width: 1024px) {
-    .tour-grid {
-        grid-template-columns: repeat(4, 1fr); /* 强制电脑端显示 4 列 */
-        max-width: 1200px; /* 限制最大宽度，居中显示 */
-        margin: 0 auto;
-    }
-    .tour-card {
-        padding: 25px; /* 电脑端卡片内边距大一点 */
-    }
-}
-
-/* 平板端 */
-@media (min-width: 600px) and (max-width: 1023px) {
-    .tour-grid {
-        grid-template-columns: repeat(2, 1fr); /* 平板显示 2 列 */
-    }
-}
-
-/* 手机端（小屏幕）：缩小卡片内元素，使其比例和电脑一致 */
-@media (max-width: 600px) {
-    .tour-grid {
-        grid-template-columns: repeat(2, 1fr); /* 手机端也显示 2 列，这样比例就小了 */
-        gap: 12px; /* 间距缩小 */
-        padding: 10px;
-    }
-    .tour-card {
-        padding: 15px 10px; /* 缩小内边距 */
-    }
-    .city-name {
-        font-size: 1.2rem; /* 缩小城市字体 */
-    }
-    .tour-date, .tour-venue {
-        font-size: 0.8rem; /* 缩小日期和场馆字体 */
-    }
-    .more-btn {
-        padding: 4px 8px; /* 缩小按钮 */
-        font-size: 0.75rem;
-    }
-    .seal {
-        width: 40px; /* 缩小火漆印 */
-        height: 40px;
-    }
-}
 
 </style>
 </head>
