@@ -538,6 +538,45 @@ document.head.appendChild(style);
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
     animation: fadeIn 0.4s ease;
+    
+}
+
+/* 1. 通用的网格样式 */
+.achievement-grid {
+    display: none;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    animation: fadeIn 0.4s ease;
+}
+
+/* 2. 只有当它拥有 active 类时才显示（这是原有的逻辑） */
+.achievement-grid.active {
+    display: grid;
+}
+
+/* 3. 【重点】把天气和季节模块的强制单行样式提出来，独立书写 */
+#ach-weather.active{
+    display: flex !important; /* 使用 flex 覆盖上面的 grid */
+    justify-content: space-between;
+    flex-wrap: nowrap; 
+    gap: 4px; 
+}
+
+/* 4. 内部缩放优化 */
+#ach-weather .medal-item {
+    flex: 1;
+    min-width: 0;
+}
+
+#ach-weather .icon-wrapper{
+    width: 40px;  
+    height: 40px;
+    font-size: 20px; 
+}
+
+#ach-weather .name, {
+    font-size: 10px; 
+    white-space: nowrap;
 }
 
 .achievement-grid.active { display: grid; }
@@ -669,6 +708,7 @@ document.head.appendChild(style);
     font-family: "Noto Serif SC", serif;
     font-weight: bold;
     letter-spacing: 2px;
+    
 }
 
 .grain-ach-body {
@@ -812,7 +852,7 @@ eggIcons.forEach(src => {
         { id: "1206", city: "深圳", time: "2025.12.06", weather: "☀️", season: "winter",part: 1, guest: "嘉宾：GAI😎", personalPics: Array.from({length: 12}, (_, i) => `images/1206 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/1206guest (${i+1}).jpg`), songs: [{n:"历历万乡featGAI",t:"guest"},{n:"兰花草",t:"guest"},{n:"多多留意",t:"request"},{n:"被动",t:"request"},{n:"难解风情",t:"surprise"},{n:"乱",t:"surprise"}] },
         { id: "1207", city: "深圳", time: "2025.12.07", weather: "☀️", season: "winter",part: 1, guest: "嘉宾：万妮达🫅🏻", personalPics: Array.from({length: 9}, (_, i) => `images/1207 (${i+1}).jpg`), guestPics: Array.from({length: 5}, (_, i) => `images/1207guest (${i+1}).jpg`), songs: [{n:"和平鸽feat万妮达",t:"guest"},{n:"算了",t:"guest"},{n:"colorful world",t:"guest"},{n:"四海",t:"request"},{n:"泪桥",t:"request"},{n:"沉迷",t:"surprise"},{n:"乱",t:"surprise"}] },
         { id: "1220", city: "苏州", time: "2025.12.20", weather: "🌧️", season: "winter",part: 1, guest: "嘉宾：杨乃文", personalPics: Array.from({length: 12}, (_, i) => `images/1220 (${i+1}).jpg`), guestPics: Array.from({length: 3}, (_, i) => `images/1220guest (${i+1}).jpg`), songs: [{n:"光feat杨乃文",t:"guest"},{n:"星星堆满天",t:"guest"},{n:"清透",t:"request"},{n:"人间",t:"request"},{n:"乱",t:"surprise"},{n:"难解风情",t:"surprise"},{n:"爱完不完",t:"surprise"},{n:"知洲",t:"surprise"}] },
-        { id: "1231", city: "武汉", time: "2025.12.31", weather: "🌧️", season: "winter", part: 1, guest: "", isSpecial: "跨年场🎆", personalPics: Array.from({length: 11}, (_, i) => `images/1231 (${i+1}).jpg`), guestPics: [], songs: [{n:"亲爱的你",t:"request"},{n:"Best Better Ever",t:"request"},{n:"庆祝",t:"request"},{n:"银泰",t:"request"},{n:"独行侠",t:"request"},{n:"乱",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"海市蜃楼",t:"surprise"}] },
+        { id: "1231", city: "武汉", time: "2025.12.31", weather: "❄️", season: "winter", part: 1, guest: "", isSpecial: "跨年场🎆", personalPics: Array.from({length: 11}, (_, i) => `images/1231 (${i+1}).jpg`), guestPics: [], songs: [{n:"亲爱的你",t:"request"},{n:"Best Better Ever",t:"request"},{n:"庆祝",t:"request"},{n:"银泰",t:"request"},{n:"独行侠",t:"request"},{n:"乱",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"海市蜃楼",t:"surprise"}] },
         { id: "0101", city: "武汉", time: "2026.01.01", weather: "☀️", season: "winter",part: 1, guest: "", isSpecial: "元旦场🧨", personalPics: Array.from({length: 12}, (_, i) => `images/0101 (${i+1}).jpg`), guestPics: [], songs: [{n:"情景剧",t:"request"},{n:"远游",t:"request"},{n:"乐园",t:"request"},{n:"My Dear Art",t:"request"},{n:"再度重相逢",t:"request"},{n:"乱",t:"surprise"},{n:"剧烈",t:"surprise"}] },
         { id: "0314", city: "成都", time: "2026.03.14", weather: "", season: "spring",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
         { id: "0315", city: "成都", time: "2026.03.15", weather: "", season: "spring",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
@@ -1035,9 +1075,30 @@ function renderMyGrain(container) {
     // --- 第二部分：成就模块 ---
     const achBox = document.createElement('div');
     achBox.className = 'achievement-box'; 
+
+    // --- 新增：进度计算逻辑 ---
+    // 计算当前解锁的总数（4个勋章 + 16个成就项）
+    const totalPossible = 4 + 16; 
+    const currentUnlocked = (badges.filter(b => b.unlocked).length) + 
+                            (myIds.includes('0726')?1:0) + (myIds.includes('1231')?1:0) + (myIds.includes('0101')?1:0) +
+                            Array.from(myWeathers).length + Array.from(mySeasons).length +
+                            ((myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101'))?1:0) +
+                            (hasLongVacation?1:0) + (totalKM >= 3000?1:0) + (isFourSeasonsComplete?1:0);
     
+    const progressPercent = Math.round((currentUnlocked / totalPossible) * 100);
+
     achBox.innerHTML = `
-        <p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 25px; text-align:center; font-family: serif;">成就收集</p>
+        <div style="padding: 0 10px; margin-bottom: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 12px; color: #8C2222; font-weight: bold; letter-spacing: 1px;">成就达成进度</span>
+                <span style="font-size: 12px; color: #8C2222; font-family: serif;">${progressPercent}%</span>
+            </div>
+            <div style="width: 100%; height: 3px; background: rgba(140, 34, 34, 0.1); border-radius: 10px; overflow: hidden;">
+                <div style="width: ${progressPercent}%; height: 100%; background: #8C2222; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+            </div>
+        </div>
+
+        <p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 25px; text-align:center; font-family: serif;">一粒 · 成就收集</p>
         
         <div class="tab-header">
             <div class="tab-btn active" onclick="switchAchTab(event, 'ach-special')">特殊场次</div>
@@ -1113,7 +1174,7 @@ function renderMyGrain(container) {
                 <div class="icon-wrapper">🍹</div><div class="name">悠长假期</div>
             </div>
             <div class="medal-item ${totalKM >= 3000 ? 'unlocked' : ''}" style="cursor:pointer" 
-                 onclick="openGrainAchievement('<b>达成条件：【累计里程达5000公里】</b><br>${totalKM >= 5000 ? '陪一粒走过' + totalKM + ' KM。' : '该成就未解锁'}')">
+                 onclick="openGrainAchievement('<b>达成条件：【累计里程达5000公里】</b><br>${totalKM >= 5000 ? '“踏遍万水千山总有一地故乡”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">✈️</div><div class="name">历历万乡</div>
             </div>
             <div class="medal-item ${isFourSeasonsComplete ? 'unlocked' : ''}" style="cursor:pointer" 
@@ -1133,7 +1194,7 @@ function renderMyGrain(container) {
             <div id="pins-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
         </div>
         <div style="text-align: center; margin-top: 20px; padding: 0 10px;">
-            <p style="font-size: 0.9em; color: var(--tag-special); letter-spacing: 3px; font-weight: 500;">踏遍万水千山总有一地故乡</p>
+            <p style="font-size: 0.9em; color: var(--tag-special); letter-spacing: 3px; font-weight: 500;">希望你活成诗 去喜欢的城市</p>
         </div>
     `;
     container.appendChild(mapBox);
