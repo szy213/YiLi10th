@@ -1069,11 +1069,14 @@ function closeModal() {
 
     // --- 背景切换核心逻辑 ---
     if (part === 3) {
-        // “我的一粒”板块专属背景：使用浅色渐变叠加一张特定的背景图
-        // 你可以将 'images/my_grain_bg.jpg' 换成你准备好的樱桃或其他主题图片路径
-        document.body.style.backgroundImage = "linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0.6)), url('images/my_grain_bg.jpg')";
-        document.body.style.backgroundSize = "cover"; // 确保背景铺满
-    } else {
+    // 只保留原图，去掉 linear-gradient 遮罩
+    document.body.style.backgroundImage = "url('images/my_grain_bg.jpg')";
+    
+    // 确保其他参数不变（延续 body 的全局设置，或根据需要微调）
+    document.body.style.backgroundSize = "cover"; 
+    document.body.style.backgroundRepeat = "no-repeat"; // 原图通常建议不重复
+    /* document.body.style.backgroundAttachment = "fixed";  // 如果想要背景固定不随滚动条走，可以加这一行 */
+} else {
         // 还原 PART I 和 PART II 的巡演主背景
         document.body.style.backgroundImage = "linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 25%, transparent 40%), url('images/033de8f0d6622db97e42ea88b4770bba.jpg')";
         document.body.style.backgroundSize = "100% auto";
@@ -1440,7 +1443,7 @@ function renderMyGrain(container) {
                     我在现场
                 </label>
             </div>
-            <div class="edit-note-btn" onclick="editNote('${item.id}')">🖋️</div>
+            <div class="edit-note-btn" onclick="editNote('${item.id}')">🪶</div>
                 <div class="note-bubble" id="bubble-${item.id}">${localStorage.getItem('note-' + item.id) || '点击羽毛笔记录心情...'}</div>`;
         grid.appendChild(card);
     });
