@@ -462,6 +462,48 @@
 
 @keyframes rippleOut { to { transform: scale(2); opacity: 0; } }
 
+/* 羽毛笔图标样式 */
+.edit-note-btn {
+    position: absolute;
+    right: 15px;
+    bottom: 45px; /* 避开火漆印位置 */
+    cursor: pointer;
+    font-size: 18px;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+    z-index: 5;
+}
+.edit-note-btn:hover { opacity: 1; transform: scale(1.1); }
+
+/* 悄悄话气泡样式 */
+.note-bubble {
+    position: absolute;
+    background: var(--seal-red);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    bottom: 85px;
+    right: 10px;
+    max-width: 150px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    pointer-events: none; /* 不挡住鼠标点击 */
+    display: none; /* 默认隐藏 */
+    z-index: 10;
+}
+.note-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    right: 15px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid var(--seal-red);
+}
+.tour-card:hover .note-bubble {
+    display: block; /* 悬停卡片显示气泡 */
+}
+
 const style = document.createElement('style');
 style.textContent = `
     @keyframes pinDrop {
@@ -1340,7 +1382,9 @@ function renderMyGrain(container) {
                            onchange="saveCheckState('${item.id}', this.checked)"> 
                     我在现场
                 </label>
-            </div>`;
+            </div>
+            <div class="edit-note-btn" onclick="editNote('${item.id}')">🖋️</div>
+                <div class="note-bubble" id="bubble-${item.id}">${localStorage.getItem('note-' + item.id) || '点击羽毛笔记录心情...'}</div>`;
         grid.appendChild(card);
     });
 
@@ -1464,6 +1508,22 @@ function switchAchTab(evt, tabId) {
     evt.currentTarget.classList.add('active');
 }
 
+
+function editNote(id) {
+    // 阻止点击穿透到卡片（如果需要）
+    const oldNote = localStorage.getItem('note-' + id) || "";
+    const newNote = prompt("在这里写下关于这一场的悄悄话...", oldNote);
+    
+    if (newNote !== null) {
+        // 保存到本地
+        localStorage.setItem('note-' + id, newNote);
+        // 实时更新页面上的气泡内容
+        const bubble = document.getElementById('bubble-' + id);
+        if (bubble) {
+            bubble.innerText = newNote || '点击羽毛笔记录心情...';
+        }
+    }
+}
 
 </script>
 
