@@ -1059,7 +1059,7 @@ eggIcons.forEach(src => {
 });
 
     const tourData = [
-        { id: "0726", city: "北京", time: "2025.07.26",weather: "☁️", season: "summer", part: 1, guest: "嘉宾：任贤齐🐟", isSpecial: "生日场🎂", personalPics: Array.from({length: 17}, (_, i) => `images/0726 (${i+1}).jpg`), guestPics: Array.from({length: 9}, (_, i) => `images/0726guest (${i+1}).jpg`), songs: [{n:"近来可好feat任贤齐",t:"guest"},{n:"天涯",t:"guest"},{n:"我是一只鱼",t:"guest"},{n:"少年时代心目中的英雄",t:"request"},{n:"飞松",t:"request"},{n:"五言",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"七楼",t:"surprise"}] },
+        { id: "0726", city: "北京", time: "2025.07.26",weather: "☁️", season: "summer", part: 1, guest: "嘉宾：任贤齐🐟", isSpecial: "首场+生日场", personalPics: Array.from({length: 17}, (_, i) => `images/0726 (${i+1}).jpg`), guestPics: Array.from({length: 9}, (_, i) => `images/0726guest (${i+1}).jpg`), songs: [{n:"近来可好feat任贤齐",t:"guest"},{n:"天涯",t:"guest"},{n:"我是一只鱼",t:"guest"},{n:"少年时代心目中的英雄",t:"request"},{n:"飞松",t:"request"},{n:"五言",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"七楼",t:"surprise"}] },
         { id: "0727", city: "北京", time: "2025.07.27", weather: "🌧️", season: "summer",part: 1, guest: "嘉宾：李宇春👑", personalPics: Array.from({length: 12}, (_, i) => `images/0727 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/0727guest (${i+1}).jpg`), songs: [{n:"空空feat李宇春",t:"guest"},{n:"冬泳",t:"guest"},{n:"我们存在一刹那的喜欢",t:"request"},{n:"☆",t:"request"},{n:"七楼",t:"surprise"},{n:"远辰",t:"surprise"},{n:"五言",t:"surprise"},{n:"知洲",t:"surprise"}] },
         { id: "0808", city: "上海", time: "2025.08.08", weather: "🌤️", season: "summer",part: 1, guest: "嘉宾：张信哲🤴", personalPics: Array.from({length: 12}, (_, i) => `images/0808 (${i+1}).jpg`), guestPics: Array.from({length: 6}, (_, i) => `images/0808guest (${i+1}).jpg`), songs: [{n:"搬走feat张信哲",t:"guest"},{n:"别怕我伤心",t:"guest"},{n:"无所求必满载而归",t:"request"},{n:"PONY",t:"request"}] },
         { id: "0809", city: "上海", time: "2025.08.09", weather: "☁️", season: "summer",part: 1, guest: "嘉宾：魏如萱🪩", personalPics: Array.from({length: 9}, (_, i) => `images/0809 (${i+1}).jpg`), guestPics: Array.from({length: 4}, (_, i) => `images/0809guest (${i+1}).jpg`), songs: [{n:"小半 feat 魏如萱",t:"guest"},{n:"have a nice day",t:"guest"},{n:"乔妍的心事",t:"request"},{n:"贪得",t:"request"},{n:"比如世界",t:"surprise"}] },
@@ -1333,12 +1333,16 @@ function renderMyGrain(container) {
 
         <div id="ach-special" class="achievement-grid active">
             <div class="medal-item ${myIds.includes('0726') ? 'unlocked' : ''}" style="cursor:pointer" 
+                 onclick="openGrainAchievement('<b>达成条件：【观看首场】</b><br>${myIds.includes('0726') ? '“让我们来庆祝！”' : '该成就未解锁'}')">
+                <div class="icon-wrapper">🎉</div><div class="name">首场</div>
+            </div>
+            <div class="medal-item ${myIds.includes('0726') ? 'unlocked' : ''}" style="cursor:pointer" 
                  onclick="openGrainAchievement('<b>达成条件：【观看生日场】</b><br>${myIds.includes('0726') ? '“要你永存想象，要你快乐健康”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">🎂</div><div class="name">生日场</div>
             </div>
             <div class="medal-item ${myIds.includes('1231') ? 'unlocked' : ''}" style="cursor:pointer" 
                  onclick="openGrainAchievement('<b>达成条件：【观看跨年场】</b><br>${myIds.includes('1231') ? '“烟花落入杯杯佳酿”' : '该成就未解锁'}')">
-                <div class="icon-wrapper">🎇</div><div class="name">跨年场</div>
+                <div class="icon-wrapper">🎆</div><div class="name">跨年场</div>
             </div>
             <div class="medal-item ${myIds.includes('0101') ? 'unlocked' : ''}" style="cursor:pointer" 
                  onclick="openGrainAchievement('<b>达成条件：【观看元旦场】</b><br>${myIds.includes('0101') ? '“这人间岁岁年年永不停歇变换”' : '该成就未解锁'}')">
@@ -1438,8 +1442,8 @@ function renderMyGrain(container) {
             const pin = document.createElement('div');
             pin.style.cssText = `position: absolute; left: ${pos.left}; top: ${pos.top}; transform: translate(-50%, -100%); z-index: 10; text-align: center;`;
             pin.innerHTML = `
-                <div style="font-size: 18px; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); line-height:1;">📍</div>
-                <div style="font-size: 9px; color: #fff; background: var(--tag-special); padding: 0px 3px; border-radius: 3px; margin-top: -3px; white-space: nowrap; font-weight: bold;">${city}</div>
+                <div style="font-size: 16px; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3)); line-height:1;">📍</div>
+                <div style="font-size: 7px; color: #fff; background: var(--tag-special); padding: 0px 3px; border-radius: 3px; margin-top: -3px; white-space: nowrap; font-weight: bold;">${city}</div>
             `;
             pinsLayer.appendChild(pin);
         }
