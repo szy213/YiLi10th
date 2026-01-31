@@ -906,6 +906,94 @@ document.head.appendChild(style);
     </div>
 </div>
 
+<div id="info-btn" title="使用说明" style="
+    position: fixed;
+    bottom: 70px; /* 在回到顶部按钮 (20px + 40px + 10px) 的上方 */
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    background: var(--paper-white);
+    border: 1px solid rgba(140, 34, 34, 0.2);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 9999;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+">
+    <span style="font-size: 18px; color: var(--tag-special);">❓</span>
+</div>
+
+<div id="info-panel" style="
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 80%;
+    max-width: 400px;
+    max-height: 70vh;
+    background: #fff;
+    border: 2px solid var(--seal-red);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    z-index: 10000;
+    padding: 30px;
+    border-radius: 5px;
+    display: none; /* 初始状态 */
+    opacity: 0;
+    transition: all 0.3s ease;
+    overflow-y: auto; /* 允许纵向滑动 */
+    background-image: repeating-linear-gradient(#fff, #fff 24px, #e5e5e5 25px); /* 信纸横格线条 */
+    line-height: 25px;
+    font-family: 'serif';
+">
+    <div style="text-align: center; color: var(--seal-red); font-weight: bold; margin-bottom: 15px; font-size: 1.2em;">使用说明</div>
+    <div style="color: #444; font-size: 0.95em;">
+        
+        一.为获得最佳使用体验，强烈建议打开后先点开右下角BGM，并将网站添加到手机主屏幕，添加后即可得到一个专属【一粒】的APP！<br><br>
+
+        添加方法如下：<br>
+            如果你使用的是iPhone(iOS)<br>
+            iPhone用户须使用自带的Safari浏览器才能完成此操作。<br>
+            1。打开Safari，进入你想保存的网页。<br>
+            2。点击屏幕底部中间的"分享"图标(一个带箭头的方框).<br>
+            3。在弹出的菜单中向上滑动，找到并点击"添加到主屏幕".<br>
+            4。你可以自定义图标的名称，最后点击右上角的"添加".<br><br>
+
+            如果你使用的是 安卓手机(Android)<br>
+            安卓手机的操作比较灵活，主流浏览器(如Chrome，手机<br>
+            自带浏览器)步骤大同小异。以Chrome浏览器为例：<br>
+            1。打开Chrome，进入目标网页。<br>
+            2。点击右上角的"三个点"菜单().<br>
+            3。在下拉列表中选择"添加到主屏幕".<br>
+            4。确认名称后点击"添加".<br>
+            注：部分安卓系统会弹出一个窗口，要求你手动将图标拖动到桌面上。<br><br>
+
+        二.后续有新场次会在演出结束一到两天内在part2更新以供打卡，如果看不到刷新一下页面即可。（网站会实时在本地浏览器缓存中保存打卡记录，除手
+        动清除浏览器缓存外无需担心刷新后数据丢失，请放心使用~）<br><br>
+
+        三.网站的完善离不开大家的建议和纠错。所有图片均为人工收集，信息、文本均为键盘输入，如果有差错或想要提出的功能、设计，烦请添加作者微信： msjlwl8wrcwmsj 提出，（也欢迎和我扩列啊啊啊想和粒丝们一起玩TT）谢谢大家！<br><br>
+
+        感谢妳的使用！粒粒让我们相遇，祝大家玩得开心，我们有缘现场见^-^
+    </div>
+    <div id="close-info" style="
+        text-align: center; 
+        margin-top: 20px; 
+        cursor: pointer; 
+        color: var(--seal-red);
+        text-decoration: underline;
+    ">我知道了</div>
+</div>
+
+<div id="info-overlay" style="
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    display: none;
+"></div>
+
 <div id="back-to-top" title="回到顶部" style="
     position: fixed;
     bottom: 20px;
@@ -1633,6 +1721,36 @@ function editNote(id) {
         }
     }
 }
+
+const infoBtn = document.getElementById('info-btn');
+const infoPanel = document.getElementById('info-panel');
+const infoOverlay = document.getElementById('info-overlay');
+const closeInfo = document.getElementById('close-info');
+
+// 打开说明
+infoBtn.addEventListener('click', () => {
+    infoPanel.style.display = 'block';
+    infoOverlay.style.display = 'block';
+    // 稍微延迟以触发动画
+    setTimeout(() => {
+        infoPanel.style.opacity = '1';
+        infoPanel.style.transform = 'translate(-50%, -50%) scale(1)';
+    }, 10);
+});
+
+// 关闭说明的函数
+function hideInfo() {
+    infoPanel.style.opacity = '0';
+    infoPanel.style.transform = 'translate(-50%, -50%) scale(0.9)';
+    setTimeout(() => {
+        infoPanel.style.display = 'none';
+        infoOverlay.style.display = 'none';
+    }, 300);
+}
+
+// 点击关闭按钮或点击背景遮罩均可关闭
+closeInfo.addEventListener('click', hideInfo);
+infoOverlay.addEventListener('click', hideInfo);
 
 </script>
 
