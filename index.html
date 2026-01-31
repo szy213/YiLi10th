@@ -123,16 +123,10 @@ body {
     display: inline-block;
 }
 
-/* 装饰：在标题下方增加一个极淡的装饰线，增加视觉重心 */
-/* .header h1::after {
-    content: "";
-    display: block;
-    width: 40px;
-    height: 2px;
-    background: var(--tag-guest); /* 使用火漆红作为点缀 */
-    margin: 15px auto 0;
-    opacity: 0.6;
-} */
+.header h1::after {
+    content: none; /* 关键：不渲染伪元素，不会影响语法，也不会产生视觉线条 */
+    display: none; /* 双重保险 */
+}
 
 .header p {
     /* 保持原有属性 */
