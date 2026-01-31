@@ -20,3 +20,8 @@
             <div class="medal-item ${totalKM > 2000 ? 'unlocked' : ''}"><span class="icon">✈️</span><span class="name">里程达人</span></div>
             <div class="medal-item ${hasLongVacation ? 'unlocked' : ''}"><span class="icon">🍹</span><span class="name">悠长假期</span></div>
         </div>
+
+        使用说明
+        为获得最佳使用体验，建议将网站添加到手机主屏幕
+        后续有新场次会在演出结束一到两天内在part2更新以供打卡，如果看不到刷新一下页面即可。
+        所有图片均为人工收集，文本均为键盘输入。如有差错，烦请添加作者微信：msjlwl8wrcwmsj指正
