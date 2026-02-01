@@ -1649,7 +1649,7 @@ function renderMyGrain(container) {
         grid.appendChild(card);
     });
 
-for(let i=0; i<10; i++) {
+for(let i=0; i<12; i++) {
     const egg = document.createElement('img');
     egg.className = 'shiguan-egg';
     egg.src = eggIcons[i%8];
@@ -1663,24 +1663,54 @@ for(let i=0; i<10; i++) {
     egg.style.top = (Math.random() * 90) + "%";
     
     egg.style.animationDelay = (Math.random() * 2) + "s";
+    // 1. 在脚本全局定义一个变量来记录已抽过的索引（放在点击函数外面）
+let usedQuoteIndices = []; 
+
+egg.onclick = function(e) {
+    // --- 原有的 ripple 动画逻辑保持不变 ---
+    let ripple = document.createElement('div');
+    ripple.style.cssText = `position:fixed; left:${e.clientX-25}px; top:${e.clientY-25}px; width:50px; height:50px; border:2px solid var(--tag-special); border-radius:50%; animation: rippleOut 0.5s ease-out; pointer-events:none; z-index:9999;`;
+    document.body.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 500);
+    e.stopPropagation();
+    this.remove(); 
+
+    // --- 修改：不重复抽取逻辑 ---
     
-    // 点击逻辑保持不变...
-    egg.onclick = function(e) {
-        // ... 原有的点击 ripple 和 modal 逻辑 ...
-        let ripple = document.createElement('div');
-        ripple.style.cssText = `position:fixed; left:${e.clientX-25}px; top:${e.clientY-25}px; width:50px; height:50px; border:2px solid var(--tag-special); border-radius:50%; animation: rippleOut 0.5s ease-out; pointer-events:none; z-index:9999;`;
-        document.body.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 500);
-        e.stopPropagation();
-        this.remove(); 
-        
-        const randomQuote = eggQuotes[Math.floor(Math.random() * eggQuotes.length)];
-        const modalContent = document.querySelector('.modal-content');
-        modalContent.style.setProperty('--seal-emoji', '"🍒"');
-        modalContent.querySelector('div:first-child').innerHTML = "🍎 捡到一粒果实 🍎";
-        document.getElementById('modalText').innerHTML = `<div style="font-style:italic; text-align:left;">${randomQuote}</div>`;
-        showModal();
-    };
+    // 生成一个所有可用索引的列表
+    let availableIndices = [];
+    for (let i = 0; i < eggQuotes.length; i++) {
+        if (!usedQuoteIndices.includes(i)) {
+            availableIndices.push(i);
+        }
+    }
+
+    // 如果所有文案都抽完了，重置“已抽过”列表，开始新的一轮循环
+    if (availableIndices.length === 0) {
+        usedQuoteIndices = [];
+        // 重新填满可用索引
+        for (let i = 0; i < eggQuotes.length; i++) {
+            availableIndices.push(i);
+        }
+    }
+
+    // 从可用的索引中随机选一个
+    const randomIndexInAvailable = Math.floor(Math.random() * availableIndices.length);
+    const chosenIndex = availableIndices[randomIndexInAvailable];
+
+    // 将选中的索引加入“已抽取记录”
+    usedQuoteIndices.push(chosenIndex);
+
+    // 获取选中的文案
+    const randomQuote = eggQuotes[chosenIndex];
+
+    // --- 后续弹窗显示逻辑保持不变 ---
+    const modalContent = document.querySelector('.modal-content');
+    modalContent.style.setProperty('--seal-emoji', '"🍒"');
+    modalContent.querySelector('div:first-child').innerHTML = "🍎 捡到一粒果实 🍎";
+    document.getElementById('modalText').innerHTML = `<div style="font-style:italic; text-align:left;">${randomQuote}</div>`;
+    showModal();
+};
     grid.appendChild(egg);
 }
 }
