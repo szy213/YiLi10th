@@ -110,7 +110,7 @@ body {
 .header h1 {
     /* 保持原有属性 */
     font-family: "Noto Serif SC", "STSong", "SimSun", serif; 
-    letter-spacing: 15.3px!important;
+    letter-spacing: 2vw!important;
     font-size: 2.2em;
     margin: 0;
     color: #4a4a4a;
@@ -901,6 +901,60 @@ document.head.appendChild(style);
     </div>
 </div>
 
+<div id="changelog-btn" title="更新日志" style="
+    position: fixed;
+    bottom: 120px; 
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    background: var(--paper-white);
+    border: 1px solid rgba(140, 34, 34, 0.2);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 9999;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    /* 不设置 visibility: hidden，让它一直显示 */
+">
+    <span style="font-size: 18px; color: var(--tag-special);">📝</span>
+</div>
+
+<div id="changelog-modal" style="
+    display: none; 
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 10001;
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+">
+    <div style="
+        background: #fdfaf5;
+        width: 80%;
+        max-width: 400px;
+        max-height: 60vh;
+        padding: 25px;
+        border-radius: 15px;
+        overflow-y: auto; 
+        border: 2px solid var(--tag-special);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    ">
+        <h3 style="color: var(--tag-special); margin-top: 0;">更新日志</h3>
+        <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
+            <p><b>2026.1.31</b><br>• 新增“首场”成就。</p>
+        </div>
+        <button id="close-changelog" style="
+            margin-top: 20px; width: 100%; padding: 10px;
+            background: var(--tag-special); color: white;
+            border: none; border-radius: 8px; cursor: pointer;
+        ">确定</button>
+    </div>
+</div>
+
 <div id="info-btn" title="使用说明" style="
     position: fixed;
     bottom: 70px; /* 在回到顶部按钮 (20px + 40px + 10px) 的上方 */
@@ -943,6 +997,7 @@ document.head.appendChild(style);
     line-height: 25px;
     font-family: 'serif';
 ">
+
     <div style="text-align: center; color: var(--seal-red); font-weight: bold; margin-bottom: 15px; font-size: 1.2em;">使用说明</div>
     <div style="color: #444; font-size: 0.95em;">
         
@@ -1011,6 +1066,8 @@ document.head.appendChild(style);
 </div>
 
 <audio id="bgMusic" loop><source id="musicSource" src="bgm.mp3" type="audio/mpeg"></audio>
+
+
 
 <div id="quoteModal" onclick="closeModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
@@ -1333,8 +1390,8 @@ function renderMyGrain(container) {
 
         <div id="ach-special" class="achievement-grid active">
             <div class="medal-item ${myIds.includes('0726') ? 'unlocked' : ''}" style="cursor:pointer" 
-                 onclick="openGrainAchievement('<b>达成条件：【观看首场】</b><br>${myIds.includes('0726') ? '“我们喝风 我们饮露 我们四方无阻”' : '该成就未解锁'}')">
-                <div class="icon-wrapper">🎉</div><div class="name">首场</div>
+                 onclick="openGrainAchievement('<b>达成条件：【观看首场】</b><br>${myIds.includes('0726') ? '“我们天底下最幸福 像风一样漂浮”' : '该成就未解锁'}')">
+                <div class="icon-wrapper">🎊</div><div class="name">首场</div>
             </div>
             <div class="medal-item ${myIds.includes('0726') ? 'unlocked' : ''}" style="cursor:pointer" 
                  onclick="openGrainAchievement('<b>达成条件：【观看生日场】</b><br>${myIds.includes('0726') ? '“要你永存想象，要你快乐健康”' : '该成就未解锁'}')">
@@ -1749,6 +1806,27 @@ function hideInfo() {
 // 点击关闭按钮或点击背景遮罩均可关闭
 closeInfo.addEventListener('click', hideInfo);
 infoOverlay.addEventListener('click', hideInfo);
+
+const changelogBtn = document.getElementById('changelog-btn');
+const changelogModal = document.getElementById('changelog-modal');
+const closeChangelog = document.getElementById('close-changelog');
+
+// 点击显示更新日志
+changelogBtn.addEventListener('click', () => {
+    changelogModal.style.display = 'flex';
+    document.body.style.overflow = 'hidden'; 
+});
+
+// 关闭逻辑
+const hideChangelogModal = () => {
+    changelogModal.style.display = 'none';
+    document.body.style.overflow = '';
+};
+
+closeChangelog.addEventListener('click', hideChangelogModal);
+changelogModal.addEventListener('click', (e) => {
+    if (e.target === changelogModal) hideChangelogModal();
+});
 
 </script>
 
