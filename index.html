@@ -29,7 +29,7 @@
 
         /* 1. 当内部 checkbox 被选中时，卡片整体的质感变化 */
 .tour-card:has(input[type="checkbox"]:checked) {
-    background: rgba(255, 255, 255, 0.95) !important; /* 变得更白、更不透明 */
+    background: rgba(255, 255, 255, 0.85) !important; /* 变得更白、更不透明 */
     border: 1px solid rgba(140, 34, 34, 0.3) !important; /* 增加淡淡的火漆红边框 */
     transform: translateY(-8px) scale(1.01) !important; /* 向上浮起并轻微放大 */
     box-shadow: 0 20px 40px rgba(140, 34, 34, 0.15) !important; /* 增加红色的柔和投影 */
@@ -273,7 +273,7 @@ body {
         .date-num { color:#4a4a4a ; font-size: 1.5em; font-family: "Times New Roman", serif; }
         .tour-guest { font-size:1em; color: #666; letter-spacing: 1px; cursor: pointer; text-decoration: underline dotted; }
         .special-songs-box { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-        .song-tag { padding: 3px 9px; font-size: 7px; border: 1px solid currentColor; letter-spacing: 1px; }
+        .song-tag { padding: 3px 9px; font-size: 8px; border: 1px solid currentColor; letter-spacing: 1px; }
         .song-tag.guest { color: var(--tag-guest); }
         .song-tag.request { color: var(--tag-bg); }
         .song-tag.surprise { color: var(--tag-special); }
@@ -943,9 +943,10 @@ document.head.appendChild(style);
         border: 2px solid var(--tag-special);
         box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     ">
-        <h3 style="color: var(--tag-special); margin-top: 0;">更新日志</h3>
+        <h3 style="color: var(--tag-special); margin-top: 0;">更新日志(点击任意位置退出)</h3>
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>2026.1.31</b><br>• 新增【首场】成就。</p>
+            <p><b>2026.1.31</b><br>• 新增BGM：《至少还有你（cover）》。</p>
         </div>
         <button id="close-changelog" style="
             margin-top: 20px; width: 100%; padding: 10px;
