@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <link rel="preconnect" href="https://yili10th.site">
 <!-- app -->
 <meta name="apple-mobile-web-app-title" content="一粒10TH">
 <meta name="application-name" content="一粒10TH">
@@ -1618,7 +1619,7 @@ function renderMyGrain(container) {
         const isChecked = localStorage.getItem('checked_' + item.id) === 'true';
         
         const badgeHTML = item.isSpecial ? `<div class="special-badge">${item.isSpecial}</div>` : '';
-        const unplayedHTML = item.status === 'unplayed' ? `<span class="unplayed-label">(已官宣·未开演)</span>` : '';
+        const unplayedHTML = item.status === 'unplayed' ? `<span class="unplayed-label">(已官宣)</span>` : '';
         const tags = item.songs.map(s => `<span class="song-tag ${s.t}">${s.n}</span>`).join('');
         
         card.innerHTML = `
