@@ -898,13 +898,15 @@ document.head.appendChild(style);
 .save-trigger {
     display: block;
     width: fit-content;
-    margin: 15px auto 30px; /* 居中核心：auto，并留出底部间距 */
+    margin: 15px auto 40px; /* 增加底部间距 */
     text-align: center;
-    font-size: 12px;
+    font-size: 13px;
     color: #8C2222;
+    background: rgba(140, 34, 34, 0.05); /* 淡淡的底色让它更像按钮 */
+    padding: 5px 15px;
+    border-radius: 15px;
     cursor: pointer;
-    letter-spacing: 2px;
-    opacity: 0.7;
+    letter-spacing: 1px;
     font-weight: bold;
 }
 
@@ -1383,26 +1385,38 @@ function renderMyGrain(container) {
     const isFourSeasonsComplete = mySeasons.has('spring') && mySeasons.has('summer') && mySeasons.has('autumn') && mySeasons.has('winter');
 
     // 通用截图保存函数
+    // 通用截图保存函数 (优化为手机长按保存模式)
     window.saveBoxImage = function(elementId, fileName) {
         const target = document.getElementById(elementId);
         const btn = event.currentTarget;
         const oldText = btn.innerHTML;
-        btn.innerHTML = "正在生成图片...";
+        btn.innerHTML = "生成中，请稍后...";
 
         html2canvas(target, {
             useCORS: true,
             backgroundColor: "#ffffff",
-            scale: 3, // 提高清晰度
+            scale: 3,
             logging: false
         }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `${fileName}.png`;
-            link.href = canvas.toDataURL("image/png");
-            link.click();
+            const imageData = canvas.toDataURL("image/jpeg", 0.9);
+            
+            // 创建一个全屏蒙层显示图片，方便用户长按保存
+            const overlay = document.createElement('div');
+            overlay.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10000; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; box-sizing:border-box;";
+            
+            overlay.innerHTML = `
+                <div style="color:#fff; margin-bottom:15px; font-size:14px; letter-spacing:1px;">↑ 长按图片保存到相册</div>
+                <img src="${imageData}" style="width:100%; max-height:80%; object-fit:contain; box-shadow:0 0 20px rgba(0,0,0,0.5); border-radius:8px;">
+                <div style="margin-top:20px; color:#ccc; border:1px solid #666; padding:8px 20px; border-radius:20px; font-size:12px;">点击空白处关闭</div>
+            `;
+            
+            overlay.onclick = () => overlay.remove();
+            document.body.appendChild(overlay);
+            
             btn.innerHTML = oldText;
         }).catch(err => {
             console.error(err);
-            btn.innerHTML = "保存失败，请重试";
+            btn.innerHTML = "生成失败";
         });
     };
 
