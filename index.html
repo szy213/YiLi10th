@@ -1140,7 +1140,7 @@ window.saveBoxImage = function(elementId, fileName) {
 
     const btn = event ? event.currentTarget : null;
     const oldText = btn ? btn.innerHTML : "";
-    if (btn) btn.innerHTML = "生成中...";
+    if (btn) btn.innerHTML = " ";
 
     // 处理弹窗截图位移的黑科技：记录当前滚动位置 -> 回到顶部 -> 截图 -> 还原位置
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -1423,7 +1423,7 @@ window.openGrainAchievement = function(content) {
             ${content}
         </div>
         <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; font-size: 9px; color: #ccc; letter-spacing: 2px;">
-            GRAIN JOURNEY ACHIEVEMENT
+             TOUR ACHIEVEMENT
         </div>
     `;
 
