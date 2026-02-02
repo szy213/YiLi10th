@@ -20,12 +20,22 @@
     <title>一粒·巡演全纪录</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        html, body {
-    /* 1. 强制禁止横向溢出 */
-    overflow-x: hidden;
-    /* 2. 确保宽度计算包含边框和内边距，防止撑破容器 */
+    html, body {
     width: 100%;
-    /* 3. 增强：禁用 iOS 的橡皮筋回弹效果（可选） */
+    margin: 0;
+    padding: 0;
+    /* 禁止横向滚动 */
+    overflow-x: hidden; 
+    /* 配合这个属性可以防止手机端左右滑动的“回弹”感 */
+    overscroll-behavior-x: none; 
+    /* 确保宽度计算准确 */
+    box-sizing: border-box;
+    position: relative;
+}
+
+#app {
+    width: 100vw; /* 使用视口宽度 */
+    overflow-x: hidden;
     position: relative;
 }
 
