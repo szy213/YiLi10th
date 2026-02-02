@@ -20,6 +20,21 @@
     <title>一粒·巡演全纪录</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+        html, body {
+    /* 1. 强制禁止横向溢出 */
+    overflow-x: hidden;
+    /* 2. 确保宽度计算包含边框和内边距，防止撑破容器 */
+    width: 100%;
+    /* 3. 增强：禁用 iOS 的橡皮筋回弹效果（可选） */
+    position: relative;
+}
+
+.container {
+    /* 确保主容器也不会溢出 */
+    width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
         :root {
             --tag-bg: #B8860B;      
             --tag-guest: #525A6B;   
