@@ -1412,9 +1412,43 @@ const achPopupHTML = `
 document.body.insertAdjacentHTML('beforeend', achPopupHTML);
 
 window.openGrainAchievement = function(content) {
-    const body = document.getElementById('grainAchBody');
-    body.innerHTML = content;
-    document.getElementById('grainAchOverlay').style.display = 'flex';
+    const body = document.getElementById('grainAchBody'); // 这是弹窗文字容器
+    const overlay = document.getElementById('grainAchOverlay');
+    const modalContent = body.parentElement; // 获取它的父级，即整个内容盒
+    
+    // 1. 设置截图 ID 和 填充内容
+    modalContent.id = "capture-grain-ach"; 
+    body.innerHTML = `
+        <div style="font-family: serif; line-height: 1.8; color: #333;">
+            ${content}
+        </div>
+        <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; font-size: 9px; color: #ccc; letter-spacing: 2px;">
+            GRAIN JOURNEY ACHIEVEMENT
+        </div>
+    `;
+
+    // 2. 清理旧的截图按钮（防止重复出现）
+    const oldBtn = modalContent.querySelector('.save-trigger-link');
+    if (oldBtn) oldBtn.remove();
+
+    // 3. 创建并添加新的截图按钮 (仿照彩蛋样式，但在确定键下方)
+    const saveBtn = document.createElement('div');
+    saveBtn.className = 'save-trigger-link'; // 使用新类名避免样式冲突
+    saveBtn.style.cssText = "margin: 15px auto 5px; font-size: 12px; color: #bbb; text-align: center; cursor: pointer; text-decoration: underline; display: block; width: fit-content; opacity: 0.7;";
+    saveBtn.innerHTML = "📸 保存这张成就卡";
+    
+    saveBtn.onclick = function(ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        // 截图目标设为 modalContent，这样截出来的图带边框和样式
+        saveBoxImage('capture-grain-ach', '我的一粒·成就卡');
+    };
+
+    // 将按钮添加到 modalContent 内部的最下方（即确定键下面）
+    modalContent.appendChild(saveBtn);
+
+    // 4. 显示弹窗
+    overlay.style.display = 'flex';
 };
 
 window.closeGrainPopup = function() {
