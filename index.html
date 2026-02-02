@@ -16,7 +16,7 @@
 
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>一粒·巡演全纪录</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -1990,62 +1990,6 @@ changelogModal.addEventListener('click', (e) => {
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/photoswipe.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/umd/photoswipe-lightbox.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/photoswipe/5.4.2/umd/photoswipe.umd.min.js"></script>
-
-<script>
-(function() {
-    /** 1. 强制禁止手动缩放 (直接修改 Meta 属性) **/
-    const fixViewport = () => {
-        const meta = document.querySelector('meta[name="viewport"]');
-        if (meta) meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
-    };
-    fixViewport();
-    // 针对部分手机浏览器可能延迟加载的情况，循环检查一次
-    setTimeout(fixViewport, 1000);
-
-    /** 2. 全局“雷达”监听：只抓取巡演图片的点击 **/
-    // 使用捕获模式 (true)，确保在 Vue 处理点击前抢先拦截
-    window.addEventListener('click', function(e) {
-        // 判断点击的是否是巡演照片（通过 class 包含 photo-card 来判断）
-        let target = e.target;
-        
-        // 向上查找，确认点击的是否属于你的 photo-card 区域内的图片
-        if (target.tagName === 'IMG' && target.closest('.photo-card')) {
-            console.log("检测到巡演图片点击:", target.src); // 调试信息
-            
-            // 阻止原本可能触发的任何 Vue 事件
-            e.preventDefault();
-            e.stopImmediatePropagation();
-
-            // 立即开启灯箱
-            const pswp = new PhotoSwipe({
-                dataSource: [{
-                    src: target.src,
-                    width: target.naturalWidth || 1200,
-                    height: target.naturalHeight || 1600
-                }],
-                // 专门针对手机端的优化
-                showHideAnimationType: 'zoom',
-                returnFocus: false,
-                trapFocus: false,
-                allowPanToNext: true,
-                pswpModule: PhotoSwipe 
-            });
-            pswp.init();
-        }
-    }, true); 
-})();
-</script>
-
-<style>
-/* 增加视觉反馈，确保用户知道可以点 */
-.photo-card img {
-    cursor: zoom-in !important;
-    -webkit-tap-highlight-color: transparent; /* 去除手机端点击时的蓝色高亮 */
-}
-</style>
 
 
 </body>
