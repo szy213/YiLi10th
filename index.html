@@ -1159,7 +1159,7 @@ window.saveBoxImage = function(elementId, fileName) {
         const overlay = document.createElement('div');
         overlay.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:100000; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; box-sizing:border-box;";
         overlay.innerHTML = `
-            <div style="color:#fff; margin-bottom:15px; font-size:14px; letter-spacing:1px; font-weight:bold;">↑ 长按图片保存到相册</div>
+            <div style="color:#fff; margin-bottom:15px; font-size:14px; letter-spacing:1px; font-weight:bold;">长按图片保存到相册</div>
             <img src="${imageData}" style="width:100%; max-width:400px; border-radius:10px; box-shadow:0 0 30px rgba(0,0,0,0.5);">
             <div style="margin-top:20px; color:#ccc; border:1px solid #666; padding:8px 20px; border-radius:20px; font-size:12px;">点击任意位置返回</div>
         `;
