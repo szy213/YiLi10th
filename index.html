@@ -2005,6 +2005,52 @@ changelogModal.addEventListener('click', (e) => {
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
 
+<script>
+window.addEventListener('click', function (e) {
+    const target = e.target;
+    
+    // 1. 如果点的是图片，就放大
+    if (target.tagName === 'IMG' && target.src.includes('images/')) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const overlay = document.createElement('div');
+        overlay.id = 'lightbox-overlay';
+        // 样式优化：加入更丝滑的过渡
+        overlay.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 100000;
+            display: flex; align-items: center; justify-content: center;
+            cursor: zoom-out; opacity: 0; transition: all 0.3s ease-out;
+            backdrop-filter: blur(4px);
+        `;
+
+        const bigImg = document.createElement('img');
+        bigImg.src = target.src;
+        bigImg.style.cssText = `
+            max-width: 95%; max-height: 95%;
+            object-fit: contain; border-radius: 4px;
+            transform: scale(0.9); transition: transform 0.3s ease-out;
+        `;
+
+        overlay.appendChild(bigImg);
+        document.body.appendChild(overlay);
+
+        // 进场动画
+        setTimeout(() => {
+            overlay.style.opacity = '1';
+            bigImg.style.transform = 'scale(1)';
+        }, 10);
+
+        // 2. 退出机制：点击黑色背景或图片本身都关闭
+        overlay.onclick = function () {
+            overlay.style.opacity = '0';
+            bigImg.style.transform = 'scale(0.9)'; // 缩小动画
+            setTimeout(() => overlay.remove(), 300);
+        };
+    }
+}, true);
+</script>
 
 
 </body>
