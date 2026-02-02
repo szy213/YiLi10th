@@ -987,7 +987,7 @@ document.head.appendChild(style);
         <h3 style="color: var(--tag-special); margin-top: 0;">更新日志</h3>
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
-            <p><b>2026.2.1</b><br>• 【我的一粒】新增一键保存卡片到相册功能</p>
+            <p><b>2026.2.1</b><br>• 新增一键保存成就、小兔私信、果实到相册功能</p>
             <p><b>2026.2.1</b><br>• 新增查看大图功能</p>
             <p><b>2026.2.1</b><br>• 【果实】语录新增至40余条，多数来自陈粒小号，快去试试吧:）</p>
             <p><b>2026.1.31</b><br>• 新增【首场】成就。</p>
@@ -1243,11 +1243,30 @@ function showQuote(id) {
         const target = document.getElementById('modalText');
         const modalContent = document.querySelector('.modal-content');
         
+        // 为内容容器设置ID，用于截图
+        modalContent.id = "capture-quote"; 
+        
         // 1. 设置火漆印为兔子
         modalContent.style.setProperty('--seal-emoji', '"🐰"');
         
         // 2. 设置标题
         modalContent.querySelector('div:first-child').innerHTML = "来自小兔的私信";
+        
+        // 3. 插入保存按钮（如果不存在则添加）
+        let saveBtn = modalContent.querySelector('.save-trigger');
+        if (!saveBtn) {
+            saveBtn = document.createElement('div');
+            saveBtn.className = 'save-trigger';
+            // 沿用之前的样式：居中、红色文字
+            saveBtn.style.cssText = "margin: 20px auto 0; font-size: 12px; opacity: 0.6; cursor: pointer; text-align: center;";
+            saveBtn.innerHTML = "📸 保存小兔私信";
+            saveBtn.onclick = (e) => {
+                e.stopPropagation();
+                // 调用通用的保存函数，截取 #capture-quote
+                saveBoxImage('capture-quote', '一粒·私信');
+            };
+            modalContent.appendChild(saveBtn);
+        }
         
         showModal();
         typewriter(target, quotes[id], 60); 
@@ -1757,8 +1776,6 @@ egg.onclick = function(e) {
     this.remove(); 
 
     // --- 修改：不重复抽取逻辑 ---
-    
-    // 生成一个所有可用索引的列表
     let availableIndices = [];
     for (let i = 0; i < eggQuotes.length; i++) {
         if (!usedQuoteIndices.includes(i)) {
@@ -1766,30 +1783,41 @@ egg.onclick = function(e) {
         }
     }
 
-    // 如果所有文案都抽完了，重置“已抽过”列表，开始新的一轮循环
     if (availableIndices.length === 0) {
         usedQuoteIndices = [];
-        // 重新填满可用索引
         for (let i = 0; i < eggQuotes.length; i++) {
             availableIndices.push(i);
         }
     }
 
-    // 从可用的索引中随机选一个
     const randomIndexInAvailable = Math.floor(Math.random() * availableIndices.length);
     const chosenIndex = availableIndices[randomIndexInAvailable];
-
-    // 将选中的索引加入“已抽取记录”
     usedQuoteIndices.push(chosenIndex);
-
-    // 获取选中的文案
     const randomQuote = eggQuotes[chosenIndex];
 
-    // --- 后续弹窗显示逻辑保持不变 ---
+    // --- 后续弹窗显示逻辑 ---
     const modalContent = document.querySelector('.modal-content');
+    modalContent.id = "capture-modal-content"; // 设置截图ID
     modalContent.style.setProperty('--seal-emoji', '"🍒"');
     modalContent.querySelector('div:first-child').innerHTML = "🍎 捡到一粒果实 🍎";
     document.getElementById('modalText').innerHTML = `<div style="font-style:italic; text-align:left;">${randomQuote}</div>`;
+    
+    // 注入保存按钮
+    let saveBtn = modalContent.querySelector('.save-trigger');
+    if (!saveBtn) {
+        saveBtn = document.createElement('div');
+        saveBtn.className = 'save-trigger';
+        saveBtn.style.cssText = "margin: 20px auto 0; font-size: 12px; opacity: 0.6; cursor: pointer; text-align: center;";
+        saveBtn.innerHTML = "📸 保存果实";
+        saveBtn.onclick = (e) => {
+            e.stopPropagation();
+            saveBoxImage('capture-modal-content', '一粒·果实彩蛋');
+        };
+        modalContent.appendChild(saveBtn);
+    } else {
+        saveBtn.innerHTML = "📸 保存果实"; // 确保按钮文字同步
+    }
+
     showModal();
 };
     grid.appendChild(egg);
