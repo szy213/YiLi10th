@@ -2007,63 +2007,67 @@ changelogModal.addEventListener('click', (e) => {
 
 <script>
 (function() {
-    // 兼容手机和电脑的函数
     function openLightbox(e) {
         const target = e.target;
-        // 依然通过路径匹配图片
         if (target.tagName === 'IMG' && target.src.includes('images/')) {
             e.preventDefault();
             e.stopPropagation();
 
             const src = target.src;
             const overlay = document.createElement('div');
+            // 提高 z-index 确保在彩带特效上方
             overlay.style.cssText = `
                 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(0,0,0,0.95); z-index: 1000000;
+                background: rgba(0,0,0,0.95); z-index: 2000000;
                 display: flex; align-items: center; justify-content: center;
-                opacity: 0; transition: opacity 0.2s;
-                backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+                opacity: 0; transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+                cursor: zoom-out;
             `;
 
             const bigImg = document.createElement('img');
             bigImg.src = src;
             bigImg.style.cssText = `
-                max-width: 98%; max-height: 98%;
+                max-width: 96%; max-height: 96%;
                 object-fit: contain; border-radius: 4px;
+                transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             `;
 
             overlay.appendChild(bigImg);
             document.body.appendChild(overlay);
 
-            setTimeout(() => overlay.style.opacity = '1', 10);
+            // 进场：背景变黑 + 图片从小变大
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+                bigImg.style.transform = 'scale(1)';
+            }, 20);
 
-            // 点击即关闭
-            overlay.onclick = function() {
+            // 【核心：退出逻辑】
+            // 无论是点背景还是点图片，都执行退出
+            const closeBox = () => {
                 overlay.style.opacity = '0';
-                setTimeout(() => overlay.remove(), 200);
+                bigImg.style.transform = 'scale(0.8)'; // 退场时缩小
+                setTimeout(() => overlay.remove(), 300);
+            };
+
+            overlay.onclick = closeBox;
+            // 针对手机端增加触摸退出支持
+            overlay.ontouchstart = (ev) => {
+                ev.preventDefault();
+                closeBox();
             };
         }
     }
 
-    // 关键：同时监听点击和触摸
-    // 使用捕获模式 {capture: true} 确保优先级最高
     window.addEventListener('click', openLightbox, {capture: true});
+    // 手机端专用监听
     window.addEventListener('touchstart', function(e) {
-        // 手机端如果识别到是图片，直接运行
-        if (e.target.tagName === 'IMG') openLightbox(e);
+        if (e.target.tagName === 'IMG' && e.target.src.includes('images/')) {
+            openLightbox(e);
+        }
     }, {passive: false, capture: true});
 })();
 </script>
-
-<style>
-/* 关键：防止手机端图片被系统默认长按菜单或其他层阻挡 */
-img[src*="images/"] {
-    cursor: zoom-in !important;
-    pointer-events: auto !important; /* 确保图片一定能接收点击 */
-    -webkit-user-drag: none;
-    -webkit-tap-highlight-color: transparent; /* 去掉手机点击时的蓝色框 */
-}
-</style>
 
 
 </body>
