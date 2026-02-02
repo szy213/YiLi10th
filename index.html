@@ -2007,65 +2007,90 @@ changelogModal.addEventListener('click', (e) => {
 
 <script>
 (function() {
-    function openLightbox(e) {
-        const target = e.target;
-        if (target.tagName === 'IMG' && target.src.includes('images/')) {
-            e.preventDefault();
-            e.stopPropagation();
+    let touchStartTime = 0;
+    let touchStartX = 0;
+    let touchStartY = 0;
 
-            const src = target.src;
-            const overlay = document.createElement('div');
-            // 提高 z-index 确保在彩带特效上方
-            overlay.style.cssText = `
-                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                background: rgba(0,0,0,0.95); z-index: 2000000;
-                display: flex; align-items: center; justify-content: center;
-                opacity: 0; transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-                cursor: zoom-out;
-            `;
+    function openLightbox(src) {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 2000000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s ease;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            cursor: zoom-out;
+        `;
 
-            const bigImg = document.createElement('img');
-            bigImg.src = src;
-            bigImg.style.cssText = `
-                max-width: 96%; max-height: 96%;
-                object-fit: contain; border-radius: 4px;
-                transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            `;
+        // 右上角关闭小叉叉
+        const closeBtn = document.createElement('div');
+        closeBtn.innerHTML = '×';
+        closeBtn.style.cssText = `
+            position: absolute; top: 20px; right: 20px; width: 40px; height: 40px;
+            color: white; font-size: 35px; text-align: center; line-height: 36px;
+            background: rgba(255,255,255,0.1); border-radius: 50%; z-index: 2000001;
+        `;
 
-            overlay.appendChild(bigImg);
-            document.body.appendChild(overlay);
+        const bigImg = document.createElement('img');
+        bigImg.src = src;
+        bigImg.style.cssText = `
+            max-width: 96%; max-height: 96%;
+            object-fit: contain; border-radius: 4px;
+            transform: scale(0.9); transition: transform 0.3s ease;
+        `;
 
-            // 进场：背景变黑 + 图片从小变大
-            setTimeout(() => {
-                overlay.style.opacity = '1';
-                bigImg.style.transform = 'scale(1)';
-            }, 20);
+        overlay.appendChild(closeBtn);
+        overlay.appendChild(bigImg);
+        document.body.appendChild(overlay);
 
-            // 【核心：退出逻辑】
-            // 无论是点背景还是点图片，都执行退出
-            const closeBox = () => {
-                overlay.style.opacity = '0';
-                bigImg.style.transform = 'scale(0.8)'; // 退场时缩小
-                setTimeout(() => overlay.remove(), 300);
-            };
+        setTimeout(() => {
+            overlay.style.opacity = '1';
+            bigImg.style.transform = 'scale(1)';
+        }, 20);
 
-            overlay.onclick = closeBox;
-            // 针对手机端增加触摸退出支持
-            overlay.ontouchstart = (ev) => {
-                ev.preventDefault();
-                closeBox();
-            };
-        }
+        const closeBox = (e) => {
+            if (e) e.stopPropagation();
+            overlay.style.opacity = '0';
+            bigImg.style.transform = 'scale(0.9)';
+            setTimeout(() => overlay.remove(), 300);
+        };
+
+        overlay.onclick = closeBox;
     }
 
-    window.addEventListener('click', openLightbox, {capture: true});
-    // 手机端专用监听
+    // 监听整个页面的触摸，精准判断“单击”
     window.addEventListener('touchstart', function(e) {
-        if (e.target.tagName === 'IMG' && e.target.src.includes('images/')) {
-            openLightbox(e);
+        touchStartTime = Date.now();
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }, {passive: true, capture: true});
+
+    window.addEventListener('touchend', function(e) {
+        const moveX = Math.abs(e.changedTouches[0].clientX - touchStartX);
+        const moveY = Math.abs(e.changedTouches[0].clientY - touchStartY);
+        const duration = Date.now() - touchStartTime;
+
+        // 只有位移很小（<10px）且时间很短（<250ms）才认为是点击，否则是滑动
+        if (moveX < 10 && moveY < 10 && duration < 250) {
+            const target = e.target;
+            // 过滤条件：是图片 + 路径含 images/ + 必须是 .webp 后缀
+            if (target.tagName === 'IMG' && 
+                target.src.includes('images/') && 
+                target.src.toLowerCase().endsWith('.webp')) {
+                openLightbox(target.src);
+            }
         }
-    }, {passive: false, capture: true});
+    }, {passive: true, capture: true});
+
+    // 电脑端点击保持不变，但也增加 webp 过滤
+    window.addEventListener('click', function(e) {
+        const target = e.target;
+        if (target.tagName === 'IMG' && 
+            target.src.includes('images/') && 
+            target.src.toLowerCase().endsWith('.webp')) {
+            openLightbox(target.src);
+        }
+    }, {capture: true});
 })();
 </script>
 
