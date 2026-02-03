@@ -988,6 +988,7 @@ document.head.appendChild(style);
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
             <p><b></b><br>万分抱歉🙇🏻‍♀️由于1月31日更换了一次托管服务器，在这之前的打卡和随记可能会丢失。更换后网站已进入稳定运行，日后增加场次和功能不会影响打卡记录和随记的保存，请放心使用</p>
+            <p><b>2026.2.3</b><br>• 新增AI合成语音阅读小兔私信功能</p>
             <p><b>2026.2.2</b><br>• 新增一键保存成就、小兔私信、果实到相册功能</p>
             <p><b>2026.2.1</b><br>• 新增查看大图功能</p>
             <p><b>2026.2.1</b><br>• 【果实】语录新增至40余条，多数来自陈粒小号，快去试试吧:）</p>
@@ -1221,8 +1222,8 @@ eggIcons.forEach(src => {
         { id: "1220", city: "苏州", time: "2025.12.20", weather: "🌧️", season: "winter",part: 1, guest: "嘉宾：杨乃文", personalPics: Array.from({length: 12}, (_, i) => `images/1220 (${i+1}).webp`), guestPics: Array.from({length: 3}, (_, i) => `images/1220guest (${i+1}).webp`), songs: [{n:"光feat杨乃文",t:"guest"},{n:"星星堆满天",t:"guest"},{n:"清透",t:"request"},{n:"人间",t:"request"},{n:"乱",t:"surprise"},{n:"难解风情",t:"surprise"},{n:"爱完不完",t:"surprise"},{n:"知洲",t:"surprise"}] },
         { id: "1231", city: "武汉", time: "2025.12.31", weather: "❄️", season: "winter", part: 1, guest: "", isSpecial: "跨年场🎆", personalPics: Array.from({length: 11}, (_, i) => `images/1231 (${i+1}).webp`), guestPics: [], songs: [{n:"亲爱的你",t:"request"},{n:"Best Better Ever",t:"request"},{n:"庆祝",t:"request"},{n:"银泰",t:"request"},{n:"独行侠",t:"request"},{n:"乱",t:"surprise"},{n:"比如世界",t:"surprise"},{n:"海市蜃楼",t:"surprise"}] },
         { id: "0101", city: "武汉", time: "2026.01.01", weather: "☀️", season: "winter",part: 1, guest: "", isSpecial: "元旦场🧨", personalPics: Array.from({length: 12}, (_, i) => `images/0101 (${i+1}).webp`), guestPics: [], songs: [{n:"情景剧",t:"request"},{n:"远游",t:"request"},{n:"乐园",t:"request"},{n:"My Dear Art",t:"request"},{n:"再度重相逢",t:"request"},{n:"乱",t:"surprise"},{n:"剧烈",t:"surprise"}] },
-        { id: "0314", city: "成都", time: "2026.03.14", weather: "", season: "spring",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
-        { id: "0315", city: "成都", time: "2026.03.15", weather: "", season: "spring",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "260314", city: "成都", time: "2026.03.14", weather: "", season: "spring",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "260315", city: "成都", time: "2026.03.15", weather: "", season: "spring",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
         { id: "NB", city: "宁波", time: "coming soon", weather: "", season: "",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
         { id: "QD", city: "青岛", time: "coming soon", weather: "", season: "",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
         { id: "QZ", city: "泉州", time: "coming soon", weather: "", season: "",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
@@ -1388,9 +1389,11 @@ function saveCheckState(id, isChecked) {
     // 使用 tourData 中的 id 作为存储键名，确保唯一性
     localStorage.setItem('checked_' + id, isChecked);
     
-    // 如果是勾选（点亮），显示语录
+    // 如果是勾选（点亮）
     if (isChecked) {
         showQuote(id);
+        // 新增：播放专属音频并调低背景音乐
+        playIdAudio(id);
     }
     
     // 如果在“我的一粒”页面，立即刷新以同步足迹图和统计数据
@@ -2011,6 +2014,50 @@ closeChangelog.addEventListener('click', hideChangelogModal);
 changelogModal.addEventListener('click', (e) => {
     if (e.target === changelogModal) hideChangelogModal();
 });
+
+// 全局变量，用于追踪当前正在播放的 ID 音频
+let currentIdAudio = null;
+
+function playIdAudio(id) {
+    // 1. 获取背景音乐对象 (根据 index.html 逻辑，BGM 对象通常是全局变量 bgm)
+    const bgmAudio = window.bgm; 
+    const originalVolume = 1.0; // 假设 BGM 初始音量是 1.0
+    const loweredVolume = 0.2;  // 播放 ID 音频时 BGM 的音量
+
+    // 2. 如果之前有正在播放的 ID 音频，先停止它
+    if (currentIdAudio) {
+        currentIdAudio.pause();
+        currentIdAudio = null;
+    }
+
+    // 3. 创建新的音频对象，路径为同一个文件夹下的 id.mp3
+    const audioPath = `${id}.mp3`;
+    const idAudio = new Audio(audioPath);
+    currentIdAudio = idAudio;
+
+    // 4. 调低背景音乐音量
+    if (bgmAudio) {
+        bgmAudio.volume = loweredVolume;
+    }
+
+    // 5. 播放音频
+    idAudio.play().catch(err => {
+        console.warn("音频播放失败，可能是文件不存在或浏览器限制:", err);
+        // 播放失败则恢复音量
+        if (bgmAudio) bgmAudio.volume = originalVolume;
+    });
+
+    // 6. 播放结束后，恢复背景音乐音量
+    idAudio.onended = function() {
+        if (bgmAudio) {
+            bgmAudio.volume = originalVolume;
+        }
+        currentIdAudio = null;
+    };
+}
+
+
+
 
 </script>
 
