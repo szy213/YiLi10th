@@ -1347,7 +1347,7 @@ function showQuote(id) {
         modalContent.appendChild(saveBtn);
         
         showModal();
-        typewriter(target, quotes[id], 60); 
+        typewriter(target, quotes[id], 150); 
     }
 }
 
@@ -1906,7 +1906,7 @@ egg.onclick = function(e) {
 }
 }
 
-function typewriter(element, text, speed = 50) {
+function typewriter(element, text, speed = 100) {
     element.innerText = '';
     let i = 0;
     const timer = setInterval(() => {
