@@ -937,16 +937,33 @@ document.head.appendChild(style);
 }
 
 /* 荧光棒外框 */
+/* 荧光棒外框 */
 .lightstick-item {
     display: flex;
-    height: 35px;
-    border-radius: 18px; /* 两头圆润 */
-    overflow: hidden;
+    height: 20px;
+    /* 建议改为 10px，既能看出弧度，又不是全圆头 */
+    border-radius: 11px; 
+    overflow: hidden; /* 必须保留，用来裁切内部色块的直角 */
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     transition: all 0.3s ease;
-    filter: grayscale(1) opacity(0.5); /* 默认未收集状态：灰色且半透明 */
+    filter: grayscale(1) opacity(0.5);
     border: 1px solid rgba(0,0,0,0.05);
+    /* 增加这一行，强制移动端渲染引擎生效裁切 */
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
+
+/* 手机端适配也同步修改 */
+@media (max-width: 480px) {
+    .lightstick-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .lightstick-item { 
+        height: 30px; 
+        border-radius: 8px; /* 手机端稍微小一点点 */
+    }
+    .city-label { font-size: 11px; }
 }
 
 /* 选中后的状态 */
@@ -957,7 +974,7 @@ document.head.appendChild(style);
     box-shadow: 0 0 15px var(--city-color);
     border-color: rgba(255, 255, 255, 0.4);
     /* 时间改为 4s，使其呼吸速度更慢、更平稳 */
-    animation: lightBreath 4s infinite ease-in-out;
+    animation: lightBreath 2s infinite ease-in-out;
 }
 
 /* 定义呼吸动画逻辑 (保持不变) */
