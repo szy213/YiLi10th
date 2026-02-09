@@ -953,7 +953,22 @@ document.head.appendChild(style);
 .lightstick-item.active {
     filter: grayscale(0) opacity(1);
     transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    /* 初始光晕效果 */
+    box-shadow: 0 0 15px var(--city-color);
+    border-color: rgba(255, 255, 255, 0.4);
+    /* 时间改为 4s，使其呼吸速度更慢、更平稳 */
+    animation: lightBreath 4s infinite ease-in-out;
+}
+
+/* 定义呼吸动画逻辑 (保持不变) */
+@keyframes lightBreath {
+    0%, 100% {
+        box-shadow: 0 0 10px var(--city-color), 0 0 5px var(--city-color);
+    }
+    50% {
+        box-shadow: 0 0 25px var(--city-color), 0 0 15px var(--city-color);
+        filter: grayscale(0) opacity(1) brightness(1.1);
+    }
 }
 
 /* 左侧 60% 自定义颜色区 */
@@ -1616,6 +1631,8 @@ function toggleStick(name, el) {
     localStorage.setItem(`stick_${name}`, isCollected);
 }
 
+
+
 function renderMyGrain(container) {
     // 1. 数据准备（保留原逻辑）
     // 1. 数据准备（核心修改点：在所有统计前过滤掉 unplayed 场次）
@@ -2189,20 +2206,28 @@ backToTopBtn.onmouseleave = () => {
 });
 
 function renderEquip(container) {
-    const cities = ["北京", "上海", "杭州", "南京", "西安", "济南", "重庆", "厦门", "深圳", "苏州", "武汉"];
-    // 对应城市的自定义颜色（可根据喜好调整）
-    const cityColors = {
-        "北京": "#E60012", "上海": "#005CAF", "杭州": "#00A95F", "南京": "#F15A22",
-        "西安": "#8E44AD", "济南": "#2980B9", "重庆": "#C0392B", "厦门": "#1ABC9C",
-        "深圳": "#3498DB", "苏州": "#27AE60", "武汉": "#E74C3C"
-    };
+    if (!container) return;
 
-    let lightstickHTML = cities.map(city => {
-        const isCollected = localStorage.getItem(`lightstick_${city}`) === 'true';
+    // 1. 定义数据：建议将名称和颜色放在一起
+    const cityData = [
+        { name: "北京", color: "#C9C9D3" }, { name: "上海", color: "#C9C9D3" } ,
+        { name: "杭州", color: "#F4F492" }, { name: "南京", color: "#BADAE4" },
+        { name: "西安", color: "#B3CBC4" }, { name: "济南", color: "#F6C1C7" },
+        { name: "重庆", color: "#F7D9E9" }, { name: "厦门", color: "#B6D9D6" },
+        { name: "深圳", color: "#9C9DCF" }, { name: "苏州", color: "#CCCDA5" },
+        { name: "武汉", color: "#F69393" }
+    ];
+
+    let lightstickHTML = cityData.map(city => {
+        // 读取存储状态
+        const isCollected = localStorage.getItem(`stick_${city.name}`) === 'true';
+        
         return `
-            <div class="lightstick-item ${isCollected ? 'active' : ''}" onclick="toggleLightstick('${city}', this)">
-                <div class="lightstick-body" style="--city-color: ${cityColors[city] || '#ccc'}">
-                    <span class="city-label">${city}</span>
+            <div class="lightstick-item ${isCollected ? 'active' : ''}" 
+                 onclick="toggleLightstick('${city.name}', this)">
+                <div class="lightstick-body" 
+                     style="--city-color: ${city.color}; background-color: ${city.color};">
+                    <span class="city-label">${city.name}</span>
                 </div>
                 <div class="lightstick-silver"></div>
                 <div class="lightstick-grey"></div>
@@ -2224,14 +2249,18 @@ function renderEquip(container) {
     `;
 }
 
-// 处理点击标记逻辑
-function toggleLightstick(city, el) {
-    const isCollected = el.classList.toggle('active');
-    localStorage.setItem(`lightstick_${city}`, isCollected);
-    
-    // 触发一个简单的触感反馈（可选）
-    if (window.navigator.vibrate) window.navigator.vibrate(5);
+/**
+ * 配套点击切换函数
+ * 确保点击时不仅改变视觉，还要保存到本地
+ */
+function toggleLightstick(name, el) {
+    // 切换 active 类名（触发置灰滤镜消失）
+    const isActive = el.classList.toggle('active');
+    // 保存到本地存储
+    localStorage.setItem(`stick_${name}`, isActive);
 }
+
+
 
 function switchAchTab(evt, tabId) {
     const box = evt.currentTarget.closest('.achievement-box');
