@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE htm>
 <html lang="zh-CN">
 <head>
     <link rel="preconnect" href="https://yili10th.site">
@@ -928,7 +928,69 @@ document.head.appendChild(style);
     font-weight: bold;
 }
 
+/* 荧光棒容器 */
+.lightstick-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+    padding: 10px;
+}
 
+/* 荧光棒外框 */
+.lightstick-item {
+    display: flex;
+    height: 35px;
+    border-radius: 18px; /* 两头圆润 */
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    filter: grayscale(1) opacity(0.5); /* 默认未收集状态：灰色且半透明 */
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* 选中后的状态 */
+.lightstick-item.active {
+    filter: grayscale(0) opacity(1);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* 左侧 60% 自定义颜色区 */
+.lightstick-body {
+    flex: 0 0 60%;
+    background-color: var(--city-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+/* 中间 10% 银色区 */
+.lightstick-silver {
+    flex: 0 0 10%;
+    background: linear-gradient(to right, #bdc3c7, #ecf0f1, #bdc3c7);
+}
+
+/* 右侧 30% 深灰色区 */
+.lightstick-grey {
+    flex: 0 0 30%;
+    background-color: #555;
+}
+
+/* 手机端适配：一行两个 */
+@media (max-width: 480px) {
+    .lightstick-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .lightstick-item { height: 30px; }
+    .city-label { font-size: 11px; }
+}
 
 </style>
 </head>
@@ -1282,6 +1344,8 @@ const CITY_COORDS = {
     "合肥": [117.22, 31.82]
 };
 
+
+
 // 自动里程计算函数 (Haversine算法)
 function calcTotalKM(list) {
     if (list.length < 2) return 0;
@@ -1403,17 +1467,15 @@ function closeModal() {
     currentPart = part;
     // 1. 切换按钮高亮状态
     document.querySelectorAll('.part-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    if (btn) btn.classList.add('active');
 
     // 2. 背景切换核心逻辑
     if (part === 3 || part === 4) {
-        // Part 3 和 Part 4 使用完全一致的背景：纯原图，无渐变遮罩
         document.body.style.backgroundImage = "url('images/my_grain_bg.jpg')";
         document.body.style.backgroundSize = "cover"; 
         document.body.style.backgroundRepeat = "no-repeat";
-        document.body.style.backgroundAttachment = "fixed"; // 建议固定背景，增加沉浸感
+        document.body.style.backgroundAttachment = "fixed";
     } else {
-        // 还原 PART I 和 PART II 的巡演主背景（带渐变遮罩）
         document.body.style.backgroundImage = "linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 25%, transparent 40%), url('images/bg.jpg')";
         document.body.style.backgroundSize = "100% auto";
         document.body.style.backgroundAttachment = "scroll";
@@ -1422,24 +1484,15 @@ function closeModal() {
     // 3. 内容渲染逻辑
     const grid = document.getElementById('mainGrid');
     
+    // 隐藏/显示 Part 1/2 特有的时间刻度尺
+    const ruler = document.querySelector('.time-ruler');
+    
     if (part === 4) {
-        // Part 4：彩带收集 - 渲染一致的容器但内容空白
-        grid.innerHTML = `
-            <div class="achievement-box" style="min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <div class="module-title">彩带收集</div>
-                <p style="color: #999; font-style: italic; margin-top: 20px;">敬请期待</p>
-            </div>
-            <div class="achievement-box" style="min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                <div class="module-title">荧光棒收集</div>
-                <p style="color: #999; font-style: italic; margin-top: 20px;">敬请期待</p>
-            </div>
-        `;
-        
-        // 隐藏 Part 1/2 特有的时间刻度尺
-        const ruler = document.querySelector('.time-ruler');
         if (ruler) ruler.style.display = 'none';
-        
+        // 关键：这里直接调用 renderEquip，并阻止执行下方的 render()
+        renderEquip(grid);
     } else {
+        if (ruler) ruler.style.display = 'flex';
         // 执行原有的渲染逻辑（Part 1, 2, 3）
         render(); 
     }
@@ -1521,6 +1574,47 @@ window.closeGrainPopup = function() {
     document.getElementById('grainAchOverlay').style.display = 'none';
 };
     
+
+const cityList = [
+    { name: "北京", color: "#E60012" }, { name: "上海", color: "#005CAF" },
+    { name: "杭州", color: "#00A95F" }, { name: "南京", color: "#F15A22" },
+    { name: "西安", color: "#8E44AD" }, { name: "济南", color: "#2980B9" },
+    { name: "重庆", color: "#C0392B" }, { name: "厦门", color: "#1ABC9C" },
+    { name: "深圳", color: "#9292C1" }, { name: "苏州", color: "#C2C29A" },
+    { name: "武汉", color: "#000000" }
+];
+
+function renderEquip(container) {
+    let html = `
+        <div class="achievement-box">
+            <div class="module-title">荧光棒收集</div>
+            <div class="lightstick-grid">`;
+    
+    cityList.forEach(city => {
+        const isCollected = localStorage.getItem(`stick_${city.name}`) === 'true';
+        html += `
+            <div class="lightstick-item ${isCollected ? 'active' : ''}" 
+                 style="--city-color: ${city.color}" 
+                 onclick="toggleStick('${city.name}', this)">
+                <div class="ls-left">${city.name}</div>
+                <div class="ls-mid"></div>
+                <div class="ls-right"></div>
+            </div>`;
+    });
+
+    html += `</div></div>
+        <div class="achievement-box" style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div class="module-title">彩带收集</div>
+            <p style="color: #999; font-style: italic; margin-top: 20px;">敬请期待</p>
+        </div>`;
+    
+    container.innerHTML = html;
+}
+
+function toggleStick(name, el) {
+    const isCollected = el.classList.toggle('active');
+    localStorage.setItem(`stick_${name}`, isCollected);
+}
 
 function renderMyGrain(container) {
     // 1. 数据准备（保留原逻辑）
@@ -1874,6 +1968,11 @@ function render() {
         if(ruler) ruler.style.display = 'none';
         return;
     }
+    if (currentPart === 4) {
+        renderEquip(grid);
+        if(ruler) ruler.style.display = 'none';
+        return;
+    }
 
     // 刻度尺初始化
     if(ruler) {
@@ -2089,6 +2188,51 @@ backToTopBtn.onmouseleave = () => {
     });
 });
 
+function renderEquip(container) {
+    const cities = ["北京", "上海", "杭州", "南京", "西安", "济南", "重庆", "厦门", "深圳", "苏州", "武汉"];
+    // 对应城市的自定义颜色（可根据喜好调整）
+    const cityColors = {
+        "北京": "#E60012", "上海": "#005CAF", "杭州": "#00A95F", "南京": "#F15A22",
+        "西安": "#8E44AD", "济南": "#2980B9", "重庆": "#C0392B", "厦门": "#1ABC9C",
+        "深圳": "#3498DB", "苏州": "#27AE60", "武汉": "#E74C3C"
+    };
+
+    let lightstickHTML = cities.map(city => {
+        const isCollected = localStorage.getItem(`lightstick_${city}`) === 'true';
+        return `
+            <div class="lightstick-item ${isCollected ? 'active' : ''}" onclick="toggleLightstick('${city}', this)">
+                <div class="lightstick-body" style="--city-color: ${cityColors[city] || '#ccc'}">
+                    <span class="city-label">${city}</span>
+                </div>
+                <div class="lightstick-silver"></div>
+                <div class="lightstick-grey"></div>
+            </div>
+        `;
+    }).join('');
+
+    container.innerHTML = `
+        <div class="achievement-box">
+            <div class="module-title">荧光棒收集</div>
+            <div class="lightstick-container">
+                ${lightstickHTML}
+            </div>
+        </div>
+        <div class="achievement-box" style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div class="module-title">彩带收集</div>
+            <p style="color: #999; font-style: italic; margin-top: 20px;">敬请期待</p>
+        </div>
+    `;
+}
+
+// 处理点击标记逻辑
+function toggleLightstick(city, el) {
+    const isCollected = el.classList.toggle('active');
+    localStorage.setItem(`lightstick_${city}`, isCollected);
+    
+    // 触发一个简单的触感反馈（可选）
+    if (window.navigator.vibrate) window.navigator.vibrate(5);
+}
+
 function switchAchTab(evt, tabId) {
     const box = evt.currentTarget.closest('.achievement-box');
     box.querySelectorAll('.achievement-grid').forEach(g => g.classList.remove('active'));
@@ -2267,32 +2411,31 @@ function playIdAudio(id) {
     }
 
     // --- 镭射气球类 (未开演场次：酒红深灰，向上飘) ---
-// --- 极深钢色 (Deep Steel #374146) + 深红 (#90140F) 动态镭射版 ---
-// --- 极致高亮版 (深铅灰 #374146 + 深红 #90140F) ---
-// --- 锐化高光版 (深铅灰 #374146 + 深红 #90140F) ---
-// --- 锐化高光版 (深铅灰 #374146 + 深红 #90140F) ---
-// --- 极致高亮版 (深铅灰 #374146 + 深红 #90140F) ---
 class Ball {
     constructor(x, y) {
         this.x = x;
         this.y = y;
+        this.startX = x; // 记录起始位置，用于辅助发散计算
+
+        const redTheme = { main: '#90140F', highlight: '#FF8080' };
+        const greyTheme = { main: '#374146', highlight: '#E0E6E9' };
         
-        const colors = [
-            { main: '#90140F', highlight: '#FF8080' }, // 红色高光也同步提亮，增加透明感
-            { main: '#374146', highlight: '#E0E6E9' }  // 灰色高光提升至接近纯白的浅亮银
-        ];
+        // 1. 修改比例：60% 红色, 40% 灰色
+        const theme = Math.random() < 0.6 ? redTheme : greyTheme;
         
-        const theme = colors[Math.floor(Math.random() * colors.length)];
         this.color = theme.main;
         this.highlight = theme.highlight;
         
         this.radius = Math.random() * 10 + 20; 
-        this.vx = Math.random() * 1.5 - 0.75;
+        
+        // 2. 发散轨迹逻辑：
+        // 让 vx 具有更大的随机跨度，并根据初始位置或随机值决定左右偏向
+        // 增加一个 scatterForce，使得气球在更新时持续向两边扩张
+        this.vx = (Math.random() - 0.5) * 2; 
+        this.scatterForce = (Math.random() - 0.5) * 0.02; 
+        
         this.vy = Math.random() * -1.5 - 0.5; 
         this.buoyancy = -0.02 - Math.random() * 0.03; 
-        
-        this.rotation = Math.random() * Math.PI * 2;
-        this.rotateSpeed = (Math.random() - 0.5) * 0.08; // 略微加快光斑转动，更有镭射感
         
         this.angle = Math.random() * Math.PI * 2;
         this.swingSpeed = Math.random() * 0.03 + 0.01;
@@ -2300,64 +2443,72 @@ class Ball {
     }
 
     update() {
+        // 3. 强化发散效果：vx 随时间累加微小的向外推力
+        this.vx += this.scatterForce; 
+        
         this.vy += this.buoyancy; 
-        this.x += this.vx + Math.sin(this.angle) * 1.0; 
+        this.x += this.vx + Math.sin(this.angle) * 1.2; // 摆动幅度稍微加大
         this.y += this.vy;
+        
         this.angle += this.swingSpeed;
-        this.rotation += this.rotateSpeed;
         this.alpha -= 0.003; 
     }
 
     draw() {
         ctx.save();
         ctx.globalAlpha = this.alpha;
-        
-        const lightDist = this.radius * 0.45;
-        const lx = this.x + Math.cos(this.rotation) * lightDist;
-        const ly = this.y + Math.sin(this.rotation) * lightDist;
+        ctx.translate(this.x, this.y);
 
-        // 核心高光渐变
-        const gradient = ctx.createRadialGradient(
-            lx, ly, this.radius * 0.005, // 极小起点，模拟点光源
-            this.x, this.y, this.radius
-        );
-        
-        // --- 亮度加强逻辑 ---
-        gradient.addColorStop(0, '#FFFFFF');           // 0. 核心极白点 (耀眼感)
-        gradient.addColorStop(0.05, '#FFFFFF');         // 0.05 保持纯白，增加高光强度
-        gradient.addColorStop(0.12, this.highlight);    // 1. 锐利的高亮过渡
-        gradient.addColorStop(0.35, this.color);        // 2. 快速切入深灰色主体
-        gradient.addColorStop(0.75, this.color);        // 3. 保持大面积深色，对比高光
-        gradient.addColorStop(0.9, '#000000');          // 4. 极致深影
-        gradient.addColorStop(1, '#A0B0B8');            // 5. 边缘反光 (再次提亮，模拟轮廓光)
-        
+        // 倒水滴形状路径
+        const r = this.radius;
+        const topY = -r * 1.2;
+        const bottomY = r * 1.2;
+        const width = r * 1.1;
+
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.moveTo(0, bottomY);
+        ctx.bezierCurveTo(-width, bottomY * 0.5, -width, topY, 0, topY);
+        ctx.bezierCurveTo(width, topY, width, bottomY * 0.5, 0, bottomY);
+        ctx.closePath();
+
+        // 高光渐变
+        const lx = -r * 0.3;
+        const ly = -r * 0.5;
+        const gradient = ctx.createRadialGradient(lx, ly, 0.5, 0, 0, r * 1.5);
+        
+        gradient.addColorStop(0, '#FFFFFF');           
+        gradient.addColorStop(0.03, '#FFFFFF');         
+        gradient.addColorStop(0.08, this.highlight);    
+        gradient.addColorStop(0.3, this.color);        
+        gradient.addColorStop(0.75, this.color);        
+        gradient.addColorStop(0.9, '#000000');          
+        gradient.addColorStop(1, '#A0B0B8');            
+        
         ctx.fillStyle = gradient;
         ctx.fill();
-        
-        // --- 增加一个次级微弱高光点，模拟镭射多重反射 ---
-        const slx = this.x - Math.cos(this.rotation) * lightDist * 0.6;
-        const sly = this.y - Math.sin(this.rotation) * lightDist * 0.6;
-        const subGradient = ctx.createRadialGradient(slx, sly, 0, slx, sly, this.radius * 0.3);
-        subGradient.addColorStop(0, 'rgba(255, 255, 255, 0.25)');
+
+        // 边缘描边
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        // 次级高光
+        const slx = -lx * 0.6;
+        const sly = -ly * 0.6;
+        const subGradient = ctx.createRadialGradient(slx, sly, 0, slx, sly, r * 0.4);
+        subGradient.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
         subGradient.addColorStop(1, 'transparent');
         ctx.fillStyle = subGradient;
         ctx.fill();
 
-        // 边缘轮廓硬化
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.4)"; // 提亮描边
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
         // 底部气球嘴
         ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(Math.sin(this.angle) * 0.25); 
+        ctx.translate(0, bottomY);
+        ctx.rotate(Math.sin(this.angle) * 0.15); 
         ctx.beginPath();
-        ctx.moveTo(0, this.radius);
-        ctx.lineTo(-4, this.radius + 6);
-        ctx.lineTo(4, this.radius + 6);
+        ctx.moveTo(0, -2); 
+        ctx.lineTo(-5, 8);
+        ctx.lineTo(5, 8);
         ctx.closePath();
         ctx.fillStyle = this.color;
         ctx.fill();
