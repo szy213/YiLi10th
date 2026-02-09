@@ -1007,7 +1007,7 @@ document.head.appendChild(style);
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
             <p><b></b><br>万分抱歉🙇🏻‍♀️由于1月31日更换了一次托管服务器，在这之前的打卡和随记可能会丢失。更换后网站已进入稳定运行，日后增加场次和功能不会影响打卡记录和随记的保存，请放心使用</p>
-            <p><b>2026.2.9</b><br>• 新增上一场正计时，下一场倒计时功能（计时器下方文案会随时间变化喔）</p>
+            <p><b>2026.2.9</b><br>• 新增上一场正计时，下一场倒计时功能。勾选已官宣时间的未开演场次即可加入倒计时。未开演场次不计入成就收集（计时器下方文案会随时间变化喔）</p>
             <p><b>2026.2.5</b><br>• 新增点击歌曲标签跳转网易云播客现场版音频（没有现场版的就是没找到音源呜呜，如果有音源拜托联系作者添加）</p>
             <p><b>2026.2.4</b><br>• 新增BGM：《幻期颐》</p>
             <p><b>2026.2.3</b><br>• 新增AI合成语音阅读小兔私信功能</p>
@@ -1587,7 +1587,7 @@ function renderMyGrain(container) {
         </div>
         <div id="timer-future" class="achievement-grid" style="display: none; flex-direction: column; align-items: center; padding: 35px 0; grid-template-columns: none;">
             ${nextShow ? `
-                <div style="font-size: 13px; color: #999; margin-bottom: 8px; letter-spacing: 1px;">距离下一次在 <b style="color:#333">${nextShow.city}</b> 见面还有</div>
+                <div style="font-size: 13px; color: #999; margin-bottom: 8px; letter-spacing: 1px;">距离下次在 <b style="color:#333">${nextShow.city}</b> 见面还有</div>
                 <div style="font-size: 3.2em; font-family: 'Times New Roman'; color: var(--tag-special); line-height: 1;"><b>${futureDays}</b> <span style="font-size: 18px;">天</span></div>
                 <div style="font-size: 11px; color: #ccc; margin-top: 15px; letter-spacing: 1px;">${nextShow.time} · 期待相遇</div>
                 <div style="margin-top: 18px; font-size: 12px; color: #8C2222; font-style: italic; opacity: 0.7; letter-spacing: 1px;">— ${getFutureStatus(futureDays)} —</div>
@@ -1895,12 +1895,13 @@ function renderMyGrain(container) {
                 </div>` : '<div style="height:20px"></div>'}
             <div class="special-songs-box">${tags}</div>
             <div class="check-area">
-                <label style="cursor: pointer;">
+                 <label style="cursor: pointer;">
                     <input type="checkbox" 
-                           ${isChecked ? 'checked' : ''} 
-                           onchange="saveCheckState('${item.id}', this.checked)"> 
-                    我在现场
+                    ${isChecked ? 'checked' : ''} 
+                    onchange="saveCheckState('${item.id}', this.checked)"> 
+                    ${item.status === 'unplayed' ? '期待相见' : '我在现场'}
                 </label>
+            </div>  
             </div>
             <div class="edit-note-btn" onclick="editNote('${item.id}')">🪶</div>
                 <div class="note-bubble" id="bubble-${item.id}">${localStorage.getItem('note-' + item.id) || '点击羽毛笔记录心情...'}</div>`;
