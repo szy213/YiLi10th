@@ -1007,7 +1007,7 @@ document.head.appendChild(style);
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
             <p><b></b><br>万分抱歉🙇🏻‍♀️由于1月31日更换了一次托管服务器，在这之前的打卡和随记可能会丢失。更换后网站已进入稳定运行，日后增加场次和功能不会影响打卡记录和随记的保存，请放心使用</p>
-            <p><b>2026.2.9</b><br>• 新增上一场正计时，下一场倒计时功能。勾选已官宣时间的未开演场次即可加入倒计时。未开演场次不计入成就收集（计时器下方文案会随时间变化喔）</p>
+            <p><b>2026.2.9</b><br>• 新增上一场正计时，下一场倒计时功能。（计时器下方文案会随时间变化喔）勾选已官宣时间的未开演场次即可加入倒计时。未开演场次不计入成就收集</p>
             <p><b>2026.2.5</b><br>• 新增点击歌曲标签跳转网易云播客现场版音频（没有现场版的就是没找到音源呜呜，如果有音源拜托联系作者添加）</p>
             <p><b>2026.2.4</b><br>• 新增BGM：《幻期颐》</p>
             <p><b>2026.2.3</b><br>• 新增AI合成语音阅读小兔私信功能</p>
@@ -1499,9 +1499,17 @@ window.closeGrainPopup = function() {
 
 function renderMyGrain(container) {
     // 1. 数据准备（保留原逻辑）
+    // 1. 数据准备（核心修改点：在所有统计前过滤掉 unplayed 场次）
     const now = new Date();
     const allPlayedTours = tourData.filter(item => item.status !== 'unplayed');
-    const myTours = tourData.filter(item => localStorage.getItem('checked_' + item.id) === 'true');
+    
+    // 【修改处】：确保 myTours 里的场次既被勾选了，且不是“unplayed”状态
+    const myTours = tourData.filter(item => 
+        localStorage.getItem('checked_' + item.id) === 'true' && 
+        item.status !== 'unplayed'
+    );
+
+    // 后续所有基于 myTours 的计算会自动排除未演场次
     const sortedTours = [...myTours].sort((a, b) => new Date(a.time.replace(/\./g, '/')) - new Date(b.time.replace(/\./g, '/')));
     const myCount = myTours.length;
     const totalPlayedCount = allPlayedTours.length;
@@ -1519,7 +1527,6 @@ function renderMyGrain(container) {
     const myWeathers = new Set(myTours.map(t => t.weather));
     const mySeasons = new Set(myTours.map(t => t.season));
     const isFourSeasonsComplete = mySeasons.has('spring') && mySeasons.has('summer') && mySeasons.has('autumn') && mySeasons.has('winter');
-
     // --- 【新增：计时器逻辑计算】 ---
     const pastChecked = sortedTours.filter(t => t.status !== 'unplayed' && new Date(t.time.replace(/\./g, '/')) <= now);
     const lastShow = pastChecked.length > 0 ? pastChecked[pastChecked.length - 1] : null;
