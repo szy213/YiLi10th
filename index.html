@@ -943,6 +943,7 @@ document.head.appendChild(style);
     <button class="part-btn active" onclick="changePart(1, this)">PART I</button>
     <button class="part-btn" onclick="changePart(2, this)">PART II</button>
     <button class="part-btn" onclick="changePart(3, this)">我的一粒</button>
+    <button class="part-btn" onclick="changePart(4, this)">彩带收集</button>
 </div>
 
 <div class="tour-grid" id="mainGrid"></div>
@@ -1400,26 +1401,46 @@ function closeModal() {
     let currentPart = 1;
     function changePart(part, btn) {
     currentPart = part;
-    // 切换按钮高亮状态
+    // 1. 切换按钮高亮状态
     document.querySelectorAll('.part-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 
-    // --- 背景切换核心逻辑 ---
-    if (part === 3) {
-    // 只保留原图，去掉 linear-gradient 遮罩
-    document.body.style.backgroundImage = "url('images/my_grain_bg.jpg')";
-    
-    // 确保其他参数不变（延续 body 的全局设置，或根据需要微调）
-    document.body.style.backgroundSize = "cover"; 
-    document.body.style.backgroundRepeat = "no-repeat"; // 原图通常建议不重复
-    /* document.body.style.backgroundAttachment = "fixed";  // 如果想要背景固定不随滚动条走，可以加这一行 */
-} else {
-        // 还原 PART I 和 PART II 的巡演主背景
+    // 2. 背景切换核心逻辑
+    if (part === 3 || part === 4) {
+        // Part 3 和 Part 4 使用完全一致的背景：纯原图，无渐变遮罩
+        document.body.style.backgroundImage = "url('images/my_grain_bg.jpg')";
+        document.body.style.backgroundSize = "cover"; 
+        document.body.style.backgroundRepeat = "no-repeat";
+        document.body.style.backgroundAttachment = "fixed"; // 建议固定背景，增加沉浸感
+    } else {
+        // 还原 PART I 和 PART II 的巡演主背景（带渐变遮罩）
         document.body.style.backgroundImage = "linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 25%, transparent 40%), url('images/bg.jpg')";
         document.body.style.backgroundSize = "100% auto";
+        document.body.style.backgroundAttachment = "scroll";
     }
 
-    render(); 
+    // 3. 内容渲染逻辑
+    const grid = document.getElementById('mainGrid');
+    
+    if (part === 4) {
+        // Part 4：彩带收集 - 渲染一致的容器但内容空白
+        grid.innerHTML = `
+            <div class="achievement-box" style="min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <div class="module-title">彩带收集</div>
+                <p style="color: #999; font-style: italic; margin-top: 20px;">暂无收集记录</p>
+            </div>
+        `;
+        
+        // 隐藏 Part 1/2 特有的时间刻度尺
+        const ruler = document.querySelector('.time-ruler');
+        if (ruler) ruler.style.display = 'none';
+        
+    } else {
+        // 执行原有的渲染逻辑（Part 1, 2, 3）
+        render(); 
+    }
+
+    // 4. 页面滚动反馈
     window.scrollTo({ top: 400, behavior: 'smooth' });
 }
 
@@ -1527,13 +1548,19 @@ function renderMyGrain(container) {
     const myWeathers = new Set(myTours.map(t => t.weather));
     const mySeasons = new Set(myTours.map(t => t.season));
     const isFourSeasonsComplete = mySeasons.has('spring') && mySeasons.has('summer') && mySeasons.has('autumn') && mySeasons.has('winter');
-    // --- 【新增：计时器逻辑计算】 ---
+
+    // --- 【计时器逻辑计算】 ---
     const pastChecked = sortedTours.filter(t => t.status !== 'unplayed' && new Date(t.time.replace(/\./g, '/')) <= now);
     const lastShow = pastChecked.length > 0 ? pastChecked[pastChecked.length - 1] : null;
 
+    // --- 修改此处：增加 localStorage 的判断，确保只有勾选的未开演场次才进入倒计时 ---
     const upcomingTours = tourData
-        .filter(item => item.status === 'unplayed' && item.time !== 'coming soon')
-        .sort((a, b) => new Date(a.time.replace(/\./g, '/')) - new Date(b.time.replace(/\./g, '/')));
+        .filter(item => 
+            item.status === 'unplayed' && 
+            item.time !== 'coming soon' &&
+            localStorage.getItem('checked_' + item.id) === 'true'
+        )
+        .sort((a, b) => new Date(a.time.replace(/\ Scaled/g, '/')) - new Date(b.time.replace(/\./g, '/')));
     const nextShow = upcomingTours.length > 0 ? upcomingTours[0] : null;
 
     const getDiffDays = (targetDateStr) => {
@@ -1555,7 +1582,7 @@ function renderMyGrain(container) {
         return "其实我们难得一见 激动的人请妳失眠"; 
     };
 
-    // --- 第一部分：巡演计时模块 (New) ---
+    // --- 第一部分：巡演计时模块 ---
     const timerBox = document.createElement('div');
     timerBox.className = 'achievement-box';
     timerBox.id = 'capture-timer';
@@ -1579,7 +1606,7 @@ function renderMyGrain(container) {
     const futureDays = nextShow ? getDiffDays(nextShow.time) : 0;
 
     timerBox.innerHTML = `
-        <p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin: 15px 0 25px; text-align:center; font-family: serif;">一粒 · 巡演计时</p>
+        <p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin: 15px 0 25px; text-align:center; font-family: serif;">巡演计时</p>
         <div class="tab-header">
             <div class="tab-btn active" onclick="switchTimerTab('past', this)">正计时</div>
             <div class="tab-btn" onclick="switchTimerTab('future', this)">倒计时</div>
@@ -1590,7 +1617,13 @@ function renderMyGrain(container) {
                 <div style="font-size: 3.2em; font-family: 'Times New Roman'; color: var(--tag-special); line-height: 1;"><b>${pastDays}</b> <span style="font-size: 18px;">天</span></div>
                 <div style="font-size: 11px; color: #ccc; margin-top: 15px; letter-spacing: 1px;">${lastShow.time} · 时光回响</div>
                 <div style="margin-top: 18px; font-size: 12px; color: #8C2222; font-style: italic; opacity: 0.7; letter-spacing: 1px;">— ${getPastStatus(pastDays)} —</div>
-            ` : `<p style="color:#ccc; font-size:13px; padding: 20px;">还没有勾选过已演出的场次哦</p>`}
+            ` : `
+                <div style="text-align: center; padding: 20px 0;">
+                    
+                    <div style="font-size: 13px; color: #ccc; letter-spacing: 2px;">尚未开启往日的回响</div>
+                    
+                </div>
+            `}
         </div>
         <div id="timer-future" class="achievement-grid" style="display: none; flex-direction: column; align-items: center; padding: 35px 0; grid-template-columns: none;">
             ${nextShow ? `
@@ -1598,7 +1631,13 @@ function renderMyGrain(container) {
                 <div style="font-size: 3.2em; font-family: 'Times New Roman'; color: var(--tag-special); line-height: 1;"><b>${futureDays}</b> <span style="font-size: 18px;">天</span></div>
                 <div style="font-size: 11px; color: #ccc; margin-top: 15px; letter-spacing: 1px;">${nextShow.time} · 期待相遇</div>
                 <div style="margin-top: 18px; font-size: 12px; color: #8C2222; font-style: italic; opacity: 0.7; letter-spacing: 1px;">— ${getFutureStatus(futureDays)} —</div>
-            ` : `<p style="color:#ccc; font-size:13px; padding: 20px;">暂无确定日期的待演场次</p>`}
+            ` : `
+                <div style="text-align: center; padding: 20px 0;">
+                    
+                    <div style="font-size: 13px; color: #ccc; letter-spacing: 2px;">暂无确定的重逢日期</div>
+                    
+                </div>
+            `}
         </div>
     `;
     container.appendChild(timerBox);
@@ -1609,7 +1648,7 @@ function renderMyGrain(container) {
     btnTimer.onclick = () => saveBoxImage('capture-timer', '我的一粒·巡演计时');
     container.appendChild(btnTimer);
 
-    // --- 第二部分：荣誉勋章墙 (保留原样) ---
+    // --- 第二部分：荣誉勋章墙 ---
     const badgeWall = document.createElement('div');
     badgeWall.id = 'capture-badges'; 
     badgeWall.className = 'achievement-box'; 
@@ -1617,7 +1656,7 @@ function renderMyGrain(container) {
     const badges = [
         { name: "奇妙能力", icon: "🍒", unlocked: myCount > 0, desc: "开启一粒之旅" },
         { name: "自然环境", icon: "🥨", unlocked: ratio > 0.3, desc: "已解锁超过 30% 现有场次。" },
-        { name: "世界正中", icon: "🪽", unlocked: ratio > 0.7, desc: "已解锁超过 60% 现有场次。" },
+        { name: "世界正中", icon: "🪽", unlocked: ratio > 0.6, desc: "已解锁超过 60% 现有场次。" },
         { name: "全勤之约", icon: "🍎", unlocked: ratio === 1 && totalPlayedCount > 0, desc: "已解锁100%现有场次。" }
     ];
     
@@ -1643,7 +1682,7 @@ function renderMyGrain(container) {
     btn1.onclick = () => saveBoxImage('capture-badges', '我的一粒·勋章墙');
     container.appendChild(btn1);
 
-    // --- 第三部分：成就模块 (保留原进度条及所有判定) ---
+    // --- 第三部分：成就模块 ---
     const achBox = document.createElement('div');
     achBox.id = 'capture-achievements'; 
     achBox.className = 'achievement-box'; 
@@ -1667,7 +1706,7 @@ function renderMyGrain(container) {
                 <div style="width: ${progressPercent}%; height: 100%; background: #8C2222; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);"></div>
             </div>
         </div>
-        <p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 25px; text-align:center; font-family: serif;">一粒 · 成就收集</p>
+        <p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 25px; text-align:center; font-family: serif;">成就收集</p>
         <div class="tab-header">
             <div class="tab-btn active" onclick="switchAchTab(event, 'ach-special')">特殊场次</div>
             <div class="tab-btn" onclick="switchAchTab(event, 'ach-weather')">天气收集</div>
@@ -1742,7 +1781,7 @@ function renderMyGrain(container) {
     btn2.onclick = () => saveBoxImage('capture-achievements', '我的一粒·成就卡');
     container.appendChild(btn2);
 
-    // --- 第四部分：足迹地图 (保留原样) ---
+    // --- 第四部分：足迹地图 ---
     const mapBox = document.createElement('div');
     mapBox.className = 'achievement-box'; 
     mapBox.innerHTML = `
@@ -1760,7 +1799,7 @@ function renderMyGrain(container) {
         "北京": { left: "66.4%", top: "40.3%" }, "上海": { left: "75.2%", top: "58.2%" }, "成都": { left: "49.0%", top: "60.8%" },
         "济南": { left: "68.6%", top: "47.3%" }, "西安": { left: "57.2%", top: "53.1%" }, "重庆": { left: "54.0%", top: "63.7%" },
         "武汉": { left: "64.6%", top: "60.7%" }, "厦门": { left: "71.9%", top: "72.5%" }, "杭州": { left: "73.7%", top: "60.5%" }, 
-        "深圳": { left: "66.3%", top: "77.8%" },"南京": { left: "71.7%", top: "56.7%" }, "郑郑州": { left: "63.6%", top: "52.0%" }
+        "深圳": { left: "66.3%", top: "77.8%" },"南京": { left: "71.7%", top: "56.7%" }, "郑州": { left: "63.6%", top: "52.0%" }
     };
     const pinsLayer = mapBox.querySelector('#pins-layer');
     const litCities = new Set(myTours.map(t => t.city));
@@ -1775,7 +1814,7 @@ function renderMyGrain(container) {
         }
     });
 
-    // --- 第五部分：记忆存根 (保留所有详细统计数据) ---
+    // --- 第五部分：记忆存根 ---
     const uniqueCitiesCount = [...new Set(myTours.map(item => item.city))].length;
     const travelPath = [...new Set(sortedTours.map(item => item.city))].join(' → ');
     
