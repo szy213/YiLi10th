@@ -1688,32 +1688,7 @@ const cityList = [
     { name: "武汉", color: "#000000" }
 ];
 
-function renderEquip(container) {
-    let html = `
-        <div class="achievement-box">
-            <div class="module-title">荧光棒收集</div>
-            <div class="lightstick-grid">`;
-    
-    cityList.forEach(city => {
-        const isCollected = localStorage.getItem(`stick_${city.name}`) === 'true';
-        html += `
-            <div class="lightstick-item ${isCollected ? 'active' : ''}" 
-                 style="--city-color: ${city.color}" 
-                 onclick="toggleStick('${city.name}', this)">
-                <div class="ls-left">${city.name}</div>
-                <div class="ls-mid"></div>
-                <div class="ls-right"></div>
-            </div>`;
-    });
 
-    html += `</div></div>
-        <div class="achievement-box" style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <div class="module-title">彩带收集</div>
-            <p style="color: #999; font-style: italic; margin-top: 20px;">敬请期待</p>
-        </div>`;
-    
-    container.innerHTML = html;
-}
 
 function toggleStick(name, el) {
     const isCollected = el.classList.toggle('active');
@@ -2345,22 +2320,55 @@ function renderEquip(container) {
     container.appendChild(btnStick);
 
     // --- 模块二：彩带收集 ---
+// --- 模块二：彩带收集 ---
     const ribbonBox = document.createElement('div');
     ribbonBox.className = 'achievement-box';
-    ribbonBox.id = 'capture-ribbon'; // 设置截图ID
-    ribbonBox.style.cssText = "min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;";
+    ribbonBox.id = 'capture-ribbon';
+    
+    // 1. 插入标题和切换按钮
     ribbonBox.innerHTML = `
         <div class="module-title">彩带收集</div>
-        <p style="color: #999; font-style: italic; margin-top: 20px;">敬请期待</p>
+        
+        <div class="tab-header" style="margin: 0 auto 20px; max-width: 280px;">
+            <div class="tab-btn active" onclick="switchRibbonTab('pattern', this)">图案款</div>
+            <div class="tab-btn" onclick="switchRibbonTab('text', this)">文字款</div>
+            <div class="tab-btn" onclick="switchRibbonTab('special', this)">异形款</div>
+        </div>
+
+        <div id="ribbon-content" style="min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <p style="color: #999; font-style: italic; margin-top: 10px;">图案款：敬请期待</p>
+        </div>
     `;
     container.appendChild(ribbonBox);
 
-    // 彩带截图键
+    // 2. 彩带截图键
     const btnRibbon = document.createElement('div');
     btnRibbon.className = 'save-trigger';
     btnRibbon.innerHTML = '📸 保存彩带收集';
     btnRibbon.onclick = () => saveBoxImage('capture-ribbon', '我的一粒·彩带收集');
     container.appendChild(btnRibbon);
+}
+
+/**
+ * 切换彩带分类的逻辑函数
+ */
+window.switchRibbonTab = function(type, btn) {
+    // 更新按钮状态
+    const header = btn.parentElement;
+    header.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // 更新内容显示
+    const contentBox = document.getElementById('ribbon-content');
+    const labels = {
+        'pattern': '图案款',
+        'text': '文字款',
+        'special': '异形款'
+    };
+    
+    contentBox.innerHTML = `
+        <p style="color: #999; font-style: italic; margin-top: 10px;">${labels[type]}：敬请期待</p>
+    `;
 }
 
 /**
