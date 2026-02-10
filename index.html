@@ -2363,11 +2363,6 @@ function renderEquip(container) {
     `;
     container.appendChild(stickBox);
 
-    const btnStick = document.createElement('div');
-    btnStick.className = 'save-trigger';
-    btnStick.innerHTML = '📸 保存荧光棒收集';
-    btnStick.onclick = () => saveBoxImage('capture-lightstick', '我的一粒·荧光棒收集');
-    container.appendChild(btnStick);
 
 
     // --- 模块二：彩带收集 (全新收藏簿款式) ---
@@ -2392,11 +2387,7 @@ function renderEquip(container) {
     `;
     container.appendChild(ribbonBox);
 
-    const btnRibbon = document.createElement('div');
-    btnRibbon.className = 'save-trigger';
-    btnRibbon.innerHTML = '📸 保存彩带收集';
-    btnRibbon.onclick = () => saveBoxImage('capture-ribbon', '我的一粒·彩带收集');
-    container.appendChild(btnRibbon);
+
 }
 
 /**
