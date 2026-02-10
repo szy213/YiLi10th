@@ -929,147 +929,146 @@ document.head.appendChild(style);
 }
 
 /* 荧光棒容器 */
+/* 荧光棒容器：模拟收纳盒底座 */
+/* 荧光棒容器：增加工业点阵纹理 */
+/* 1. 荧光棒容器：增加螺丝、面板接缝与深层收纳感 */
 .lightstick-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    justify-content: center;
     gap: 15px;
-    padding: 10px;
+    padding: 30px 20px; /* 增加上下内边距给螺丝留位 */
+    
+    /* 核心修改：基础底色 + 工业点阵 + 四角螺丝绘制 */
+    background-color: #f5f5f5;
+    background-image: 
+        /* 左上螺丝 */
+        radial-gradient(circle at 12px 12px, #eee 1px, #999 3px, #444 4px, transparent 5px),
+        /* 右上螺丝 */
+        radial-gradient(circle at calc(100% - 12px) 12px, #eee 1px, #999 3px, #444 4px, transparent 5px),
+        /* 左下螺丝 */
+        radial-gradient(circle at 12px calc(100% - 12px), #eee 1px, #999 3px, #444 4px, transparent 5px),
+        /* 右下螺丝 */
+        radial-gradient(circle at calc(100% - 12px) calc(100% - 12px), #eee 1px, #999 3px, #444 4px, transparent 5px),
+        /* 工业点阵 */
+        radial-gradient(#d0d0d0 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 20px 20px;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
+    
+    border-radius: 12px;
+    /* 模拟面板嵌入感：外边框+内凹陷 */
+    border: 1px solid #ccc;
+    outline: 1px solid #eee;
+    outline-offset: -5px; /* 模拟面板接缝线 */
+    box-shadow: inset 2px 2px 12px rgba(0,0,0,0.1);
+    margin: 10px 0;
+    position: relative;
 }
 
-/* 荧光棒外框 */
-/* 荧光棒外框 */
+/* 2. 荧光棒外框：强化实体厚度感 */
 .lightstick-item {
     display: flex;
-    height: 20px;
-    /* 建议改为 10px，既能看出弧度，又不是全圆头 */
-    border-radius: 9px; 
-    overflow: hidden; /* 必须保留，用来裁切内部色块的直角 */
+    height: 22px; 
+    border-radius: 11px;
+    overflow: hidden;
     cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    filter: grayscale(1) opacity(0.5);
-    border: 1px solid rgba(0,0,0,0.05);
-    /* 增加这一行，强制移动端渲染引擎生效裁切 */
-    -webkit-mask-image: -webkit-radial-gradient(white, black);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     
+    /* 白色外框 + 实体细微阴影 */
+    border: 2px solid #ffffff; 
+    box-shadow: 
+        0 0 0 1px rgba(0,0,0,0.1), /* 模拟嵌入缝隙 */
+        1px 2px 3px rgba(0,0,0,0.1); /* 基础投影 */
+    
+    filter: grayscale(1) opacity(0.5);
+    background-color: #fff;
 }
 
-/* 手机端适配也同步修改 */
-@media (max-width: 480px) {
-    .lightstick-container {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
+/* 3. 冲击力动画逻辑 */
+@keyframes powerOn {
+    0% { 
+        filter: grayscale(1) opacity(0.5) brightness(1); 
+        box-shadow: 0 0 0 0 var(--city-color);
     }
-    .lightstick-item { 
-        height: 30px; 
-        border-radius: 8px; /* 手机端稍微小一点点 */
+    30% { 
+        filter: grayscale(0) opacity(1) brightness(2.5); /* 瞬间过曝 */
+        box-shadow: 0 0 30px 5px var(--city-color); /* 能量爆发感 */
     }
-    .city-label { font-size: 11px; }
+    100% { 
+        filter: grayscale(0) opacity(1) brightness(1.1); 
+        box-shadow: 0 0 15px var(--city-color); 
+    }
 }
 
-/* 选中后的状态 */
+/* 4. 选中状态：触发冲击动画并产生“浮起”效果 */
 .lightstick-item.active {
     filter: grayscale(0) opacity(1);
-    transform: scale(1.05);
-    /* 初始光晕效果 */
-    box-shadow: 0 0 15px var(--city-color);
-    border-color: rgba(255, 255, 255, 0.4);
-    /* 时间改为 4s，使其呼吸速度更慢、更平稳 */
-    animation: lightBreath 2s infinite ease-in-out;
+    transform: scale(1.06) translateY(-2px); /* 点击时微微浮起，增加实体感 */
+    border-color: rgba(255, 255, 255, 0.9);
+    
+    /* 组合：0.6s 瞬间冲击 + 随后无限呼吸 */
+    animation: 
+        powerOn 0.6s ease-out forwards, 
+        lightBreath 3s infinite 0.6s;
 }
 
-/* 定义呼吸动画逻辑 (保持不变) */
+/* 5. 呼吸动画逻辑 (保持原有，稍微提亮) */
 @keyframes lightBreath {
     0%, 100% {
         box-shadow: 0 0 10px var(--city-color), 0 0 5px var(--city-color);
+        filter: brightness(1.1);
     }
     50% {
         box-shadow: 0 0 25px var(--city-color), 0 0 15px var(--city-color);
-        filter: grayscale(0) opacity(1) brightness(1.1);
+        filter: brightness(1.2);
     }
 }
 
-/* 左侧 60% 自定义颜色区 - 增加圆柱体立体感 */
-/* 左侧 60% 自定义颜色区 - 纯色+上下高光营造立体感 */
+/* 6. 棒身细节：增强圆柱体效果 */
 .lightstick-body {
     flex: 0 0 60%;
-    /* 核心逻辑：使用 linear-gradient (to bottom) 模拟圆柱体。
-       - 顶部和底部略深 (rgba(0,0,0,0.15))
-       - 中间最亮的部分是纯色 (var(--city-color))
-       - 最中心横向高光条 (rgba(255,255,255,0.25))
-    */
     background: linear-gradient(to bottom, 
-        rgba(0,0,0,0.1) 0%, 
+        rgba(0,0,0,0.12) 0%, 
         var(--city-color) 20%, 
-        rgba(255,255,255,0.1) 50%, 
+        rgba(255,255,255,0.3) 50%, 
         var(--city-color) 80%, 
-        rgba(0,0,0,0.1) 100%
+        rgba(0,0,0,0.12) 100%
     );
-    /* 这里的背景色作为回退方案 */
     background-color: var(--city-color);
-
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     font-size: 11px;
     font-weight: bold;
-    letter-spacing: 2px;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
-    /* 内阴影增加厚度感 */
-    box-shadow: inset 0 1px 0px rgba(255,255,255,0.2), inset 0 -1px 0px rgba(0,0,0,0.1);
 }
 
-/* 激活状态下稍微提亮高光 */
-.lightstick-item.active .lightstick-body {
-    background: linear-gradient(to bottom, 
-        rgba(0,0,0,0.05) 0%, 
-        var(--city-color) 15%, 
-        rgba(255,255,255,0.55) 50%, 
-        var(--city-color) 85%, 
-        rgba(0,0,0,0.05) 100%
-    );
-}
-
-/* 中间 10% 银色区 - 增加金属折射感 */
+/* 7. 金属环与手柄细节 */
 .lightstick-silver {
     flex: 0 0 10%;
-    /* 修改：增加垂直方向的暗影，使其看起来像金属圆环 */
-    background: linear-gradient(to bottom, 
-        #95a5a6 0%, 
-        #eee 50%, 
-        #95a5a6 100%);
+    background: linear-gradient(to bottom, #95a5a6 0%, #eee 50%, #95a5a6 100%);
     border-left: 1px solid rgba(0,0,0,0.1);
     border-right: 1px solid rgba(0,0,0,0.1);
 }
 
-/* 右侧 30% 深灰色区 - 增加橡胶握把质感 */
 .lightstick-grey {
     flex: 0 0 30%;
-    /* 修改：同样增加垂直渐变，让手柄圆润 */
-    background: linear-gradient(to bottom, 
-        #444 0%, 
-        #666 50%, 
-        #333 100%);
-    /* 增加细微的内阴影 */
+    /* 模拟橡胶手柄的细微横纹 */
+    background: 
+        repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,0,0,0.05) 4px),
+        linear-gradient(to bottom, #444 0%, #666 50%, #333 100%);
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
 }
 
-/* 调整 active 状态下的亮度，让立体感更强 */
-.lightstick-item.active {
-    filter: grayscale(0) opacity(1) brightness(1.1); /* 整体提亮 */
-    transform: scale(1.05);
-    box-shadow: 0 0 20px var(--city-color);
-}
-
-/* 手机端适配：一行两个 */
+/* 手机端适配 */
 @media (max-width: 480px) {
     .lightstick-container {
         grid-template-columns: repeat(2, 1fr);
+        padding: 20px 12px;
         gap: 10px;
     }
-    .lightstick-item { height: 30px; }
-    .city-label { font-size: 11px; }
+    .lightstick-item { height: 32px; border-radius: 16px; }
 }
 
 </style>
@@ -2307,11 +2306,13 @@ function renderEquip(container) {
                 ${lightstickHTML}
             </div>
         </div>
+        
         <div class="achievement-box" style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
             <div class="module-title">彩带收集</div>
             <p style="color: #999; font-style: italic; margin-top: 20px;">敬请期待</p>
         </div>
     `;
+    
 }
 
 /**
