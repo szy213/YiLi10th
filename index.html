@@ -992,7 +992,7 @@ document.head.appendChild(style);
 /* 2. 荧光棒外框：强化实体厚度感 */
 .lightstick-item {
     display: flex;
-    height: 11px; 
+    height: 7px; 
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
@@ -1093,6 +1093,60 @@ document.head.appendChild(style);
         gap: 10px;
     }
     .lightstick-item { height: 32px; border-radius: 16px; }
+}
+
+/* --- 彩带收集模块专用样式 --- */
+
+/* 选项键容器：强制三等分且与下方等宽 */
+.ribbon-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    width: 100%;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+/* 基础样式：熄灭且不联通状态 */
+.ribbon-tab {
+    padding: 12px 0;
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+    background: #e5e0d5; /* 熄灭时的深米色 */
+    color: #999;
+    border: 1px solid #d1c8b8;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.2s ease;
+    position: relative;
+    /* 熄灭时：不与下方联通，保留下边框 */
+    z-index: 1; 
+}
+
+/* 激活状态：点亮并联通 */
+.ribbon-tab.active {
+    background: #fdfaf5; /* 变亮：与展示框同色 */
+    color: var(--tag-special); /* 使用你定义的火漆红 */
+    font-weight: bold;
+    /* 联通逻辑：隐藏下边框，并向下压 1px 覆盖展示框的顶边框 */
+    border-bottom: 1px solid #fdfaf5; 
+    margin-bottom: -1px; 
+    z-index: 3; /* 提升层级，确保覆盖下方的边框线 */
+}
+
+/* 下方展示框：收藏簿款式 */
+.ribbon-book-container {
+    background: #fdfaf5;
+    border: 1px solid #d1c8b8;
+    border-radius: 0 0 12px 12px; /* 只有下方圆角，上方平直方便联通 */
+    min-height: 200px;
+    width: 100%;
+    position: relative;
+    z-index: 2; /* 低于激活的 tab，高于熄灭的 tab */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
 }
 
 </style>
@@ -2272,7 +2326,15 @@ backToTopBtn.onmouseleave = () => {
 function renderEquip(container) {
     if (!container) return;
 
-    // 1. 定义数据
+    // 清空容器
+    container.innerHTML = '';
+
+    // --- 模块一：荧光棒收集 (保持你原有的逻辑) ---
+    const stickBox = document.createElement('div');
+    stickBox.className = 'achievement-box';
+    stickBox.id = 'capture-lightstick';
+    
+    // 准备荧光棒 HTML
     const cityData = [
         { name: "北京", color: "#C9C9D3" }, { name: "上海", color: "#C9C9D3" } ,
         { name: "杭州", color: "#F4F492" }, { name: "南京", color: "#BADAE4" },
@@ -2281,14 +2343,12 @@ function renderEquip(container) {
         { name: "深圳", color: "#9C9DCF" }, { name: "苏州", color: "#CCCDA5" },
         { name: "武汉", color: "#F69393" }
     ];
-
     let lightstickHTML = cityData.map(city => {
         const isCollected = localStorage.getItem(`stick_${city.name}`) === 'true';
         return `
             <div class="lightstick-item ${isCollected ? 'active' : ''}" 
                  onclick="toggleLightstick('${city.name}', this)">
-                <div class="lightstick-body" 
-                     style="--city-color: ${city.color}; background-color: ${city.color};">
+                <div class="lightstick-body" style="--city-color: ${city.color}; background-color: ${city.color};">
                     <span class="city-label">${city.name}</span>
                 </div>
                 <div class="lightstick-silver"></div>
@@ -2297,51 +2357,41 @@ function renderEquip(container) {
         `;
     }).join('');
 
-    // 清空容器并渲染
-    container.innerHTML = '';
-
-    // --- 模块一：荧光棒收集 ---
-    const stickBox = document.createElement('div');
-    stickBox.className = 'achievement-box';
-    stickBox.id = 'capture-lightstick'; // 设置截图ID
     stickBox.innerHTML = `
         <div class="module-title">荧光棒收集</div>
-        <div class="lightstick-container">
-            ${lightstickHTML}
-        </div>
+        <div class="lightstick-container">${lightstickHTML}</div>
     `;
     container.appendChild(stickBox);
 
-    // 荧光棒截图键
     const btnStick = document.createElement('div');
     btnStick.className = 'save-trigger';
     btnStick.innerHTML = '📸 保存荧光棒收集';
     btnStick.onclick = () => saveBoxImage('capture-lightstick', '我的一粒·荧光棒收集');
     container.appendChild(btnStick);
 
-    // --- 模块二：彩带收集 ---
-// --- 模块二：彩带收集 ---
+
+    // --- 模块二：彩带收集 (全新收藏簿款式) ---
     const ribbonBox = document.createElement('div');
     ribbonBox.className = 'achievement-box';
     ribbonBox.id = 'capture-ribbon';
     
-    // 1. 插入标题和切换按钮
     ribbonBox.innerHTML = `
         <div class="module-title">彩带收集</div>
         
-        <div class="tab-header" style="margin: 0 auto 20px; max-width: 280px;">
-            <div class="tab-btn active" onclick="switchRibbonTab('pattern', this)">图案款</div>
-            <div class="tab-btn" onclick="switchRibbonTab('text', this)">文字款</div>
-            <div class="tab-btn" onclick="switchRibbonTab('special', this)">异形款</div>
-        </div>
+        <div style="padding: 0 10px;">
+            <div class="ribbon-tabs">
+                <div class="ribbon-tab active" onclick="switchRibbonTab('pattern', this)">图案款</div>
+                <div class="ribbon-tab" onclick="switchRibbonTab('text', this)">文字款</div>
+                <div class="ribbon-tab" onclick="switchRibbonTab('special', this)">异形款</div>
+            </div>
 
-        <div id="ribbon-content" style="min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <p style="color: #999; font-style: italic; margin-top: 10px;">图案款：敬请期待</p>
+            <div id="ribbon-content" class="ribbon-book-container">
+                <p style="color: #b0a590; font-style: italic; font-size: 14px;">图案款：敬请期待</p>
+            </div>
         </div>
     `;
     container.appendChild(ribbonBox);
 
-    // 2. 彩带截图键
     const btnRibbon = document.createElement('div');
     btnRibbon.className = 'save-trigger';
     btnRibbon.innerHTML = '📸 保存彩带收集';
@@ -2350,15 +2400,15 @@ function renderEquip(container) {
 }
 
 /**
- * 切换彩带分类的逻辑函数
+ * 切换彩带分类的逻辑
  */
 window.switchRibbonTab = function(type, btn) {
-    // 更新按钮状态
-    const header = btn.parentElement;
-    header.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    // 1. 切换按键状态：上一个熄灭并断开联通，当前点亮并联通
+    const tabs = btn.parentElement.querySelectorAll('.ribbon-tab');
+    tabs.forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
 
-    // 更新内容显示
+    // 2. 更新内容展示
     const contentBox = document.getElementById('ribbon-content');
     const labels = {
         'pattern': '图案款',
@@ -2367,10 +2417,9 @@ window.switchRibbonTab = function(type, btn) {
     };
     
     contentBox.innerHTML = `
-        <p style="color: #999; font-style: italic; margin-top: 10px;">${labels[type]}：敬请期待</p>
+        <p style="color: #b0a590; font-style: italic; font-size: 14px;">${labels[type]}：敬请期待</p>
     `;
-}
-
+};
 /**
  * 配套点击切换函数
  * 确保点击时不仅改变视觉，还要保存到本地
