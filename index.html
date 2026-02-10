@@ -937,32 +937,56 @@ document.head.appendChild(style);
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     justify-content: center;
     gap: 15px;
-    padding: 30px 20px; /* 增加上下内边距给螺丝留位 */
+    padding: 30px 20px 45px;
     
-    /* 核心修改：基础底色 + 工业点阵 + 四角螺丝绘制 */
+    /* 核心修改：保留拉丝底纹，移除螺丝十字 */
     background-color: #f5f5f5;
     background-image: 
-        /* 左上螺丝 */
+        /* --- 四角圆头螺丝（移除十字，仅保留圆形金属感） --- */
         radial-gradient(circle at 12px 12px, #eee 1px, #999 3px, #444 4px, transparent 5px),
-        /* 右上螺丝 */
         radial-gradient(circle at calc(100% - 12px) 12px, #eee 1px, #999 3px, #444 4px, transparent 5px),
-        /* 左下螺丝 */
         radial-gradient(circle at 12px calc(100% - 12px), #eee 1px, #999 3px, #444 4px, transparent 5px),
-        /* 右下螺丝 */
         radial-gradient(circle at calc(100% - 12px) calc(100% - 12px), #eee 1px, #999 3px, #444 4px, transparent 5px),
-        /* 工业点阵 */
+
+        /* --- 金属拉丝效果 --- */
+        repeating-linear-gradient(90deg, 
+            rgba(0,0,0,0.03) 0px, 
+            rgba(0,0,0,0.03) 1px, 
+            transparent 1px, 
+            transparent 2px),
+        
+        /* --- 工业点阵 --- */
         radial-gradient(#d0d0d0 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 20px 20px;
-    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
+
+    /* 简化后的 size 对应顺序：4个螺丝, 1个拉丝纹, 1个点阵 */
+    background-size: 
+        100% 100%, 100% 100%, 100% 100%, 100% 100%, 
+        100% 100%, 
+        20px 20px;
+
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat;
     
     border-radius: 12px;
-    /* 模拟面板嵌入感：外边框+内凹陷 */
-    border: 1px solid #ccc;
+    border: 1px solid #bbb; 
     outline: 1px solid #eee;
-    outline-offset: -5px; /* 模拟面板接缝线 */
-    box-shadow: inset 2px 2px 12px rgba(0,0,0,0.1);
+    outline-offset: -5px; 
+    box-shadow: 
+        inset 1px 1px 0px rgba(255,255,255,0.8), 
+        inset 2px 2px 12px rgba(0,0,0,0.1);
     margin: 10px 0;
     position: relative;
+}
+
+/* 铭牌标签保持不变 */
+.lightstick-container::after {
+    content: "SERIAL: YILI-10TH";
+    position: absolute;
+    bottom: 12px;
+    right: 20px;
+    font-family: monospace;
+    font-size: 9px;
+    color: rgba(0,0,0,0.3);
+    letter-spacing: 0.5px;
 }
 
 /* 2. 荧光棒外框：强化实体厚度感 */
@@ -1149,6 +1173,7 @@ document.head.appendChild(style);
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
             <p><b></b><br>万分抱歉🙇🏻‍♀️由于1月31日更换了一次托管服务器，在这之前的打卡和随记可能会丢失。更换后网站已进入稳定运行，日后增加场次和功能不会影响打卡记录和随记的保存，请放心使用</p>
+            <p><b>2026.2.10</b><br>• 新增荧光棒收集功能</p>
             <p><b>2026.2.9</b><br>• 新增上一场正计时，下一场倒计时功能。（计时器下方文案会随时间变化喔）勾选已官宣时间的未开演场次即可加入倒计时。未开演场次不计入成就收集</p>
             <p><b>2026.2.5</b><br>• 新增点击歌曲标签跳转网易云播客现场版音频（没有现场版的就是没找到音源呜呜，如果有音源拜托联系作者添加）</p>
             <p><b>2026.2.4</b><br>• 新增BGM：《幻期颐》</p>
