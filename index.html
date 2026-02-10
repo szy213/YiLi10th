@@ -1320,8 +1320,9 @@ document.head.appendChild(style);
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
             <p><b></b><br>万分抱歉🙇🏻‍♀️由于1月31日更换了一次托管服务器，在这之前的打卡和随记可能会丢失。更换后网站已进入稳定运行，日后增加场次和功能不会影响打卡记录和随记的保存，请放心使用</p>
-            <p><b>2026.2.10</b><br>• 新增荧光棒收集功能</p>
-            <p><b>2026.2.9</b><br>• 新增上一场正计时，下一场倒计时功能。（计时器下方文案会随时间变化喔）勾选已官宣时间的未开演场次即可加入倒计时。未开演场次不计入成就收集</p>
+            <p><b>2026.2.10</b><br>• 【果实】语录更新</p>
+            <p><b>2026.2.10</b><br>• 新增【荧光棒】收集功能</p>
+            <p><b>2026.2.9</b><br>• 新增【计时】功能。（计时器下方文案会随时间变化喔）勾选已官宣时间的未开演场次即可加入倒计时。未开演场次不计入成就收集</p>
             <p><b>2026.2.5</b><br>• 新增点击歌曲标签跳转网易云播客现场版音频（没有现场版的就是没找到音源呜呜，如果有音源拜托联系作者添加）</p>
             <p><b>2026.2.4</b><br>• 新增BGM：《幻期颐》</p>
             <p><b>2026.2.3</b><br>• 新增AI合成语音阅读小兔私信功能</p>
@@ -2430,9 +2431,9 @@ backToTopBtn.onmouseleave = () => {
 // prefix: 文件名前缀 (rp)
 // count: 该分类下的图片总数
 const ribbonConfig = [
-    { type: 'icon',  prefix: 'rp', count: 12 }, // 对应 images/ribbon/icon/rp (1).webp 到 (12)
-    { type: 'text',  prefix: 'rt', count: 8  }, // 对应 images/ribbon/text/rt (1).webp 到 (8)
-    { type: 'shape', prefix: 'rs', count: 5  }  // 对应 images/ribbon/shape/rs (1).webp 到 (5)
+    { type: 'icon',  prefix: 'rp', count: 0 }, // 对应 images/ribbon/icon/rp (1).webp 到 (12)
+    { type: 'text',  prefix: 'rt', count: 0  }, // 对应 images/ribbon/text/rt (1).webp 到 (8)
+    { type: 'shape', prefix: 'rs', count: 0  }  // 对应 images/ribbon/shape/rs (1).webp 到 (5)
 ];
 
 // 自动生成详细数据
@@ -2527,7 +2528,7 @@ window.renderRibbonList = function(type) {
     const filtered = ribbonData.filter(item => item.type === type);
     
     if (filtered.length === 0) {
-        content.innerHTML = `<div style="grid-column: span 2; text-align: center; padding: 40px; color: #ccc;">暂无该系列收集</div>`;
+        content.innerHTML = `<div style="grid-column: span 2; text-align: center; padding: 40px; color: #ccc;">敬请期待</div>`;
         return;
     }
 
