@@ -969,7 +969,7 @@ document.head.appendChild(style);
 .lightstick-item {
     display: flex;
     height: 22px; 
-    border-radius: 11px;
+    border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -2272,7 +2272,7 @@ backToTopBtn.onmouseleave = () => {
 function renderEquip(container) {
     if (!container) return;
 
-    // 1. 定义数据：建议将名称和颜色放在一起
+    // 1. 定义数据
     const cityData = [
         { name: "北京", color: "#C9C9D3" }, { name: "上海", color: "#C9C9D3" } ,
         { name: "杭州", color: "#F4F492" }, { name: "南京", color: "#BADAE4" },
@@ -2283,9 +2283,7 @@ function renderEquip(container) {
     ];
 
     let lightstickHTML = cityData.map(city => {
-        // 读取存储状态
         const isCollected = localStorage.getItem(`stick_${city.name}`) === 'true';
-        
         return `
             <div class="lightstick-item ${isCollected ? 'active' : ''}" 
                  onclick="toggleLightstick('${city.name}', this)">
@@ -2299,20 +2297,45 @@ function renderEquip(container) {
         `;
     }).join('');
 
-    container.innerHTML = `
-        <div class="achievement-box">
-            <div class="module-title">荧光棒收集</div>
-            <div class="lightstick-container">
-                ${lightstickHTML}
-            </div>
-        </div>
-        
-        <div class="achievement-box" style="min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-            <div class="module-title">彩带收集</div>
-            <p style="color: #999; font-style: italic; margin-top: 20px;">敬请期待</p>
+    // 清空容器并渲染
+    container.innerHTML = '';
+
+    // --- 模块一：荧光棒收集 ---
+    const stickBox = document.createElement('div');
+    stickBox.className = 'achievement-box';
+    stickBox.id = 'capture-lightstick'; // 设置截图ID
+    stickBox.innerHTML = `
+        <div class="module-title">荧光棒收集</div>
+        <div class="lightstick-container">
+            ${lightstickHTML}
         </div>
     `;
-    
+    container.appendChild(stickBox);
+
+    // 荧光棒截图键
+    const btnStick = document.createElement('div');
+    btnStick.className = 'save-trigger';
+    btnStick.innerHTML = '📸 保存荧光棒收集';
+    btnStick.onclick = () => saveBoxImage('capture-lightstick', '我的一粒·荧光棒收集');
+    container.appendChild(btnStick);
+
+    // --- 模块二：彩带收集 ---
+    const ribbonBox = document.createElement('div');
+    ribbonBox.className = 'achievement-box';
+    ribbonBox.id = 'capture-ribbon'; // 设置截图ID
+    ribbonBox.style.cssText = "min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;";
+    ribbonBox.innerHTML = `
+        <div class="module-title">彩带收集</div>
+        <p style="color: #999; font-style: italic; margin-top: 20px;">敬请期待</p>
+    `;
+    container.appendChild(ribbonBox);
+
+    // 彩带截图键
+    const btnRibbon = document.createElement('div');
+    btnRibbon.className = 'save-trigger';
+    btnRibbon.innerHTML = '📸 保存彩带收集';
+    btnRibbon.onclick = () => saveBoxImage('capture-ribbon', '我的一粒·彩带收集');
+    container.appendChild(btnRibbon);
 }
 
 /**
