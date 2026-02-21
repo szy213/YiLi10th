@@ -20,6 +20,32 @@
     <title>一粒·巡演全纪录</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
+    /* 加载层基础样式：默认隐藏（PC端不显示） */
+#loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10000; /* 确保在最顶层 */
+    background-color: #fff; /* 防止图片未加载时的白屏 */
+}
+
+/* 仅在手机端开启 */
+@media (max-width: 768px) {
+    #loading-overlay {
+        display: block;
+    }
+}
+
+/* 图片拉伸填满逻辑 */
+#loading-overlay img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 核心：图片会根据屏幕尺寸自动裁剪拉伸，填满整个视野 */
+    display: block;
+}
     html, body {
     width: 100%;
     margin: 0;
@@ -1257,6 +1283,10 @@ document.head.appendChild(style);
 </head>
 <body>
 
+    <div id="loading-overlay">
+    <img src="images/load.webp" alt="Loading">
+</div>
+
 <div class="header">
     <h1>一粒 · 巡演全纪录 </h1>
     <p> 陪着妳 爱着妳 常常想起妳 </p>
@@ -1486,6 +1516,18 @@ document.head.appendChild(style);
 <div id="monthRuler" class="time-ruler"></div>
 
 <script>
+
+window.addEventListener('load', function() {
+    const loader = document.getElementById('loading-overlay');
+    if (loader) {
+        // 延迟 0.5 秒消失，避免闪现，增加丝滑感
+        setTimeout(() => {
+            loader.style.transition = 'opacity 0.5s ease';
+            loader.style.opacity = '0';
+            setTimeout(() => loader.remove(), 500); // 彻底移除节点
+        }, 500);
+    }
+});
 
 // 确保这个函数在全局作用域，任何地方都能调用
 window.saveBoxImage = function(elementId, fileName) {
