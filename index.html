@@ -990,7 +990,7 @@ document.head.appendChild(style);
 
 /* 铭牌标签保持不变 */
 .lightstick-container::after {
-    content: "SERIAL: YILI-10TH";
+    content: "SERIAL: YILI10TH-PART1";
     position: absolute;
     bottom: 12px;
     right: 20px;
@@ -1281,6 +1281,7 @@ document.head.appendChild(style);
         <option value="bgm6.mp3">幻期颐</option>
         <option value="bgm7.mp3">正趣果上果</option>
         <option value="bgm8.mp3">八节木</option>
+        <option value="bgm9.mp3">青原</option>
     </select>
     <div id="musicControl" onclick="toggleMusic()">
         <span id="musicIcon">🎵</span>
@@ -1333,10 +1334,11 @@ document.head.appendChild(style);
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
             <p><b></b><br>万分抱歉🙇🏻‍♀️由于1月31日更换了一次托管服务器，在这之前的打卡和随记可能会丢失。更换后网站已进入稳定运行，日后增加场次和功能不会影响打卡记录和随记的保存，请放心使用</p>
+            <p><b>2026.2.21</b><br>• 新增BGM：《青原》</p>
             <p><b>2026.2.15</b><br>•【果实】语录更新（新增了一些以往专辑好玩的简介）</p>
             <p><b>2026.2.14</b><br>•【果实】语录更新</p>
-            <p><b>2026.2.12</b><br>•新增【簌簌一梦】成就（彩带收集功能的工作量有点大还没添加，有时间会做出来，不好意思(´•༝•`)</p>
-            <p><b>2026.2.12</b><br>•新增BGM：《正趣果上果》《八节木》</p>
+            <p><b>2026.2.12</b><br>• 新增【簌簌一梦】成就（彩带收集功能的工作量有点大还没添加，有时间会做出来，不好意思(´•༝•`)</p>
+            <p><b>2026.2.12</b><br>• 新增BGM：《正趣果上果》《八节木》</p>
             <p><b>2026.2.10</b><br>•【果实】语录更新</p>
             <p><b>2026.2.10</b><br>• 新增【荧光棒】收集功能</p>
             <p><b>2026.2.9</b><br>• 新增【计时】功能。（计时器下方文案会随时间变化喔）勾选已官宣时间的未开演场次即可加入倒计时。未开演场次不计入成就收集</p>
@@ -1577,7 +1579,7 @@ eggIcons.forEach(src => {
         { id: "1101", city: "西安", time: "2025.11.01", weather: "🌤️", season: "autumn",part: 1, guest: "嘉宾：尚雯婕🐼", personalPics: Array.from({length: 10}, (_, i) => `images/1101 (${i+1}).webp`), guestPics: Array.from({length: 7}, (_, i) => `images/1101guest (${i+1}).webp`), 
         songs: [{n:"交卷feat尚雯婕",t:"guest",l:"https://music.163.com/dj?id=3705792272&uct2=U2FsdGVkX1+hP6qeOdC6ZzzzIUbH3eM9re749zPA/T8="},{n:"Atypical异类",t:"guest",l:"https://music.163.com/dj?id=3706154128&uct2=U2FsdGVkX19Dj2S8xiu0hk7tXw06mYzVhR2tYiC5bo4="},{n:"极端者",t:"guest",l:""},{n:"且慢",t:"request",l:"https://music.163.com/dj?id=3705814311&uct2=U2FsdGVkX1/hyOoahlcEJ8ceDOh05kb6yUginndqRLA="},{n:"有则抱抱无则笑笑",t:"request",l:"https://music.163.com/dj?id=3705935270&uct2=U2FsdGVkX1/uVtRiMI+yLZgE7fcigbh+w4IqE1TrDe8="},{n:"知洲",t:"surprise"}] },
         { id: "1108", city: "济南", time: "2025.11.08", weather: "🌤️", season: "winter",part: 1, guest: "嘉宾：郁可唯🌻", personalPics: Array.from({length: 9}, (_, i) => `images/1108 (${i+1}).webp`), guestPics: Array.from({length: 6}, (_, i) => `images/1108guest (${i+1}).webp`), 
-        songs: [{n:"进化feat郁可唯",t:"guest",l:"https://music.163.com/dj?id=3706367534&uct2=U2FsdGVkX18FT2Xl3kbd4xpB7WQBb4XzGYd2jEh84bo="},{n:"路过人间",t:"guest",l:""},{n:"从头",t:"request",l:"https://music.163.com/dj?id=3706447568&uct2=U2FsdGVkX1+GMyVaf1RsQAyuABhXON6PB9rBqqMmbwM="},{n:"至少还有你",t:"request",l:"https://music.163.com/dj?id=3706545509&uct2=U2FsdGVkX1/mkml9SfWc8c1qgVECnFHBR/l3KAY3Zo4="},{n:"知洲",t:"surprise",l:"https://music.163.com/dj?id=3706969603&uct2=U2FsdGVkX19j3bMICkS/uMZ9XBpcvJdC5nRa3oJ+vQI="},{n:"七楼",t:"surprise",l:"https://music.163.com/dj?id=3706425563&uct2=U2FsdGVkX18zVrAUafeeYmwwUpNhifbSw4K8l7GnuMQ="}] },
+        songs: [{n:"进化feat郁可唯",t:"guest",l:"https://music.163.com/dj?id=3706367534&uct2=U2FsdGVkX18FT2Xl3kbd4xpB7WQBb4XzGYd2jEh84bo="},{n:"路过人间",t:"guest",l:"路过人间.mp3"},{n:"从头",t:"request",l:"https://music.163.com/dj?id=3706447568&uct2=U2FsdGVkX1+GMyVaf1RsQAyuABhXON6PB9rBqqMmbwM="},{n:"至少还有你",t:"request",l:"https://music.163.com/dj?id=3706545509&uct2=U2FsdGVkX1/mkml9SfWc8c1qgVECnFHBR/l3KAY3Zo4="},{n:"知洲",t:"surprise",l:"https://music.163.com/dj?id=3706969603&uct2=U2FsdGVkX19j3bMICkS/uMZ9XBpcvJdC5nRa3oJ+vQI="},{n:"七楼",t:"surprise",l:"https://music.163.com/dj?id=3706425563&uct2=U2FsdGVkX18zVrAUafeeYmwwUpNhifbSw4K8l7GnuMQ="}] },
         { id: "1115", city: "重庆", time: "2025.11.15", weather: "🌧️", season: "winter",part: 1, guest: "嘉宾：叶蓓🍁", personalPics: Array.from({length: 9}, (_, i) => `images/1115 (${i+1}).webp`), guestPics: Array.from({length: 6}, (_, i) => `images/1115guest (${i+1}).webp`), 
         songs: [{n:"爱完不完feat叶蓓",t:"guest",l:"https://music.163.com/dj?id=3707607232&uct2=U2FsdGVkX188irRezNYb8+Xc2KJgghL6IKQzuNBRcMo="},{n:"蒲公英",t:"guest",l:"https://music.163.com/dj?id=3707384582&uct2=U2FsdGVkX193Ef8lKqmxr+xfXyKqEqH4fAbD5ZMi92E="},{n:"玉人歌",t:"request",l:"https://music.163.com/dj?id=3707689231&uct2=U2FsdGVkX18NOhGk8ySvGMch8vNTYtraJjMT//qdeGw="},{n:"怪情歌",t:"request",l:"https://music.163.com/dj?id=3707607231&uct2=U2FsdGVkX19xP3s+srt6myQ6hewJoS/v2jR5ZVqR80o="},{n:"无烟区",t:"surprise",l:"https://music.163.com/dj?id=3707626191&uct2=U2FsdGVkX1/7FhYRTt6XggmP0j/+nfPjoB+l2CwNejk="},{n:"知洲",t:"surprise"}] },
         { id: "1129", city: "厦门", time: "2025.11.29", weather: "☀️", season: "winter",part: 1, guest: "独唱场🐰", personalPics: Array.from({length: 9}, (_, i) => `images/1129 (${i+1}).webp`), guestPics: [], 
@@ -1661,6 +1663,7 @@ function calcTotalKM(list) {
     ,"如何形容我想要的人生？有时用一个字形容会嫌多，有时用一时废话反而嫌少，但有聊无聊，别含糊，表态就好。","啊 为什么我们不克制一下我们克制欲望的欲望","我有多少顶帽子 我就有多不爱洗头"
     ,"大自然慷慨解囊，露出一片光线：黄的、蓝的、星星点点，云层再往下就是漆黑了，大自然囊中也羞涩。","并没有什么事亟待解决，眼前只有脚粒.","我的水杯不动，茶几也静止。一切静悄悄，但房间和我都在起舞。"
     ,"有巨大的口含住我的脑袋 以为是智慧之口 于是以憋气致敬 越憋气 越难明白含住我脑袋的到底是不是智慧","以前拒绝很多 不是因为个性太强 而是因为能力太弱","四海好大 你还好吗","四海好大 欢迎回家"
+    ,"千言万语好","🐥🎗️🫘🌸🍜"
     ,"世界虽然已经很挤了。但还是有海量的缝隙语言没有填满，如果无限地趋向精确的话，那就会无限地趋向失语和沉默。所以妳现在看到的这些是我暂时放弃了精确，再企图放松而说出的话，冒昧了。"
     ,"于是到了近两年，我才突然意识到观察力是我们度过美好时光的一大关键，去观察的效果简单地说我能首先忘我，于是稳定情绪，然后学到知识，于是更有安全感，最后对事物越来越理解和尊重。"
     ,"妳翻看过的风和夜晚我也翻看过，在妳脚边晃动过的影子也跑到我这来晃动过，路过妳的那些路灯，也从我身边齐步走过，更不用说那些树，我都差不多认识。它们要去哪我不知道，我们要去哪，我也稀里糊涂。"
