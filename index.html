@@ -2862,112 +2862,115 @@ function playIdAudio(id) {
     }
 
     // --- 镭射气球类 (未开演场次：酒红深灰，向上飘) ---
-class Ball {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.startX = x; // 记录起始位置，用于辅助发散计算
+// --- 镭射气球类 (未开演场次：酒红深灰，向上飘) ---
+    class Ball {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            
+            // --- 核心修改1：缩放与倾斜初始化 ---
+            this.scale = 0;           // 初始大小为0
+            this.targetScale = 1;     // 目标大小
+            this.growSpeed = 0.06;    // 变大的速度
+            
+            // 随机倾斜角度：正负30度以内 (30 * Math.PI / 180 ≈ 0.523弧度)
+            this.tiltAngle = (Math.random() - 0.5) * 2 * (30 * Math.PI / 180);
 
-        const redTheme = { main: '#90140F', highlight: '#FF8080' };
-        const greyTheme = { main: '#374146', highlight: '#E0E6E9' };
-        
-        // 1. 修改比例：60% 红色, 40% 灰色
-        const theme = Math.random() < 0.6 ? redTheme : greyTheme;
-        
-        this.color = theme.main;
-        this.highlight = theme.highlight;
-        
-        this.radius = Math.random() * 10 + 20; 
-        
-        // 2. 发散轨迹逻辑：
-        // 让 vx 具有更大的随机跨度，并根据初始位置或随机值决定左右偏向
-        // 增加一个 scatterForce，使得气球在更新时持续向两边扩张
-        this.vx = (Math.random() - 0.5) * 2; 
-        this.scatterForce = (Math.random() - 0.5) * 0.02; 
-        
-        this.vy = Math.random() * -1.5 - 0.5; 
-        this.buoyancy = -0.02 - Math.random() * 0.03; 
-        
-        this.angle = Math.random() * Math.PI * 2;
-        this.swingSpeed = Math.random() * 0.03 + 0.01;
-        this.alpha = 1;
+            const redTheme = { main: '#90140F', highlight: '#FF8080' };
+            const greyTheme = { main: '#374146', highlight: '#E0E6E9' };
+            const theme = Math.random() < 0.6 ? redTheme : greyTheme;
+            
+            this.color = theme.main;
+            this.highlight = theme.highlight;
+            this.radius = Math.random() * 10 + 20; 
+            
+            // --- 核心修改2：沿着倾斜方向运动的初始速度 ---
+            // -Math.PI/2 是正上方，加上倾斜角即为目标指向
+            const moveAngle = -Math.PI / 2 + this.tiltAngle;
+            const speed = Math.random() * 2 + 1.5; // 初始冲力
+            this.vx = Math.cos(moveAngle) * speed;
+            this.vy = Math.sin(moveAngle) * speed;
+            
+            this.buoyancy = -0.015 - Math.random() * 0.02; // 持续向上的微弱浮力
+            this.angle = Math.random() * Math.PI * 2;
+            this.swingSpeed = Math.random() * 0.03 + 0.01;
+            this.alpha = 1;
+        }
+
+        update() {
+            // --- 核心修改3：处理生长逻辑 ---
+            if (this.scale < this.targetScale) {
+                this.scale += this.growSpeed;
+            }
+
+            // 基础位移：沿初始斜率飞行 + 随时间增加的浮力
+            this.vy += this.buoyancy; 
+            this.x += this.vx + Math.sin(this.angle) * 1.0; // 这里的sin产生左右晃动感
+            this.y += this.vy;
+            
+            this.angle += this.swingSpeed;
+            this.alpha -= 0.003; // 消失速度
+        }
+
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.alpha;
+            
+            // --- 核心修改4：应用位置、旋转和缩放 ---
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.tiltAngle);        // 整体向指引方向倾斜
+            ctx.scale(this.scale, this.scale); // 应用从小变大的缩放
+
+            // 绘制倒水滴形状气球
+            const r = this.radius;
+            const topY = -r * 1.2;
+            const bottomY = r * 1.2;
+            const width = r * 1.1;
+
+            ctx.beginPath();
+            ctx.moveTo(0, bottomY);
+            ctx.bezierCurveTo(-width, bottomY * 0.5, -width, topY, 0, topY);
+            ctx.bezierCurveTo(width, topY, width, bottomY * 0.5, 0, bottomY);
+            ctx.closePath();
+
+            // 镭射高光渐变
+            const lx = -r * 0.3;
+            const ly = -r * 0.5;
+            const gradient = ctx.createRadialGradient(lx, ly, 0.5, 0, 0, r * 1.5);
+            
+            gradient.addColorStop(0, '#FFFFFF');           
+            gradient.addColorStop(0.03, '#FFFFFF');         
+            gradient.addColorStop(0.08, this.highlight);    
+            gradient.addColorStop(0.3, this.color);        
+            gradient.addColorStop(0.75, this.color);        
+            gradient.addColorStop(0.9, '#000000');          
+            gradient.addColorStop(1, '#A0B0B8');            
+            
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // 边缘淡描边
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+
+            // 底部气球嘴
+            ctx.save();
+            ctx.translate(0, bottomY);
+            // 嘴巴处随摆动稍微抖动
+            ctx.rotate(Math.sin(this.angle) * 0.1); 
+            ctx.beginPath();
+            ctx.moveTo(0, -2); 
+            ctx.lineTo(-5, 8);
+            ctx.lineTo(5, 8);
+            ctx.closePath();
+            ctx.fillStyle = this.color;
+            ctx.fill();
+            ctx.restore();
+            
+            ctx.restore();
+        }
     }
-
-    update() {
-        // 3. 强化发散效果：vx 随时间累加微小的向外推力
-        this.vx += this.scatterForce; 
-        
-        this.vy += this.buoyancy; 
-        this.x += this.vx + Math.sin(this.angle) * 1.2; // 摆动幅度稍微加大
-        this.y += this.vy;
-        
-        this.angle += this.swingSpeed;
-        this.alpha -= 0.003; 
-    }
-
-    draw() {
-        ctx.save();
-        ctx.globalAlpha = this.alpha;
-        ctx.translate(this.x, this.y);
-
-        // 倒水滴形状路径
-        const r = this.radius;
-        const topY = -r * 1.2;
-        const bottomY = r * 1.2;
-        const width = r * 1.1;
-
-        ctx.beginPath();
-        ctx.moveTo(0, bottomY);
-        ctx.bezierCurveTo(-width, bottomY * 0.5, -width, topY, 0, topY);
-        ctx.bezierCurveTo(width, topY, width, bottomY * 0.5, 0, bottomY);
-        ctx.closePath();
-
-        // 高光渐变
-        const lx = -r * 0.3;
-        const ly = -r * 0.5;
-        const gradient = ctx.createRadialGradient(lx, ly, 0.5, 0, 0, r * 1.5);
-        
-        gradient.addColorStop(0, '#FFFFFF');           
-        gradient.addColorStop(0.03, '#FFFFFF');         
-        gradient.addColorStop(0.08, this.highlight);    
-        gradient.addColorStop(0.3, this.color);        
-        gradient.addColorStop(0.75, this.color);        
-        gradient.addColorStop(0.9, '#000000');          
-        gradient.addColorStop(1, '#A0B0B8');            
-        
-        ctx.fillStyle = gradient;
-        ctx.fill();
-
-        // 边缘描边
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-
-        // 次级高光
-        const slx = -lx * 0.6;
-        const sly = -ly * 0.6;
-        const subGradient = ctx.createRadialGradient(slx, sly, 0, slx, sly, r * 0.4);
-        subGradient.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
-        subGradient.addColorStop(1, 'transparent');
-        ctx.fillStyle = subGradient;
-        ctx.fill();
-
-        // 底部气球嘴
-        ctx.save();
-        ctx.translate(0, bottomY);
-        ctx.rotate(Math.sin(this.angle) * 0.15); 
-        ctx.beginPath();
-        ctx.moveTo(0, -2); 
-        ctx.lineTo(-5, 8);
-        ctx.lineTo(5, 8);
-        ctx.closePath();
-        ctx.fillStyle = this.color;
-        ctx.fill();
-        ctx.restore();
-        
-        ctx.restore();
-    }
-}
 
     // --- 唯一的核心监听逻辑 ---
     window.addEventListener('click', function(e) {
