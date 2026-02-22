@@ -1322,7 +1322,7 @@ document.head.appendChild(style);
 
 <div id="changelog-btn" title="更新日志" style="
     position: fixed;
-    bottom: 120px; 
+    bottom: 170px; 
     left: 20px;
     width: 40px;
     height: 40px;
@@ -1366,6 +1366,8 @@ document.head.appendChild(style);
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
             <p><b></b><br>万分抱歉🙇🏻‍♀️由于1月31日更换了一次托管服务器，在这之前的打卡和随记可能会丢失。更换后网站已进入稳定运行，日后增加场次和功能不会影响打卡记录和随记的保存，请放心使用</p>
+            <p><b>2026.2.22</b><br>• 新增【特别鸣谢】</p>
+            <p><b>2026.2.22</b><br>• 新增【果实】样式（萌萌哒哟）</p>
             <p><b>2026.2.22</b><br>• 新增【痛楼打卡】功能，【小粒之家】成就</p>
             <p><b>2026.2.21</b><br>• 新增BGM：《青原》</p>
             <p><b>2026.2.15</b><br>•【果实】语录更新（新增了一些以往专辑好玩的简介）</p>
@@ -1394,7 +1396,7 @@ document.head.appendChild(style);
 
 <div id="info-btn" title="使用说明" style="
     position: fixed;
-    bottom: 70px; /* 在回到顶部按钮 (20px + 40px + 10px) 的上方 */
+    bottom: 120px; /* 在回到顶部按钮 (20px + 40px + 10px) 的上方 */
     left: 20px;
     width: 40px;
     height: 40px;
@@ -1458,7 +1460,7 @@ document.head.appendChild(style);
 
         二.后续有新场次会在演出结束一到两天内在part2更新以供打卡，如果看不到刷新一下页面即可。（网站会实时在本地浏览器缓存中保存打卡记录，除手动清除浏览器缓存外无需担心刷新后数据丢失，请放心使用~）<br><br>
 
-        三.网站的完善离不开大家的建议和纠错。所有图片均为人工收集，信息、文本均为键盘输入，如果有差错或想要的功能、设计，烦请添加作者微信： msjlwl8wrcwmsj 提出，（也欢迎和我扩列啊啊啊想和粒丝们一起玩TT）谢谢大家！<br><br>
+        三.网站的完善离不开大家的建议和纠错。所有图片均为人工收集，信息、文本均为键盘输入，如有差错或想要的功能、设计，或使用中遇到问题，烦请添加作者微信： msjlwl8wrcwmsj 提出，（也欢迎和我扩列啊啊啊想和粒丝们一起玩TT）谢谢大家！<br><br>
 
         如果觉得好用欢迎分享给身边的粒丝~<br>
         感谢妳的使用！粒粒让我们相遇，祝大家玩得开心，有缘现场见^-^
@@ -1479,7 +1481,62 @@ document.head.appendChild(style);
     z-index: 9999;
     display: none;
 "></div>
+<div id="thanks-btn" title="特别鸣谢" style="
+    position: fixed;
+    bottom: 70px; /* 位置放在最底部，你可以根据需要调整 bottom 值 */
+    left: 20px;   /* 放在“回到顶部”按钮的右侧，20px + 40px + 10px */
+    width: 40px;
+    height: 40px;
+    background: var(--paper-white);
+    border: 1px solid rgba(140, 34, 34, 0.2);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 9999;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+">
+    <span style="font-size: 18px; color: var(--tag-special);">💐</span>
+</div>
 
+<div id="thanks-modal" style="
+    display: none; 
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 10001;
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+">
+    <div style="
+        background: #fdfaf5;
+        width: 80%;
+        max-width: 400px;
+        max-height: 60vh;
+        padding: 25px;
+        border-radius: 15px;
+        overflow-y: auto; 
+        border: 2px solid var(--tag-special);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        font-family: 'Noto Serif SC', serif;
+    ">
+        <h3 style="color: var(--tag-special); margin-top: 0; text-align: center;">🌹 特别鸣谢 🌹</h3>
+        <div style="color: #555; line-height: 1.8; font-size: 14px; text-align: center;">
+            <p>歌单收集：耕烟墅Kiron</p>
+            <p>感谢每位使用与纠错的朋友</p>
+            <p>谢谢陈粒</p>
+            
+        </div>
+        <button id="close-thanks" style="
+            margin-top: 20px; width: 100%; padding: 10px;
+            background: var(--tag-special); color: white;
+            border: none; border-radius: 8px; cursor: pointer;
+        ">关闭</button>
+    </div>
+</div>
 <div id="back-to-top" title="回到顶部" style="
     position: fixed;
     bottom: 20px;
@@ -1597,7 +1654,7 @@ window.saveBoxImage = function(elementId, fileName) {
         "0101": "新年~新的日光，新的希望。 \n愿你天真，充满想象。 \n勇敢出发，保持形状。 \n谢谢武汉！给我们新的力量~" 
     };
 // --- 修正后的顺序 ---
-const eggIcons = Array.from({length: 8}, (_, i) => `images/果实 (${i+1}).png`); // 1. 先定义路径
+const eggIcons = Array.from({length: 23}, (_, i) => `images/果实 (${i+1}).png`); // 1. 先定义路径
 
 const preloadedImages = []; // 2. 再进行预加载
 eggIcons.forEach(src => {
@@ -2403,61 +2460,76 @@ function render() {
     });
 
     // 彩蛋果实逻辑
-    for(let i=0; i<12; i++) {
-        const egg = document.createElement('img');
-        egg.className = 'shiguan-egg';
-        egg.src = eggIcons[i%8];
-        egg.style.left = (Math.random() * 75+ 15) + "%"; 
-        egg.style.top = (Math.random() * 90) + "%";
-        egg.style.animationDelay = (Math.random() * 2) + "s";
+    // 1. 准备原始的 23 张图片路径
+const allEggIcons = Array.from({length: 23}, (_, i) => `images/果实 (${i+1}).png`);
 
-        // 用于记录已抽过的索引
-        if (typeof usedQuoteIndices === 'undefined') window.usedQuoteIndices = []; 
+// 2. 随机打乱并截取前 12 张（保证这 12 张各不相同）
+const selectedIcons = [...allEggIcons]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 12);
 
-        egg.onclick = function(e) {
-            let ripple = document.createElement('div');
-            ripple.style.cssText = `position:fixed; left:${e.clientX-25}px; top:${e.clientY-25}px; width:50px; height:50px; border:2px solid var(--tag-special); border-radius:50%; animation: rippleOut 0.5s ease-out; pointer-events:none; z-index:9999;`;
-            document.body.appendChild(ripple);
-            setTimeout(() => ripple.remove(), 500);
-            e.stopPropagation();
-            this.remove(); 
+// 3. 循环 12 次，生成 12 个不重复的果实
+for(let i = 0; i < 12; i++) {
+    const egg = document.createElement('img');
+    egg.className = 'shiguan-egg';
+    
+    // 直接按顺序取 selectedIcons[i]，因为上面已经打乱过了
+    egg.src = selectedIcons[i]; 
+    
+    egg.style.left = (Math.random() * 75 + 15) + "%"; 
+    egg.style.top = (Math.random() * 90) + "%";
+    egg.style.animationDelay = (Math.random() * 2) + "s";
 
-            let availableIndices = [];
-            for (let i = 0; i < eggQuotes.length; i++) {
-                if (!usedQuoteIndices.includes(i)) availableIndices.push(i);
-            }
-            if (availableIndices.length === 0) {
-                usedQuoteIndices = [];
-                for (let i = 0; i < eggQuotes.length; i++) availableIndices.push(i);
-            }
-            const chosenIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
-            usedQuoteIndices.push(chosenIndex);
-            const randomQuote = eggQuotes[chosenIndex];
+    if (typeof usedQuoteIndices === 'undefined') window.usedQuoteIndices = []; 
 
-            const modalContent = document.querySelector('.modal-content');
-            modalContent.id = "capture-egg-box"; 
-            modalContent.style.setProperty('--seal-emoji', '"🍒"');
-            modalContent.querySelector('div:first-child').innerHTML = "🍎 捡到一粒果实 🍎";
-            document.getElementById('modalText').innerHTML = `<div style="font-style:italic; text-align:left;">${randomQuote}</div>`;
-            
-            const oldBtn = modalContent.querySelector('.save-trigger');
-            if (oldBtn) oldBtn.remove();
+    egg.onclick = function(e) {
+        // --- 视觉特效 ---
+        let ripple = document.createElement('div');
+        ripple.style.cssText = `position:fixed; left:${e.clientX-25}px; top:${e.clientY-25}px; width:50px; height:50px; border:2px solid var(--tag-special); border-radius:50%; animation: rippleOut 0.5s ease-out; pointer-events:none; z-index:9999;`;
+        document.body.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 500);
+        
+        e.stopPropagation();
+        this.remove(); 
 
-            const saveBtn = document.createElement('div');
-            saveBtn.className = 'save-trigger';
-            saveBtn.style.cssText = "margin: 20px auto 0; font-size: 13px; color: #8C2222; text-align: center; cursor: pointer; font-weight: bold; background: rgba(140,34,34,0.05); padding: 5px 15px; border-radius: 15px; width: fit-content; display: block;";
-            saveBtn.innerHTML = "📸 保存果实";
-            
-            saveBtn.onclick = function(ev) {
-                ev.preventDefault();
-                ev.stopPropagation();
-                saveBoxImage('capture-egg-box', '一粒·果实彩蛋');
-            };
-            modalContent.appendChild(saveBtn);
-            showModal();
+        // --- 文案随机逻辑 ---
+        let availableIndices = [];
+        for (let j = 0; j < eggQuotes.length; j++) {
+            if (!usedQuoteIndices.includes(j)) availableIndices.push(j);
+        }
+        if (availableIndices.length === 0) {
+            usedQuoteIndices = [];
+            for (let j = 0; j < eggQuotes.length; j++) availableIndices.push(j);
+        }
+        const chosenIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+        usedQuoteIndices.push(chosenIndex);
+        const randomQuote = eggQuotes[chosenIndex];
+
+        // --- 弹窗逻辑 ---
+        const modalContent = document.querySelector('.modal-content');
+        modalContent.id = "capture-egg-box"; 
+        modalContent.style.setProperty('--seal-emoji', '"🍒"');
+        modalContent.querySelector('div:first-child').innerHTML = "🍎 捡到一粒果实 🍎";
+        document.getElementById('modalText').innerHTML = `<div style="font-style:italic; text-align:left;">${randomQuote}</div>`;
+        
+        const oldBtn = modalContent.querySelector('.save-trigger');
+        if (oldBtn) oldBtn.remove();
+
+        const saveBtn = document.createElement('div');
+        saveBtn.className = 'save-trigger';
+        saveBtn.style.cssText = "margin: 20px auto 0; font-size: 13px; color: #8C2222; text-align: center; cursor: pointer; font-weight: bold; background: rgba(140,34,34,0.05); padding: 5px 15px; border-radius: 15px; width: fit-content; display: block;";
+        saveBtn.innerHTML = "📸 保存果实";
+        
+        saveBtn.onclick = function(ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            saveBoxImage('capture-egg-box', '一粒·果实彩蛋');
         };
-        grid.appendChild(egg);
-    }
+        modalContent.appendChild(saveBtn);
+        showModal();
+    };
+    grid.appendChild(egg);
+}
 }
 
 function typewriter(element, text, speed = 100) {
@@ -2829,6 +2901,23 @@ function playIdAudio(id) {
     };
 }
 
+// 特别鸣谢弹窗控制
+const thanksBtn = document.getElementById('thanks-btn');
+const thanksModal = document.getElementById('thanks-modal');
+const closeThanks = document.getElementById('close-thanks');
+
+thanksBtn.onclick = function() {
+    thanksModal.style.display = 'flex';
+};
+
+closeThanks.onclick = function() {
+    thanksModal.style.display = 'none';
+};
+
+// 点击遮罩关闭
+thanksModal.onclick = function(e) {
+    if (e.target === thanksModal) thanksModal.style.display = 'none';
+};
 
 </script>
 
