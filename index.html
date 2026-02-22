@@ -1366,6 +1366,7 @@ document.head.appendChild(style);
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
             <p><b></b><br>万分抱歉🙇🏻‍♀️由于1月31日更换了一次托管服务器，在这之前的打卡和随记可能会丢失。更换后网站已进入稳定运行，日后增加场次和功能不会影响打卡记录和随记的保存，请放心使用</p>
+            <p><b>2026.2.22</b><br>• 新增【痛楼打卡】功能，【小粒之家】成就</p>
             <p><b>2026.2.21</b><br>• 新增BGM：《青原》</p>
             <p><b>2026.2.15</b><br>•【果实】语录更新（新增了一些以往专辑好玩的简介）</p>
             <p><b>2026.2.14</b><br>•【果实】语录更新</p>
@@ -1706,7 +1707,7 @@ function calcTotalKM(list) {
     ,"我不想知道妳的年龄和身高，我只想给妳听这首歌，也很高兴从妳口中得知妳的城市在下雨。其他的不要，尤其不想知道妳在受罪。","没有在阴天出发，几个景都是在艳阳天拍的。沙子烫脚，阳光晃眼。其实根本不潇洒，但我们还是要出发。"
     ,"如何形容我想要的人生？有时用一个字形容会嫌多，有时用一时废话反而嫌少，但有聊无聊，别含糊，表态就好。","啊 为什么我们不克制一下我们克制欲望的欲望","我有多少顶帽子 我就有多不爱洗头"
     ,"大自然慷慨解囊，露出一片光线：黄的、蓝的、星星点点，云层再往下就是漆黑了，大自然囊中也羞涩。","并没有什么事亟待解决，眼前只有脚粒.","我的水杯不动，茶几也静止。一切静悄悄，但房间和我都在起舞。"
-    ,"有巨大的口含住我的脑袋 以为是智慧之口 于是以憋气致敬 越憋气 越难明白含住我脑袋的到底是不是智慧","以前拒绝很多 不是因为个性太强 而是因为能力太弱","四海好大 你还好吗","四海好大 欢迎回家"
+    ,"有巨大的口含住我的脑袋 以为是智慧之口 于是以憋气致敬 越憋气 越难明白含住我脑袋的到底是不是智慧","以前拒绝很多 不是因为个性太强 而是因为能力太弱","四海好大 你还好吗"
     ,"千言万语好","🐥🎗️🫘🌸🍜"
     ,"世界虽然已经很挤了。但还是有海量的缝隙语言没有填满，如果无限地趋向精确的话，那就会无限地趋向失语和沉默。所以妳现在看到的这些是我暂时放弃了精确，再企图放松而说出的话，冒昧了。"
     ,"于是到了近两年，我才突然意识到观察力是我们度过美好时光的一大关键，去观察的效果简单地说我能首先忘我，于是稳定情绪，然后学到知识，于是更有安全感，最后对事物越来越理解和尊重。"
@@ -1965,6 +1966,11 @@ function renderMyGrain(container) {
     const mySeasons = new Set(myTours.map(t => t.season));
     const isFourSeasonsComplete = mySeasons.has('spring') && mySeasons.has('summer') && mySeasons.has('autumn') && mySeasons.has('winter');
 
+    // 检查是否有任意一场痛楼打卡已勾选
+const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id => 
+    localStorage.getItem('tonglou_' + id) === 'true'
+);
+
     // --- 【计时器逻辑计算】 ---
     const pastChecked = sortedTours.filter(t => t.status !== 'unplayed' && new Date(t.time.replace(/\./g, '/')) <= now);
     const lastShow = pastChecked.length > 0 ? pastChecked[pastChecked.length - 1] : null;
@@ -2178,6 +2184,9 @@ function renderMyGrain(container) {
             <div class="medal-item ${myIds.includes('0000')  ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【收集任意款彩带】</b><br>${(myIds.includes('0000')) ? '“飞满天 如风 如烟”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">🎗️</div><div class="name">簌簌一梦</div>
             </div>
+            <div class="medal-item ${hasAnyTonglou ? 'unlocked' : ''}"  onclick="openGrainAchievement('<b>达成条件：【打卡任意痛楼】</b><br>${hasAnyTonglou ? '“四海好大 欢迎回家”' : '该成就未解锁'}')">
+                <div class="icon-wrapper">🏠</div><div class="name">小粒之家</div>
+            </div>
             <div class="medal-item ${myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101') ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【看一次独唱场】</b><br>${(myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')) ? '“我只属于妳在这短暂的生命”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">🎫</div><div class="name">绝对占有</div>
             </div>
@@ -2331,6 +2340,7 @@ function render() {
     });
 
     // 渲染卡片
+    // 渲染卡片
     filteredData.forEach(item => {
         const card = document.createElement('div');
         card.className = `tour-card ${item.status === 'unplayed' ? 'unplayed' : ''}`;
@@ -2338,6 +2348,22 @@ function render() {
         // 渲染前先去“保险柜”查一下这个 ID 之前有没有被勾选过
         const isChecked = localStorage.getItem('checked_' + item.id) === 'true';
         
+        // === 新增：痛楼打卡专属逻辑 ===
+        const tonglouIds = ['0726', '0727', '0920', '0921', '1101']; // 需要显示痛楼打卡的场次ID
+        const hasTonglou = tonglouIds.includes(item.id);
+        const isTonglouChecked = localStorage.getItem('tonglou_' + item.id) === 'true';
+        
+        // 如果属于痛楼场次，生成对应的 checkbox，并加一点右边距与“我在现场”隔开
+        const tonglouHTML = hasTonglou ? `
+             <label style="cursor: pointer; margin-right: 15px;">
+                <input type="checkbox" 
+                ${isTonglouChecked ? 'checked' : ''} 
+                onchange="localStorage.setItem('tonglou_${item.id}', this.checked)"> 
+                痛楼打卡
+            </label>
+        ` : '';
+        // ============================
+
         const badgeHTML = item.isSpecial ? `<div class="special-badge">${item.isSpecial}</div>` : '';
         const unplayedHTML = item.status === 'unplayed' ? `<span class="unplayed-label">(已官宣)</span>` : '';
         
@@ -2362,6 +2388,7 @@ function render() {
                 </div>` : '<div style="height:20px"></div>'}
             <div class="special-songs-box">${tags}</div>
             <div class="check-area">
+                 ${tonglouHTML}
                  <label style="cursor: pointer;">
                     <input type="checkbox" 
                     data-status="${item.status}"
