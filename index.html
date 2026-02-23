@@ -1284,6 +1284,40 @@ document.head.appendChild(style);
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
+/* 兔子容器 */
+.rabbit-container {
+    position: fixed;
+    bottom: 20%;
+    left: -50px;
+    font-size: 50px;
+    z-index: 9999;
+    cursor: pointer;
+    user-select: none;
+    pointer-events: auto;
+    /* 默认左右翻转，让它面向右边跑 */
+    transform: scaleX(-1); 
+    transition: left 8s linear; /* 默认慢速 */
+}
+
+/* 蹦蹦跳跳的垂直动画 */
+.rabbit-jump {
+    animation: bunnyJump 0.5s infinite alternate ease-in-out;
+    display: inline-block;
+}
+
+@keyframes bunnyJump {
+    from { transform: translateY(0); }
+    to { transform: translateY(-20px); }
+}
+
+/* 逃跑状态：烟雾效果 */
+.smoke {
+    position: absolute;
+    right: -20px;
+    font-size: 20px;
+    opacity: 0.8;
+}
+
 </style>
 </head>
 <body>
@@ -2445,13 +2479,13 @@ function render() {
         
         // 如果属于痛楼场次，生成对应的 checkbox，并加一点右边距与“我在现场”隔开
         const tonglouHTML = hasTonglou ? `
-             <label style="cursor: pointer; margin-right: 15px;">
-                <input type="checkbox" 
-                ${isTonglouChecked ? 'checked' : ''} 
-                onchange="localStorage.setItem('tonglou_${item.id}', this.checked)"> 
-                痛楼打卡
-            </label>
-        ` : '';
+    <label style="cursor: pointer; margin-right: 15px;">
+        <input type="checkbox" 
+        ${isTonglouChecked ? 'checked' : ''} 
+        onchange="saveTonglouStatus('${item.id}', this.checked); if(this.checked) spawnRabbit();"> 
+        痛楼打卡
+    </label>
+` : '';
         // ============================
 
         const badgeHTML = item.isSpecial ? `<div class="special-badge">${item.isSpecial}</div>` : '';
@@ -2985,6 +3019,50 @@ closeThanks.onclick = function() {
 thanksModal.onclick = function(e) {
     if (e.target === thanksModal) thanksModal.style.display = 'none';
 };
+
+function spawnRabbit() {
+    const rabbit = document.createElement('div');
+    rabbit.className = 'rabbit-container';
+    // 🐇 兔子 + 蹦跳包裹层
+    rabbit.innerHTML = `<span class="rabbit-jump">🐰</span>`;
+    document.body.appendChild(rabbit);
+
+    // 1. 开始正常的漫步 (从左到右)
+    setTimeout(() => {
+        rabbit.style.left = '110vw';
+    }, 50);
+
+    let isEscaping = false;
+
+    // 2. 点击兔子加速逃跑
+    rabbit.onclick = () => {
+        if (isEscaping) return; // 防止重复点击
+        isEscaping = true;
+
+        // 改变速度：通过修改 transition 持续时间
+        rabbit.style.transition = 'left 0.8s ease-in'; 
+        rabbit.style.left = '120vw';
+
+        // 后面出现一溜烟 💨
+        const smoke = document.createElement('span');
+        smoke.className = 'smoke';
+        smoke.innerHTML = '💨💨💨';
+        rabbit.appendChild(smoke);
+
+        // 逃跑后移除
+        setTimeout(() => rabbit.remove(), 800);
+    };
+
+    // 3. 正常跑完 8s 后移除 (如果没有被点击)
+    setTimeout(() => {
+        if (rabbit.parentNode) rabbit.remove();
+    }, 4000);
+}
+
+// 封装原有的保存逻辑
+function saveTonglouStatus(id, checked) {
+    localStorage.setItem('tonglou_' + id, checked);
+}
 
 </script>
 
