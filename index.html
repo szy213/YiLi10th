@@ -439,7 +439,7 @@ body {
 }
         .close-btn { background: var(--tag-guest); color: #fff; border: none; padding: 12px; cursor: pointer; width: 100%; }
         
-        .music-wrapper { position: fixed; bottom: 30px; right: 30px; display: flex; align-items: center; gap: 10px; z-index: 1000; }
+        .music-wrapper { position: fixed; bottom: 85px; right: 30px; display: flex; align-items: center; gap: 10px; z-index: 1000; }
         #bgmSelector { background: var(--paper-white); backdrop-filter: blur(10px); border: 1px solid var(--tag-guest); padding: 5px; border-radius: 5px; font-family: inherit; font-size: 12px; cursor: pointer; opacity: 0; transition: opacity 0.3s; }
         .music-wrapper:hover #bgmSelector { opacity: 1; }
         #musicControl { width: 45px; height: 45px; background: var(--paper-white); border: 1px solid var(--tag-guest); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -1320,9 +1320,31 @@ document.head.appendChild(style);
     </div>
 </div>
 
+<div id="back-to-top" title="回到顶部" style="
+    position: fixed;
+    bottom: 30px; /* 放在屏幕最底部适当的留白处 */
+    right: 30px;  /* 和音乐按钮的 right: 30px 完美对齐 */
+    width: 45px;  /* 和音乐按钮尺寸一致 */
+    height: 45px; /* 和音乐按钮尺寸一致 */
+    background: var(--paper-white);
+    border: 1px solid rgba(140, 34, 34, 0.2);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 9999;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    visibility: hidden;
+    opacity: 0;
+">
+    <span style="font-size: 20px; color: var(--tag-special);">🎈</span>
+</div>
+
 <div id="changelog-btn" title="更新日志" style="
     position: fixed;
-    bottom: 170px; 
+    bottom: 120px; 
     left: 20px;
     width: 40px;
     height: 40px;
@@ -1396,7 +1418,7 @@ document.head.appendChild(style);
 
 <div id="info-btn" title="使用说明" style="
     position: fixed;
-    bottom: 120px; /* 在回到顶部按钮 (20px + 40px + 10px) 的上方 */
+    bottom: 70px; /* 在回到顶部按钮 (20px + 40px + 10px) 的上方 */
     left: 20px;
     width: 40px;
     height: 40px;
@@ -1483,7 +1505,7 @@ document.head.appendChild(style);
 "></div>
 <div id="thanks-btn" title="特别鸣谢" style="
     position: fixed;
-    bottom: 70px; /* 位置放在最底部，你可以根据需要调整 bottom 值 */
+    bottom: 20px; /* 位置放在最底部，你可以根据需要调整 bottom 值 */
     left: 20px;   /* 放在“回到顶部”按钮的右侧，20px + 40px + 10px */
     width: 40px;
     height: 40px;
@@ -1537,27 +1559,7 @@ document.head.appendChild(style);
         ">关闭</button>
     </div>
 </div>
-<div id="back-to-top" title="回到顶部" style="
-    position: fixed;
-    bottom: 20px;
-    left: 20px; /* 与右侧音乐按钮对称 */
-    width: 40px;
-    height: 40px;
-    background: var(--paper-white);
-    border: 1px solid rgba(140, 34, 34, 0.2);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 9999;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    visibility: hidden; /* 初始隐藏，滚动后显示 */
-    opacity: 0;
-">
-    <span style="font-size: 20px; color: var(--tag-special);">🎈</span>
-</div>
+
 
 <audio id="bgMusic" loop><source id="musicSource" src="bgm.mp3" type="audio/mpeg"></audio>
 
