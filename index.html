@@ -1296,7 +1296,7 @@ document.head.appendChild(style);
     pointer-events: auto;
     /* 默认左右翻转，让它面向右边跑 */
      
-    transition: left 4s linear; /* 默认慢速 */
+    transition: left 8s linear; /* 默认慢速 */
 }
 
 /* 蹦蹦跳跳的垂直动画 */
@@ -3061,7 +3061,7 @@ function spawnRabbit() {
     
     // 初始 HTML：气泡 + 兔子
     rabbit.innerHTML = `
-        <div class="rabbit-speech-bubble" id="rabbitBubble">兔子凶猛 请勿抚摸！</div>
+        <div class="rabbit-speech-bubble" id="rabbitBubble">小兔凶猛 请勿抚摸！</div>
         <span class="rabbit-jump" style="font-size: 60px;">🐰</span>
     `;
     document.body.appendChild(rabbit);
@@ -3104,7 +3104,7 @@ function spawnRabbit() {
     // 8秒后自动清理（防止兔子卡在屏幕外占用资源）
     setTimeout(() => {
         if (rabbit.parentNode) rabbit.remove();
-    }, 4000);
+    }, 8000);
 }
 
 // 封装原有的保存逻辑
