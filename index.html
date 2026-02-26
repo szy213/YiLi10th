@@ -1938,7 +1938,7 @@ function closeModal() {
         if (!item) return;
         const pics = type === 'guest' ? item.guestPics : item.personalPics;
         if (pics && pics.length > 0) {
-            container.innerHTML = pics.map(src => `<img src="${src}" class="slider-img" loading="lazy" decoding="async">`).join('');
+            container.innerHTML = pics.map(src => `<img src="${src}" class="slider-img" loading="lazy">`).join('');
         }
     }
 
@@ -2545,7 +2545,7 @@ function render() {
             </div>
             ${item.personalPics.length > 0 ? `
                 <div class="image-slider" id="slider-${item.id}">
-                    ${item.personalPics.map(src => `<img src="${src}" class="slider-img" loading="lazy" decoding="async">`).join('')}
+                    ${item.personalPics.map(src => `<img src="${src}" class="slider-img" loading="lazy" >`).join('')}
                 </div>` : '<div style="height:20px"></div>'}
             <div class="special-songs-box">${tags}</div>
             <div class="check-area">
