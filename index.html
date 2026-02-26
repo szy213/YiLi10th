@@ -1733,7 +1733,7 @@ window.saveBoxImage = function(elementId, fileName) {
         "0101": "新年~新的日光，新的希望。 \n愿你天真，充满想象。 \n勇敢出发，保持形状。 \n谢谢武汉！给我们新的力量~" 
     };
 // --- 修正后的顺序 ---
-const eggIcons = Array.from({length: 23}, (_, i) => `images/果实 (${i+1}).png`); // 1. 先定义路径
+const eggIcons = Array.from({length: 34}, (_, i) => `images/果实 (${i+1}).png`); // 1. 先定义路径
 
 const preloadedImages = []; // 2. 再进行预加载
 eggIcons.forEach(src => {
@@ -2563,7 +2563,7 @@ function render() {
 
     // 彩蛋果实逻辑
     // 1. 准备原始的 23 张图片路径
-const allEggIcons = Array.from({length: 23}, (_, i) => `images/果实 (${i+1}).png`);
+const allEggIcons = Array.from({length: 34}, (_, i) => `images/果实 (${i+1}).png`);
 
 // 2. 随机打乱并截取前 12 张（保证这 12 张各不相同）
 const selectedIcons = [...allEggIcons]
