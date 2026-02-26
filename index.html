@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>一粒·巡演全纪录</title>
@@ -1638,7 +1638,7 @@ document.head.appendChild(style);
 </div>
 
 
-<audio id="bgMusic" loop><source id="musicSource" src="bgm.mp3" type="audio/mpeg"></audio>
+<audio id="bgMusic" loop preload="none"><source id="musicSource" src="bgm.mp3" type="audio/mpeg"></audio>
 
 
 
@@ -1735,11 +1735,13 @@ window.saveBoxImage = function(elementId, fileName) {
 // --- 修正后的顺序 ---
 const eggIcons = Array.from({length: 34}, (_, i) => `images/果实 (${i+1}).webp`); // 1. 先定义路径
 
-const preloadedImages = []; // 2. 再进行预加载
-eggIcons.forEach(src => {
-    const img = new Image();
-    img.src = src;
-    preloadedImages.push(img);
+// 替换原来的预加载逻辑
+window.addEventListener('load', () => {
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => {
+            eggIcons.forEach(src => new Image().src = src);
+        });
+    }
 });
 
     const tourData = [
@@ -1936,7 +1938,7 @@ function closeModal() {
         if (!item) return;
         const pics = type === 'guest' ? item.guestPics : item.personalPics;
         if (pics && pics.length > 0) {
-            container.innerHTML = pics.map(src => `<img src="${src}" class="slider-img" loading="lazy">`).join('');
+            container.innerHTML = pics.map(src => `<img src="${src}" class="slider-img" loading="lazy" decoding="async">`).join('');
         }
     }
 
@@ -2543,7 +2545,7 @@ function render() {
             </div>
             ${item.personalPics.length > 0 ? `
                 <div class="image-slider" id="slider-${item.id}">
-                    ${item.personalPics.map(src => `<img src="${src}" class="slider-img" loading="lazy">`).join('')}
+                    ${item.personalPics.map(src => `<img src="${src}" class="slider-img" loading="lazy" decoding="async">`).join('')}
                 </div>` : '<div style="height:20px"></div>'}
             <div class="special-songs-box">${tags}</div>
             <div class="check-area">
