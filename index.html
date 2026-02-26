@@ -1661,10 +1661,10 @@ window.addEventListener('load', function() {
     if (loader) {
         // 延迟 0.5 秒消失，避免闪现，增加丝滑感
         setTimeout(() => {
-            loader.style.transition = 'opacity 1s ease';
+            loader.style.transition = 'opacity 3s ease';
             loader.style.opacity = '0';
-            setTimeout(() => loader.remove(), 500); // 彻底移除节点
-        }, 500);
+            setTimeout(() => loader.remove(), 3000); // 彻底移除节点
+        }, 3000);
     }
 });
 
