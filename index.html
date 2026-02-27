@@ -1998,11 +1998,17 @@ function closeModal() {
 
     // 2. 背景切换核心逻辑
     if (part === 3 || part === 4) {
-        document.body.style.backgroundImage = "url('images/my_grain_bg.webp')";
-        document.body.style.backgroundSize = "cover"; 
-        document.body.style.backgroundRepeat = "no-repeat";
-        document.body.style.backgroundAttachment = "fixed";
-    } else {
+    document.body.style.backgroundImage = "url('images/my_grain_bg.webp')";
+    // 1. 修改为 repeat (水平垂直都重复) 或 repeat-y (仅向下重复)
+    document.body.style.backgroundRepeat = "repeat"; 
+    
+    // 2. 修改 backgroundSize
+    // 如果希望保持原图比例重复，建议将 'cover' 改为 'contain' 或 'auto'
+    // 因为 'cover' 会尝试拉伸图片填满屏幕，可能导致你看不到重复效果
+    document.body.style.backgroundSize = "100% auto"; 
+
+    document.body.style.backgroundAttachment = "fixed";
+} else {
         document.body.style.backgroundImage = "linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 25%, transparent 40%), url('images/bg.jpg')";
         document.body.style.backgroundSize = "100% auto";
         document.body.style.backgroundAttachment = "scroll";
@@ -3500,10 +3506,11 @@ function saveTonglouStatus(id, checked) {
             const target = e.target;
             // 过滤条件：是图片 + 路径含 images/ + 必须是 .webp 后缀
             if (target.tagName === 'IMG' && 
-                target.src.includes('images/') && 
-                target.src.toLowerCase().endsWith('.webp')) {
-                openLightbox(target.src);
-            }
+    target.classList.contains('slider-img') && // 关键：只允许巡演轮播图
+    target.src.includes('images/') && 
+    target.src.toLowerCase().endsWith('.webp')) {
+    openLightbox(target.src);
+}
         }
     }, {passive: true, capture: true});
 
@@ -3514,14 +3521,18 @@ function saveTonglouStatus(id, checked) {
 window.addEventListener('click', function(e) { 
     const target = e.target; 
     
+    // 修改后：
+window.addEventListener('click', function(e) { 
+    const target = e.target; 
+    
     if (target.tagName === 'IMG' && 
+        target.classList.contains('slider-img') && // 关键：只允许巡演轮播图
         target.src.includes('images/') && 
-        target.src.toLowerCase().endsWith('.webp') && 
-        !target.classList.contains('shiguan-egg') && // 排除带有 shiguan-egg 类的图片
-        !target.src.includes('load.webp')           // 新增：排除文件名包含 load.webp 的图片
-    ) { 
-        openLightbox(target.src); 
-    } 
+        target.src.toLowerCase().endsWith('.webp')) {
+        openLightbox(target.src);
+    }
+    // ... 其他逻辑如点击遮罩层关闭等
+});
 }, {capture: true});
 })();
 </script>
