@@ -3515,25 +3515,16 @@ function saveTonglouStatus(id, checked) {
     }, {passive: true, capture: true});
 
     // 电脑端点击保持不变，但也增加 webp 过滤
-    window.addEventListener('click', function(e) {
+ window.addEventListener('click', function(e) {
         const target = e.target;
-        // 修改为 👇
-window.addEventListener('click', function(e) { 
-    const target = e.target; 
-    
-    // 修改后：
-window.addEventListener('click', function(e) { 
-    const target = e.target; 
-    
-    if (target.tagName === 'IMG' && 
-        target.classList.contains('slider-img') && // 关键：只允许巡演轮播图
-        target.src.includes('images/') && 
-        target.src.toLowerCase().endsWith('.webp')) {
-        openLightbox(target.src);
-    }
-    // ... 其他逻辑如点击遮罩层关闭等
-});
-}, {capture: true});
+        if (target.tagName === 'IMG' && 
+            target.src.includes('images/') && 
+            target.src.toLowerCase().endsWith('.webp')&& 
+        !target.classList.contains('shiguan-egg') && // 排除带有 shiguan-egg 类的图片
+        !target.src.includes('load.webp')  ) {
+            openLightbox(target.src);
+        }
+    }, {capture: true});
 })();
 </script>
 
