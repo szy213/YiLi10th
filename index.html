@@ -453,9 +453,54 @@ body {
             content: ''; position: absolute; bottom: -8px; left: 0; border-width: 4px 14px; border-style: solid; border-color: var(--seal-red) var(--seal-red) transparent var(--seal-red);
         }
 
-        .part-selector { text-align: center; margin-bottom: 40px; display: flex; justify-content: center; gap: 30px; }
-        .part-btn { font-family: "STSong", "SimSun", serif; font-size: 2.5vw; white-space: nowrap;background: none; border: none; border-bottom: 2px solid transparent; color: #666; cursor: pointer; padding: 5px 15px; transition: all 0.3s; letter-spacing: 4px; }
-        .part-btn.active { color: var(--tag-guest); border-bottom: 2px solid var(--tag-guest); font-weight: bold; }
+        .part-selector {
+    display: flex;
+    justify-content: center; /* 居中排列 */
+    align-items: center;
+    gap: 10px;               /* 手机端需要缩小间距，否则放不下 */
+    margin-bottom: 40px;
+    width: 100%;             /* 确保占满全宽 */
+    flex-wrap: nowrap;       /* 强制不换行 */
+}
+
+.part-btn {
+    font-family: "STSong", "SimSun", serif;
+    /* 使用 clamp 让字号在手机上自动变小，在电脑上保持大字号 */
+    /* 12px 是最小值，2.5vw 是首选值，24px 是最大值 */
+    font-size: clamp(12px, 2.5vw, 24px); 
+    
+    white-space: nowrap;    /* 文字本身不换行 */
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: #666;
+    cursor: pointer;
+    padding: 5px 2px;       /* 缩小左右内边距 */
+    transition: all 0.3s;
+    letter-spacing: 1px;    /* 缩小字间距以节省空间 */
+    
+    /* 关键属性：允许按钮在空间不足时自动收缩 */
+    flex: 1 1 auto;         
+    text-align: center;
+    min-width: 0;           /* 允许 flex 项目压缩到小于内容宽度 */
+}
+
+.part-btn.active {
+    color: var(--tag-guest);
+    border-bottom: 2px solid var(--tag-guest);
+    font-weight: bold;
+}
+
+/* 针对极窄屏幕（如 iPhone SE）的微调 */
+@media (max-width: 380px) {
+    .part-selector {
+        gap: 5px; /* 进一步缩小间距 */
+    }
+    .part-btn {
+        letter-spacing: 0; /* 取消字间距 */
+        padding: 5px 0;
+    }
+}
         .tour-card.unplayed { opacity: 0.8; filter: grayscale(0.8); }
         .unplayed-label { color: var(--tag-bg); font-size: 0.8em; margin-left: 10px; }
 
