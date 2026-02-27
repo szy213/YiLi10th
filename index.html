@@ -2566,77 +2566,108 @@ function render() {
     });
 
     // 彩蛋果实逻辑
-    // 1. 准备原始的 23 张图片路径
-const allEggIcons = Array.from({length: 34}, (_, i) => `images/果实 (${i+1}).webp`);
+    // 彩蛋果实逻辑
+    // 1. 准备原始的 34 张图片路径
+    const allEggIcons = Array.from({length: 34}, (_, i) => `images/果实 (${i+1}).webp`);
 
-// 2. 随机打乱并截取前 12 张（保证这 12 张各不相同）
-const selectedIcons = [...allEggIcons]
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 12);
+    // 2. 随机打乱并截取前 12 张（保证这 12 张各不相同）
+    const selectedIcons = [...allEggIcons]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 12);
 
-// 3. 循环 12 次，生成 12 个不重复的果实
-for(let i = 0; i < 12; i++) {
-    const egg = document.createElement('img');
-    egg.className = 'shiguan-egg';
-    
-    // 直接按顺序取 selectedIcons[i]，因为上面已经打乱过了
-    egg.src = selectedIcons[i]; 
-    
-    egg.style.left = (Math.random() * 75 + 15) + "%"; 
-    egg.style.top = (Math.random() * 90) + "%";
-    egg.style.animationDelay = (Math.random() * 2) + "s";
+    // --- 新增：获取容器宽高，用于计算绝对像素位置以避免重叠 ---
+    const gridWidth = grid.clientWidth || window.innerWidth;
+    // 卡片渲染完后 grid 会有高度，做个兜底
+    const gridHeight = grid.clientHeight || window.innerHeight * 3; 
+    const placedEggs = []; // 用于存放已生成果实的坐标
 
-    if (typeof usedQuoteIndices === 'undefined') window.usedQuoteIndices = []; 
-
-    egg.onclick = function(e) {
-        // --- 视觉特效 ---
-        let ripple = document.createElement('div');
-        ripple.style.cssText = `position:fixed; left:${e.clientX-25}px; top:${e.clientY-25}px; width:50px; height:50px; border:2px solid var(--tag-special); border-radius:50%; animation: rippleOut 0.5s ease-out; pointer-events:none; z-index:9999;`;
-        document.body.appendChild(ripple);
-        setTimeout(() => ripple.remove(), 500);
+    // 3. 循环 12 次，生成 12 个不重复且不重叠的果实
+    for(let i = 0; i < 12; i++) {
+        const egg = document.createElement('img');
+        egg.className = 'shiguan-egg';
+        egg.src = selectedIcons[i]; 
         
-        e.stopPropagation();
-        this.remove(); 
-
-        // --- 文案随机逻辑 ---
-        let availableIndices = [];
-        for (let j = 0; j < eggQuotes.length; j++) {
-            if (!usedQuoteIndices.includes(j)) availableIndices.push(j);
+        let randomX, randomY;
+        let isOverlapping = true;
+        let attempts = 0;
+        
+        // 碰撞检测核心：最多尝试 100 次，避免死循环
+        while (isOverlapping && attempts < 100) {
+            // 先把百分比转成实际像素进行随机 (left: 15%~85%, top: 0%~95%)
+            randomX = (Math.random() * 70 + 15) / 100 * gridWidth; 
+            randomY = (Math.random() * 95) / 100 * gridHeight;
+            
+            isOverlapping = false;
+            for (let pos of placedEggs) {
+                // 果实是 100x100，设定 110px 的安全距离以防边角重叠
+                if (Math.abs(randomX - pos.x) < 110 && Math.abs(randomY - pos.y) < 110) {
+                    isOverlapping = true;
+                    break;
+                }
+            }
+            attempts++;
         }
-        if (availableIndices.length === 0) {
-            usedQuoteIndices = [];
-            for (let j = 0; j < eggQuotes.length; j++) availableIndices.push(j);
-        }
-        const chosenIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
-        usedQuoteIndices.push(chosenIndex);
-        const randomQuote = eggQuotes[chosenIndex];
-
-        // --- 弹窗逻辑 ---
-        const modalContent = document.querySelector('.modal-content');
-        modalContent.id = "capture-egg-box"; 
-        modalContent.style.setProperty('--seal-emoji', '"🍒"');
-        modalContent.querySelector('div:first-child').innerHTML = "🍎 捡到一粒果实 🍎";
-        document.getElementById('modalText').innerHTML = `<div style="font-style:italic; text-align:left;">${randomQuote}</div>`;
         
-        const oldBtn = modalContent.querySelector('.save-trigger');
-        if (oldBtn) oldBtn.remove();
-
-        const saveBtn = document.createElement('div');
-        saveBtn.className = 'save-trigger';
-        saveBtn.style.cssText = "margin: 20px auto 0; font-size: 13px; color: #8C2222; text-align: center; cursor: pointer; font-weight: bold; background: rgba(140,34,34,0.05); padding: 5px 15px; border-radius: 15px; width: fit-content; display: block;";
-        saveBtn.innerHTML = "📸 保存果实";
+        // 将成功生成的不重叠坐标存入数组
+        placedEggs.push({x: randomX, y: randomY});
         
-        saveBtn.onclick = function(ev) {
-            ev.preventDefault();
-            ev.stopPropagation();
-            saveBoxImage('capture-egg-box', '一粒·果实彩蛋');
+        // 把像素位置转换回原本的百分比赋值，兼容响应式
+        egg.style.left = (randomX / gridWidth * 100) + "%"; 
+        egg.style.top = (randomY / gridHeight * 100) + "%";
+        egg.style.animationDelay = (Math.random() * 2) + "s";
+
+        if (typeof usedQuoteIndices === 'undefined') window.usedQuoteIndices = []; 
+
+        egg.onclick = function(e) {
+            // --- 视觉特效 ---
+            let ripple = document.createElement('div');
+            ripple.style.cssText = `position:fixed; left:${e.clientX-25}px; top:${e.clientY-25}px; width:50px; height:50px; border:2px solid var(--tag-special); border-radius:50%; animation: rippleOut 0.5s ease-out; pointer-events:none; z-index:9999;`;
+            document.body.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 500);
+            
+            e.stopPropagation();
+            this.remove(); 
+
+            // --- 文案随机逻辑 ---
+            let availableIndices = [];
+            for (let j = 0; j < eggQuotes.length; j++) {
+                if (!usedQuoteIndices.includes(j)) availableIndices.push(j);
+            }
+            if (availableIndices.length === 0) {
+                usedQuoteIndices = [];
+                for (let j = 0; j < eggQuotes.length; j++) availableIndices.push(j);
+            }
+            const chosenIndex = availableIndices[Math.floor(Math.random() * availableIndices.length)];
+            usedQuoteIndices.push(chosenIndex);
+            const randomQuote = eggQuotes[chosenIndex];
+
+            // --- 弹窗逻辑 ---
+            const modalContent = document.querySelector('.modal-content');
+            modalContent.id = "capture-egg-box"; 
+            modalContent.style.setProperty('--seal-emoji', '"🍒"');
+            modalContent.querySelector('div:first-child').innerHTML = "🍎 捡到一粒果实 🍎";
+            document.getElementById('modalText').innerHTML = `<div style="font-style:italic; text-align:left;">${randomQuote}</div>`;
+            
+            const oldBtn = modalContent.querySelector('.save-trigger');
+            if (oldBtn) oldBtn.remove();
+
+            const saveBtn = document.createElement('div');
+            saveBtn.className = 'save-trigger';
+            saveBtn.style.cssText = "margin: 20px auto 0; font-size: 13px; color: #8C2222; text-align: center; cursor: pointer; font-weight: bold; background: rgba(140,34,34,0.05); padding: 5px 15px; border-radius: 15px; width: fit-content; display: block;";
+            saveBtn.innerHTML = "📸 保存果实";
+            
+            saveBtn.onclick = function(ev) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                saveBoxImage('capture-egg-box', '一粒·果实彩蛋');
+            };
+            modalContent.appendChild(saveBtn);
+            showModal();
         };
-        modalContent.appendChild(saveBtn);
-        showModal();
-    };
-    grid.appendChild(egg);
+        grid.appendChild(egg);
+    }
 }
-}
+
 
 function typewriter(element, text, speed = 100) {
     element.innerText = '';
