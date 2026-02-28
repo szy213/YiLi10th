@@ -1669,6 +1669,7 @@ document.head.appendChild(style);
         <div style="color: #555; line-height: 1.8; font-size: 14px; text-align: center;">
             <p>图片来源：@陈粒_  @趣果工作室</p>
             <p>文本来源：@陈粒_  @陈粒小号 网易云音乐</p>
+            <p>AI合成语音采样：@陈粒_</p>
             <p>歌单收集：耕烟墅Kiron</p>
             <p>加载页面图片提供：桥豆麻袋</p>
             <div style="width: 280px; height: 1px; background: #eee; margin: 10px auto;"></div>
@@ -1974,10 +1975,27 @@ function closeModal() {
     }
 
     function changeBGM(newSrc) {
-        const music = document.getElementById('bgMusic');
-        const source = document.getElementById('musicSource');
-        source.src = newSrc; music.load(); if (!music.paused) music.play();
-    }
+    const music = document.getElementById('bgMusic');
+    const source = document.getElementById('musicSource');
+    const icon = document.getElementById('musicIcon');
+    const btn = document.getElementById('musicControl');
+
+    // 1. 切换音乐源并加载
+    source.src = newSrc; 
+    music.load(); 
+    
+    // 2. 设定默认音量（和你原来 toggleMusic 里的设定保持一致）
+    music.volume = 0.3; 
+    
+    // 3. 强制播放音乐
+    music.play().catch(err => {
+        console.warn("自动播放可能被浏览器拦截:", err);
+    });
+
+    // 4. 同步更新播放按钮的 UI 状态为“播放中”
+    icon.innerText = '🎵';
+    btn.classList.add('rotating');
+}
 
     function switchPics(id, type) {
         const container = document.getElementById(`slider-${id}`);
@@ -2498,7 +2516,18 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     btn3.onclick = () => saveBoxImage('capture-ticket', '我的一粒·存根卡');
     container.appendChild(btn3);
 }
-   
+// 在用户第一次点击交互时运行
+function unlockAudio() {
+    Object.values(audioCache).forEach(audio => {
+        audio.play().then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+        }).catch(() => {});
+    });
+    // 运行一次后移除监听
+    document.removeEventListener('click', unlockAudio);
+}
+document.addEventListener('click', unlockAudio);   
 
 
 function render() {
@@ -3083,13 +3112,18 @@ changelogModal.addEventListener('click', (e) => {
 
 
     // 全局变量，用于追踪当前正在播放的 ID 音频
+
+
+// 全局变量，用于追踪当前正在播放的 ID 音频
 let currentIdAudio = null;
+let originalBgmVolume = 0.3; // 增加一个变量来存储原始音量
 
 function playIdAudio(id) {
-    // 1. 获取背景音乐对象 (根据 index.html 逻辑，BGM 对象通常是全局变量 bgm)
-    const bgmAudio = window.bgm; 
-    const originalVolume = 1.0; // 假设 BGM 初始音量是 1.0
-    const loweredVolume = 0.2;  // 播放 ID 音频时 BGM 的音量
+    // 1. 正确获取背景音乐对象 (根据 HTML 中的 id="bgMusic")
+    const bgmAudio = document.getElementById('bgMusic'); 
+    
+    // 你的原音量是 0.3，如果降到 0.2 变化不明显，建议降到 0.05 或 0.1
+    const loweredVolume = 0.1;  
 
     // 2. 如果之前有正在播放的 ID 音频，先停止它
     if (currentIdAudio) {
@@ -3097,13 +3131,15 @@ function playIdAudio(id) {
         currentIdAudio = null;
     }
 
-    // 3. 创建新的音频对象，路径为同一个文件夹下的 id.mp3
+    // 3. 创建新的音频对象
     const audioPath = `${id}.mp3`;
     const idAudio = new Audio(audioPath);
     currentIdAudio = idAudio;
 
     // 4. 调低背景音乐音量
-    if (bgmAudio) {
+    if (bgmAudio && !bgmAudio.paused) {
+        // 动态记录当前真实的音量（防止用户调整过或逻辑变动）
+        originalBgmVolume = bgmAudio.volume; 
         bgmAudio.volume = loweredVolume;
     }
 
@@ -3111,13 +3147,13 @@ function playIdAudio(id) {
     idAudio.play().catch(err => {
         console.warn("音频播放失败，可能是文件不存在或浏览器限制:", err);
         // 播放失败则恢复音量
-        if (bgmAudio) bgmAudio.volume = originalVolume;
+        if (bgmAudio && !bgmAudio.paused) bgmAudio.volume = originalBgmVolume;
     });
 
     // 6. 播放结束后，恢复背景音乐音量
     idAudio.onended = function() {
-        if (bgmAudio) {
-            bgmAudio.volume = originalVolume;
+        if (bgmAudio && !bgmAudio.paused) {
+            bgmAudio.volume = originalBgmVolume;
         }
         currentIdAudio = null;
     };
