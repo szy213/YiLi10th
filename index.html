@@ -3119,46 +3119,33 @@ let currentIdAudio = null;
 let originalBgmVolume = 0.3; // 增加一个变量来存储原始音量
 
 function playIdAudio(id) {
-    // 1. 正确获取背景音乐对象 (根据 HTML 中的 id="bgMusic")
     const bgmAudio = document.getElementById('bgMusic'); 
     
-    // 你的原音量是 0.3，如果降到 0.2 变化不明显，建议降到 0.05 或 0.1
-    const loweredVolume = 0.1;  
-
-    // 2. 如果之前有正在播放的 ID 音频，先停止它
-    if (currentIdAudio) {
-        currentIdAudio.pause();
-        currentIdAudio = null;
+    // 1. 停止之前的 ID 音频
+    if (window.currentIdAudio) {
+        window.currentIdAudio.pause();
     }
 
-    // 3. 创建新的音频对象
-    const audioPath = `${id}.mp3`;
-    const idAudio = new Audio(audioPath);
-    currentIdAudio = idAudio;
+    const idAudio = new Audio(`${id}.mp3`);
+    window.currentIdAudio = idAudio;
 
-    // 4. 调低背景音乐音量
+    // 2. 核心逻辑：直接暂停 BGM（而不是调音量）
     if (bgmAudio && !bgmAudio.paused) {
-        // 动态记录当前真实的音量（防止用户调整过或逻辑变动）
-        originalBgmVolume = bgmAudio.volume; 
-        bgmAudio.volume = loweredVolume;
+        bgmAudio.pause();
+        // 标记一下是因为播放 ID 语音才暂停的，方便后续自动恢复
+        bgmAudio.wasPlaying = true; 
     }
 
-    // 5. 播放音频
-    idAudio.play().catch(err => {
-        console.warn("音频播放失败，可能是文件不存在或浏览器限制:", err);
-        // 播放失败则恢复音量
-        if (bgmAudio && !bgmAudio.paused) bgmAudio.volume = originalBgmVolume;
-    });
+    idAudio.play();
 
-    // 6. 播放结束后，恢复背景音乐音量
+    // 3. 播放结束后，恢复背景音乐
     idAudio.onended = function() {
-        if (bgmAudio && !bgmAudio.paused) {
-            bgmAudio.volume = originalBgmVolume;
+        if (bgmAudio && bgmAudio.wasPlaying) {
+            bgmAudio.play();
+            bgmAudio.wasPlaying = false;
         }
-        currentIdAudio = null;
     };
 }
-
 // 特别鸣谢弹窗控制
 const thanksBtn = document.getElementById('thanks-btn');
 const thanksModal = document.getElementById('thanks-modal');
