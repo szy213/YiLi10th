@@ -2218,10 +2218,17 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     const nextShow = upcomingTours.length > 0 ? upcomingTours[0] : null;
 
     const getDiffDays = (targetDateStr) => {
-        const target = new Date(targetDateStr.replace(/\./g, '/'));
-        const diff = Math.abs(now - target);
-        return Math.floor(diff / (1000 * 60 * 60 * 24))+1;
-    };
+    const target = new Date(targetDateStr.replace(/\./g, '/'));
+    
+    // 把当前时间和目标时间都转成 UTC 的午夜 0 点，完美避开夏令时和时区干扰
+    const utcNow = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    const utcTarget = Date.UTC(target.getFullYear(), target.getMonth(), target.getDate());
+    
+    const diff = Math.abs(utcNow - utcTarget);
+    
+    // 使用 Math.round() 确保精确到天，不会因为差几个毫秒被向下取整吞掉
+    return Math.round(diff / (1000 * 60 * 60 * 24));
+};
 
     const getPastStatus = (days) => {
         if (days > 30) return "如果再见愿妳没改变 又聪明又勇敢";   
