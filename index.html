@@ -1061,7 +1061,7 @@ document.head.appendChild(style);
 
 /* 铭牌标签保持不变 */
 .lightstick-container::after {
-    content: "SERIAL: YILI10TH-PART1";
+    content: "SERIAL: YILI10TH";
     position: absolute;
     bottom: 12px;
     right: 20px;
@@ -2917,7 +2917,7 @@ function renderEquip(container) {
         { name: "西安", color: "#B2C089" }, { name: "济南", color: "#EEABA1" },
         { name: "重庆", color: "#E3BDD0" }, { name: "厦门", color: "#B6D9D6" },
         { name: "深圳", color: "#9C9DCF" }, { name: "苏州", color: "#D5BE4F" },
-        { name: "武汉", color: "#F69393" }
+        { name: "武汉", color: "#F69393" }, { name: "成都", color: "#A2C957" }
     ];
     let lightstickHTML = cityData.map(city => {
         const isCollected = localStorage.getItem(`stick_${city.name}`) === 'true';
