@@ -3261,14 +3261,16 @@ function spawnRabbit() {
         // 1. 改变气泡文字为生气 Emoji
         bubble.innerHTML = '找我妈收拾妳💢';
         
-        
+        // 2. 瞬间加速逃跑
+        rabbit.style.transition = 'left 1.5s ease-in'; 
+        rabbit.style.left = '120vw';
 
         
 
         
 
         // 4. 跑远后移除
-        setTimeout(() => rabbit.remove(), 800);
+        setTimeout(() => rabbit.remove(), 1500);
     };
 
     // 绑定点击事件
