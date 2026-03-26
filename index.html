@@ -2089,12 +2089,21 @@ function closeModal() {
 
     // 2. 背景切换核心逻辑
     if (part === 3 || part === 4) {
+    // 1. 设置背景图片路径
     document.body.style.backgroundImage = "url('images/my_grain_bg.webp')";
-    // 1. 修改为 repeat (水平垂直都重复) 或 repeat-y (仅向下重复)
     
+    // 2. 设置重复模式：建议使用 'repeat' 让纹理铺满整个背景
+    document.body.style.backgroundRepeat = "repeat"; 
+    
+    // 3. 设置背景大小：'100% auto' 确保宽度撑满，高度根据原图比例自适应（方便重复）
+    document.body.style.backgroundSize = "100% auto"; 
 
+    // 4. 核心：锁定背景，不随滚动条滑动
     document.body.style.backgroundAttachment = "fixed";
-} else {
+
+    // 5. 辅助：确保背景图片从顶部居中开始铺设
+    document.body.style.backgroundPosition = "top center";
+}else {
         document.body.style.backgroundImage = "linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 25%, transparent 40%), url('images/bg.jpg')";
         document.body.style.backgroundSize = "100% auto";
         document.body.style.backgroundAttachment = "scroll";
