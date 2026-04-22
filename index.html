@@ -297,7 +297,7 @@ body {
 
 /* 3. 选中后的火漆红效果 */
 .check-area input[type="checkbox"]:checked {
-    background: var(--tag-special); /* 使用你代码中定义的 #8C2222 */
+    background: var(--tag-special); /* 使用妳代码中定义的 #8C2222 */
     border-color: var(--tag-special);
     transform: scale(1.1) rotate(-10deg); /* 模拟手动盖章的歪斜感 */
 }
@@ -582,7 +582,7 @@ body {
 /* 新增：淡入动画 */
 @keyframes fadeInEgg {
     from { opacity: 0; }
-    to { opacity: 0.8; } /* 最终透明度与你设定的保持一致 */
+    to { opacity: 0.8; } /* 最终透明度与妳设定的保持一致 */
 }
 
 @keyframes eggFloat {
@@ -730,7 +730,7 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* 让卡片错开时间出现（如果你能手动给 render 里的 card 加 style） */
+/* 让卡片错开时间出现（如果妳能手动给 render 里的 card 加 style） */
 
 @keyframes rippleOut { to { transform: scale(2); opacity: 0; } }
 
@@ -797,7 +797,7 @@ document.head.appendChild(style);
     max-width: 800px !important; /* 必须与地图的 800px 一致 */
     margin: 0 auto 30px !important;
     
-    /* 提取自你地图的参数 */
+    /* 提取自妳地图的参数 */
     background: rgba(255, 255, 255, 0.8) !important;
     backdrop-filter: blur(10px) !important;
     -webkit-backdrop-filter: blur(10px);
@@ -1268,7 +1268,7 @@ document.head.appendChild(style);
 /* 激活状态：点亮并联通 */
 .ribbon-tab.active {
     background: #fdfaf5; /* 变亮：与展示框同色 */
-    color: var(--tag-special); /* 使用你定义的火漆红 */
+    color: var(--tag-special); /* 使用妳定义的火漆红 */
     font-weight: bold;
     /* 联通逻辑：隐藏下边框，并向下压 1px 覆盖展示框的顶边框 */
     border-bottom: 1px solid #fdfaf5; 
@@ -1489,7 +1489,7 @@ document.head.appendChild(style);
         <option value="bgm2.mp3">不灭</option>
         <option value="bgm3.mp3">任朝暮</option>
         <option value="bgm4.mp3">留下</option>
-        <option value="bgm5.mp3">至少还有你（cover）</option>
+        <option value="bgm5.mp3">至少还有妳（cover）</option>
         <option value="bgm6.mp3">幻期颐</option>
         <option value="bgm7.mp3">正趣果上果</option>
         <option value="bgm8.mp3">八节木</option>
@@ -1593,7 +1593,7 @@ document.head.appendChild(style);
             <p><b>2026.2.1</b><br>• 【果实】语录新增至40余条，多数来自陈粒小号，快去试试吧:）</p>
              <p><b></b><br>万分抱歉🙇🏻‍♀️由于1月31日更换了一次托管服务器，在这之前的打卡和随记可能会丢失。更换后网站已进入稳定运行，日后增加场次和功能不会影响打卡记录和随记的保存，请放心使用</p>
             <p><b>2026.1.31</b><br>• 新增【首场】成就</p>
-            <p><b>2026.1.31</b><br>• 新增BGM：《至少还有你（cover）》</p>
+            <p><b>2026.1.31</b><br>• 新增BGM：《至少还有妳（cover）》</p>
         </div>
         <button id="close-changelog" style="
             margin-top: 20px; width: 100%; padding: 10px;
@@ -1692,7 +1692,7 @@ document.head.appendChild(style);
 "></div>
 <div id="thanks-btn" title="特别鸣谢" style="
     position: fixed;
-    bottom: 20px; /* 位置放在最底部，你可以根据需要调整 bottom 值 */
+    bottom: 20px; /* 位置放在最底部，妳可以根据需要调整 bottom 值 */
     left: 20px;   /* 放在“回到顶部”按钮的右侧，20px + 40px + 10px */
     width: 40px;
     height: 40px;
@@ -1830,14 +1830,14 @@ window.saveBoxImage = function(elementId, fileName) {
 
     // 1. 数据定义 (放在最前面，确保函数能访问到)
     const quotes = {
-        "0726": "0:00，又长大了一岁\n谢谢你们陪着我，爱着我，常常想起：我也记得你在心里撑起好多艰难时刻(隐藏断句)\n💗 \n谢谢你来.",
+        "0726": "0:00，又长大了一岁\n谢谢妳们陪着我，爱着我，常常想起：我也记得妳在心里撑起好多艰难时刻(隐藏断句)\n💗 \n谢谢妳来.",
         "0727": "是... \n朝夕相伴触手可及的亲昵🍎 \n❤️❤️❤️❤️❤️❤️\n love u all❤️！",
-        "0808": "回到上海，曾经在这里 ，\n未满足的幻想和期盼\n求而不得的未知和迷幻\n希望今天能帮你短暂地填满\n希望你满载而归，\n而我也熟记了：求而不得未必是遗憾。\n🎈2025.8.8",
+        "0808": "回到上海，曾经在这里 ，\n未满足的幻想和期盼\n求而不得的未知和迷幻\n希望今天能帮妳短暂地填满\n希望妳满载而归，\n而我也熟记了：求而不得未必是遗憾。\n🎈2025.8.8",
         "0809": "I, love, Shanghai.",
         "0920": "香香的一整夜🫧 \n 一起， \n在这城市游戏💕  \n睡吧杭州💤 \n 我会记得今天", 
         "0921": "从未想过能在我自己的演唱会上，与循环了无数遍的声音同台，开演唱会真好，谢谢大家，谢谢Karen，谢谢这个美好的晚上，幸福晕啦！",
-        "1018": "人潮，呼吸，声浪，共振 \n音乐填满了我们 \n我们填满了夜晚 \n祝你快乐，充满勇气。 \n🎈 \n 谢谢南京！",
-        "1101": "从南走到北， \n途径迁徙的飞鸟、翩跹的落叶、疾驰的列车， \n分别以各自的方式寻找某种适宜。 \n谢谢西安， \n愿你乘兴而来，满载而归。", 
+        "1018": "人潮，呼吸，声浪，共振 \n音乐填满了我们 \n我们填满了夜晚 \n祝妳快乐，充满勇气。 \n🎈 \n 谢谢南京！",
+        "1101": "从南走到北， \n途径迁徙的飞鸟、翩跹的落叶、疾驰的列车， \n分别以各自的方式寻找某种适宜。 \n谢谢西安， \n愿妳乘兴而来，满载而归。", 
         "1108": "来去匆匆之间， \n我们欣于所遇。 \n虽然伸手抓不住一阵风， \n但被风扬起的快乐却总是鲜活。 \n谢谢济南， \n摊开手掌，带走快乐回忆~", 
         "1115": "让内心驯化的秩序偶尔失控， \n允许自己坠落在音乐里。 \n柔软的羽毛， \n安全、怡人、丰盈。",
         "1129": "谢谢厦门🌊  \n相拥短暂，但音乐永远温柔敞开。",
@@ -1845,7 +1845,7 @@ window.saveBoxImage = function(elementId, fileName) {
         "1207": "屏住呼吸， \n闭上眼睛， \n让音乐像自由落体， \n在旷野，在人群，在心里。 \n谢谢深圳,冬日温暖的赠予。", 
         "1220": "四季流转， \n风吹、云动、一处草野。 \n时序更迭，\n夜长、昼短、几首音乐。 \n谢谢苏州，长夜好梦。", 
         "1231": "环形时间里， \n我们奔跑，驻足，张望。 \n与旧我擦肩， \n牵起明天的手掌。 \n且歌且行，循着微光。 \n谢谢武汉，一起踏进新的一年。", 
-        "0101": "新年~新的日光，新的希望。 \n愿你天真，充满想象。 \n勇敢出发，保持形状。 \n谢谢武汉！给我们新的力量~" ,
+        "0101": "新年~新的日光，新的希望。 \n愿妳天真，充满想象。 \n勇敢出发，保持形状。 \n谢谢武汉！给我们新的力量~" ,
         "260314": "给大家汇报假期:\n好吃，好喝，好玩，好爬，好游…\n也祝大家今天：\n好听，好看，好闻，好坐，好唱…\n\n好梦～\n谢谢成都，明天再见！（来听新歌～～ " ,
         "260315":"春天好，\n我们呼吸，唱歌，舒展，流动…\n和万物一起生～长～\n\n谢谢成都！两天都玩得开心啦！ "
         
@@ -1880,7 +1880,7 @@ window.addEventListener('load', () => {
         { id: "1101", city: "西安", time: "2025.11.01", weather: "🌤️", season: "autumn",part: 1, guest: "嘉宾：尚雯婕🐼", personalPics: Array.from({length: 10}, (_, i) => `images/1101 (${i+1}).webp`), guestPics: Array.from({length: 7}, (_, i) => `images/1101guest (${i+1}).webp`), 
         songs: [{n:"交卷feat尚雯婕",t:"guest",l:"https://music.163.com/dj?id=3705792272&uct2=U2FsdGVkX1+hP6qeOdC6ZzzzIUbH3eM9re749zPA/T8="},{n:"Atypical异类",t:"guest",l:"https://music.163.com/dj?id=3706154128&uct2=U2FsdGVkX19Dj2S8xiu0hk7tXw06mYzVhR2tYiC5bo4="},{n:"极端者",t:"guest",l:""},{n:"且慢",t:"request",l:"https://music.163.com/dj?id=3705814311&uct2=U2FsdGVkX1/hyOoahlcEJ8ceDOh05kb6yUginndqRLA="},{n:"有则抱抱无则笑笑",t:"request",l:"https://music.163.com/dj?id=3705935270&uct2=U2FsdGVkX1/uVtRiMI+yLZgE7fcigbh+w4IqE1TrDe8="},{n:"知洲",t:"surprise"}] },
         { id: "1108", city: "济南", time: "2025.11.08", weather: "🌤️", season: "winter",part: 1, guest: "嘉宾：郁可唯🌻", personalPics: Array.from({length: 9}, (_, i) => `images/1108 (${i+1}).webp`), guestPics: Array.from({length: 6}, (_, i) => `images/1108guest (${i+1}).webp`), 
-        songs: [{n:"进化feat郁可唯",t:"guest",l:"https://music.163.com/dj?id=3706367534&uct2=U2FsdGVkX18FT2Xl3kbd4xpB7WQBb4XzGYd2jEh84bo="},{n:"路过人间",t:"guest",l:"路过人间.mp3"},{n:"从头",t:"request",l:"https://music.163.com/dj?id=3706447568&uct2=U2FsdGVkX1+GMyVaf1RsQAyuABhXON6PB9rBqqMmbwM="},{n:"至少还有你",t:"request",l:"https://music.163.com/dj?id=3706545509&uct2=U2FsdGVkX1/mkml9SfWc8c1qgVECnFHBR/l3KAY3Zo4="},{n:"知洲",t:"surprise",l:"https://music.163.com/dj?id=3706969603&uct2=U2FsdGVkX19j3bMICkS/uMZ9XBpcvJdC5nRa3oJ+vQI="},{n:"七楼",t:"surprise",l:"https://music.163.com/dj?id=3706425563&uct2=U2FsdGVkX18zVrAUafeeYmwwUpNhifbSw4K8l7GnuMQ="}] },
+        songs: [{n:"进化feat郁可唯",t:"guest",l:"https://music.163.com/dj?id=3706367534&uct2=U2FsdGVkX18FT2Xl3kbd4xpB7WQBb4XzGYd2jEh84bo="},{n:"路过人间",t:"guest",l:"路过人间.mp3"},{n:"从头",t:"request",l:"https://music.163.com/dj?id=3706447568&uct2=U2FsdGVkX1+GMyVaf1RsQAyuABhXON6PB9rBqqMmbwM="},{n:"至少还有妳",t:"request",l:"https://music.163.com/dj?id=3706545509&uct2=U2FsdGVkX1/mkml9SfWc8c1qgVECnFHBR/l3KAY3Zo4="},{n:"知洲",t:"surprise",l:"https://music.163.com/dj?id=3706969603&uct2=U2FsdGVkX19j3bMICkS/uMZ9XBpcvJdC5nRa3oJ+vQI="},{n:"七楼",t:"surprise",l:"https://music.163.com/dj?id=3706425563&uct2=U2FsdGVkX18zVrAUafeeYmwwUpNhifbSw4K8l7GnuMQ="}] },
         { id: "1115", city: "重庆", time: "2025.11.15", weather: "🌧️", season: "winter",part: 1, guest: "嘉宾：叶蓓🍁", personalPics: Array.from({length: 9}, (_, i) => `images/1115 (${i+1}).webp`), guestPics: Array.from({length: 6}, (_, i) => `images/1115guest (${i+1}).webp`), 
         songs: [{n:"爱完不完feat叶蓓",t:"guest",l:"https://music.163.com/dj?id=3707607232&uct2=U2FsdGVkX188irRezNYb8+Xc2KJgghL6IKQzuNBRcMo="},{n:"蒲公英",t:"guest",l:"https://music.163.com/dj?id=3707384582&uct2=U2FsdGVkX193Ef8lKqmxr+xfXyKqEqH4fAbD5ZMi92E="},{n:"玉人歌",t:"request",l:"https://music.163.com/dj?id=3707689231&uct2=U2FsdGVkX18NOhGk8ySvGMch8vNTYtraJjMT//qdeGw="},{n:"怪情歌",t:"request",l:"https://music.163.com/dj?id=3707607231&uct2=U2FsdGVkX19xP3s+srt6myQ6hewJoS/v2jR5ZVqR80o="},{n:"无烟区",t:"surprise",l:"https://music.163.com/dj?id=3707626191&uct2=U2FsdGVkX1/7FhYRTt6XggmP0j/+nfPjoB+l2CwNejk="},{n:"知洲",t:"surprise"}] },
         { id: "1129", city: "厦门", time: "2025.11.29", weather: "☀️", season: "winter",part: 1, guest: "独唱场🐰", personalPics: Array.from({length: 9}, (_, i) => `images/1129 (${i+1}).webp`), guestPics: [], 
@@ -1892,11 +1892,11 @@ window.addEventListener('load', () => {
         { id: "1220", city: "苏州", time: "2025.12.20", weather: "🌧️", season: "winter",part: 1, guest: "嘉宾：杨乃文 ", personalPics: Array.from({length: 12}, (_, i) => `images/1220 (${i+1}).webp`), guestPics: Array.from({length: 3}, (_, i) => `images/1220guest (${i+1}).webp`), 
         songs: [{n:"光feat杨乃文",t:"guest",l:"https://music.163.com/dj?id=3709793895&uct2=U2FsdGVkX1/jQdYgI9hlWvrnEavomBRWp4PFtyrm2nQ="},{n:"星星堆满天",t:"guest",l:"https://music.163.com/dj?id=3709793895&uct2=U2FsdGVkX1/jQdYgI9hlWvrnEavomBRWp4PFtyrm2nQ="},{n:"清透",t:"request",l:"https://music.163.com/dj?id=3709805893&uct2=U2FsdGVkX181Aplfbw+1xaKh0e5Wg1OE9STVqwthyCM="},{n:"人间",t:"request",l:"https://music.163.com/dj?id=3709852876&uct2=U2FsdGVkX18R9nnGdFmTRNsupJ67Bu9dJ+dtn7Q9yec="},{n:"乱",t:"surprise",l:"https://music.163.com/dj?id=3709730889&uct2=U2FsdGVkX19FiXTDrHlUalCFUucbn22szRgWUbi6Tj0="},{n:"难解风情",t:"surprise",l:"https://music.163.com/dj?id=3709832801&uct2=U2FsdGVkX19UU0U/9GDs9EID5AzIix3wfxOORpY0aJA="},{n:"爱完不完",t:"surprise",l:"https://music.163.com/dj?id=3709849917&uct2=U2FsdGVkX18EbTk7AL8niAHgcfRT8STSjnMwkYsGIBE="},{n:"知洲",t:"surprise",l:""}] },
         { id: "1231", city: "武汉", time: "2025.12.31", weather: "❄️", season: "winter", part: 1, guest: "", isSpecial: "跨年场🎆", personalPics: Array.from({length: 11}, (_, i) => `images/1231 (${i+1}).webp`), guestPics: [], 
-        songs: [{n:"亲爱的你",t:"request",l:"https://music.163.com/dj?id=3710530674&uct2=U2FsdGVkX1+Ae6bX3d63OlJ2A6RPmSG/YRX9dZj2VY4="},{n:"Best Better Ever",t:"request",l:"https://music.163.com/dj?id=3710602764&uct2=U2FsdGVkX19npNvmbvjWxf1Wpbhq8zX21Rzup3oxisA="},{n:"庆祝",t:"request",l:"https://music.163.com/dj?id=3710597693&uct2=U2FsdGVkX19TNN5HuvNvaMGW6+M5gaoZwojlhm+JBsc="},{n:"银泰",t:"request",l:"https://music.163.com/dj?id=3710581758&uct2=U2FsdGVkX1+Qm4gbGrKD9dZj0rw5vtyjMZKhiCOgBac="},{n:"独行侠",t:"request",l:"https://music.163.com/dj?id=3710529718&uct2=U2FsdGVkX1/moXpqp7+s5pm92kv6VqztObD9dBBWYx8="},{n:"乱",t:"surprise",l:"https://music.163.com/dj?id=3712522224&uct2=U2FsdGVkX18BFuzKxsemcAx1geNx0oAkdIdbmXeCVmM="},{n:"比如世界",t:"surprise",l:"https://music.163.com/dj?id=3712693208&uct2=U2FsdGVkX183XWQpVHipN/kIqpiNGSX/EMUZyZS+CUk="},{n:"海市蜃楼",t:"surprise",l:"https://music.163.com/dj?id=3712669216&uct2=U2FsdGVkX19SJDSNRCfBi6J5oR2fIrNAbmQuBmWr9Y8="}] },
+        songs: [{n:"亲爱的妳",t:"request",l:"https://music.163.com/dj?id=3710530674&uct2=U2FsdGVkX1+Ae6bX3d63OlJ2A6RPmSG/YRX9dZj2VY4="},{n:"Best Better Ever",t:"request",l:"https://music.163.com/dj?id=3710602764&uct2=U2FsdGVkX19npNvmbvjWxf1Wpbhq8zX21Rzup3oxisA="},{n:"庆祝",t:"request",l:"https://music.163.com/dj?id=3710597693&uct2=U2FsdGVkX19TNN5HuvNvaMGW6+M5gaoZwojlhm+JBsc="},{n:"银泰",t:"request",l:"https://music.163.com/dj?id=3710581758&uct2=U2FsdGVkX1+Qm4gbGrKD9dZj0rw5vtyjMZKhiCOgBac="},{n:"独行侠",t:"request",l:"https://music.163.com/dj?id=3710529718&uct2=U2FsdGVkX1/moXpqp7+s5pm92kv6VqztObD9dBBWYx8="},{n:"乱",t:"surprise",l:"https://music.163.com/dj?id=3712522224&uct2=U2FsdGVkX18BFuzKxsemcAx1geNx0oAkdIdbmXeCVmM="},{n:"比如世界",t:"surprise",l:"https://music.163.com/dj?id=3712693208&uct2=U2FsdGVkX183XWQpVHipN/kIqpiNGSX/EMUZyZS+CUk="},{n:"海市蜃楼",t:"surprise",l:"https://music.163.com/dj?id=3712669216&uct2=U2FsdGVkX19SJDSNRCfBi6J5oR2fIrNAbmQuBmWr9Y8="}] },
         { id: "0101", city: "武汉", time: "2026.01.01", weather: "☀️", season: "winter",part: 1, guest: "", isSpecial: "元旦场🧨", personalPics: Array.from({length: 12}, (_, i) => `images/0101 (${i+1}).webp`), guestPics: [], 
         songs: [{n:"情景剧",t:"request" ,l:"https://music.163.com/dj?id=3710560736&uct2=U2FsdGVkX1/qbmgdNbpSj3VQLMsw43Cz/cr8WJrE8No=",},{n :"远游" , t :"request" , l :"https://music.163.com/dj?id=3710679728&uct2=U2FsdGVkX1+Qcliem47B+hMi8e0Wgv+AT71orJBAPIY= "} , { n :"乐园" , t :" request" , l :"https://music.163.com/dj?id=3710681688&uct2=U2FsdGVkX1/lmn5cgXGxLvqoRN5+zdsDC58X3XnjQqQ= "} , { n :"My Dear Art" , t :" request" , l :" https://music.163.com/dj?id=3710693610&uct2=U2FsdGVkX1/uMDMN/2+w7Fwu04e31m5x+wFY0/DPYAY="} , { n :"再度重相逢" , t :" request" , l :"https://music.163.com/dj?id=3710605715&uct2=U2FsdGVkX18B0puCA848rqa6TS+WCkk569zTk3dM2cE= "} , { n :"乱" , t :" surprise",l:"" } , { n :"剧烈" , t :" surprise",l:"https://music.163.com/dj?id=3710685678&uct2=U2FsdGVkX19OGpMhXaeVZDHblZY5RkAO7zwGPRGjY2E="} ] },
         { id: "260314", city: "成都", time: "2026.03.14", weather: "☁️", season: "spring",part: 2,  guest: "嘉宾：凯瑟琳🐹",personalPics: Array.from({length: 13}, (_, i) => `images/260314 (${i+1}).webp`), guestPics:  Array.from({length: 1}, (_, i) => `images/260314guest (${i+1}).webp`), 
-        songs: [{n:"飞白",t:"request",l:"https://music.163.com/dj?id=3715125431&uct2=U2FsdGVkX189Qg5TzOxe+InF9IIxouavWtvfrpW7PPw="},{n:"你要的爱",t:"request",l:"https://music.163.com/dj?id=3715111445&uct2=U2FsdGVkX1+nCLfEMwo7us4wZxFM+gDNtmaqKV70Di8="},{n:"浪味仙地",t:"surprise",l:""},{n:"试运行",t:"surprise",l:"https://music.163.com/dj?id=3715083437&uct2=U2FsdGVkX18RlequJpB8GYWBCu/hewCwd0WlM1kRVq4="},{n:"超认真嬉戏",t:"surprise",l:"https://music.163.com/dj?id=3715093460&uct2=U2FsdGVkX1+EogPMMDkz15Nvorf0qp+tVBYDc9zrQ/0="},{n:"下世纪见",t:"surprise",l:"https://music.163.com/dj?id=3715179471&uct2=U2FsdGVkX19pRUe2KQ1CQG6LrD//ne5zy4v/aOOjzys="}] },
+        songs: [{n:"飞白",t:"request",l:"https://music.163.com/dj?id=3715125431&uct2=U2FsdGVkX189Qg5TzOxe+InF9IIxouavWtvfrpW7PPw="},{n:"妳要的爱",t:"request",l:"https://music.163.com/dj?id=3715111445&uct2=U2FsdGVkX1+nCLfEMwo7us4wZxFM+gDNtmaqKV70Di8="},{n:"浪味仙地",t:"surprise",l:""},{n:"试运行",t:"surprise",l:"https://music.163.com/dj?id=3715083437&uct2=U2FsdGVkX18RlequJpB8GYWBCu/hewCwd0WlM1kRVq4="},{n:"超认真嬉戏",t:"surprise",l:"https://music.163.com/dj?id=3715093460&uct2=U2FsdGVkX1+EogPMMDkz15Nvorf0qp+tVBYDc9zrQ/0="},{n:"下世纪见",t:"surprise",l:"https://music.163.com/dj?id=3715179471&uct2=U2FsdGVkX19pRUe2KQ1CQG6LrD//ne5zy4v/aOOjzys="}] },
         { id: "260315", city: "成都", time: "2026.03.15", weather: "☁️", season: "spring",part: 2, guest: "嘉宾：胡彦斌🐯", personalPics: Array.from({length: 19}, (_, i) => `images/260315 (${i+1}).webp`),  guestPics: Array.from({length: 2}, (_, i) => `images/260315guest (${i+1}).webp`),
          songs: [{n:"小半（feat胡彦斌）",t:"guest",l:""},{n:"情不自禁",t:"guest",l:"https://music.163.com/dj?id=3715382225&uct2=U2FsdGVkX1+AYX1LPVoeix578XUkRiBFtM4aJYh/4X8="},{n:"游鱼",t:"request",l:""},{n:"小情歌",t:"request",l:"https://music.163.com/dj?id=3715270210&uct2=U2FsdGVkX1+l45c1YbqCRziVUY68o38a6eUOlXWYtUo="},{n:"浪味仙地",t:"surprise",l:""},{n:"七楼",t:"surprise",l:""},{n:"下世纪见",t:"surprise",l:""},{n:"超认真嬉戏",t:"surprise",l:""}] },
         { id: "NB", city: "宁波", time: "2026.04.25", weather: "", season: "spring",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] }, 
@@ -1945,7 +1945,7 @@ function calcTotalKM(list) {
      "Here I Stand,I'm Not Going Anywhere",  "偶尔愤怒  偶尔嫉妒  妳是可爱生物", "抚摸妳的麻木  亲吻妳的眉目", "心怀啮雪大志愿！！！！！！！",
       "这大自然好大  就万事如意吧", "要陪妳上岸 别的都不管", "多像命运的美意🪽", "成长变成了我和我的隔阂", "珍惜自行珍惜 无常留给我浪费力气",
     "Stay with me，fuck the rest.","赞美和诋毁都千篇一律，惟沉默百读不厌。","每！天！进！步！一！大！点！点！","练一练 再缓慢 总是有进步的",
-    "宝贝明天会更好 悲伤洗个热水澡","妳看天地时辰 有时爱 有时恨","苦练含笑半步癫 那我去给妳煮碗面","无所求必满载而归","我体内的爱要留下，我体内的你要消失。"
+    "宝贝明天会更好 悲伤洗个热水澡","妳看天地时辰 有时爱 有时恨","苦练含笑半步癫 那我去给妳煮碗面","无所求必满载而归","我体内的爱要留下，我体内的妳要消失。"
     ,"乱世，很荣幸与您们搅同一锅浑水。","想将妳的诗意掏出妳漂亮身体 剩下空旷单纯 陪妳无聊一生","站到我面前来 哭湿我们头发","可惜时代错，时代乱，没陪妳千难万难。"
     ,"请永远给她毛茸茸的被子贴身，不辜负永远这个词被发明。","一直盯着妳的，只有妳自己的眼睛。","我心中有怒 但世界又很无辜"
     ,"有一个约誓风里纠缠，风里人生短。","再一次，孤独厉害，我更厉害。","坐在哭泣的妳的身边，此刻的妳在我手触及不到的地方正在被世界拥抱。","想要妳的吻 做妳爱的人"
@@ -1968,7 +1968,7 @@ function calcTotalKM(list) {
     ,"如何形容我想要的人生？有时用一个字形容会嫌多，有时用一时废话反而嫌少，但有聊无聊，别含糊，表态就好。","啊 为什么我们不克制一下我们克制欲望的欲望","我有多少顶帽子 我就有多不爱洗头"
     ,"大自然慷慨解囊，露出一片光线：黄的、蓝的、星星点点，云层再往下就是漆黑了，大自然囊中也羞涩。","并没有什么事亟待解决，眼前只有脚粒.","我的水杯不动，茶几也静止。一切静悄悄，但房间和我都在起舞。"
     ,"有巨大的口含住我的脑袋 以为是智慧之口 于是以憋气致敬 越憋气 越难明白含住我脑袋的到底是不是智慧","以前拒绝很多 不是因为个性太强 而是因为能力太弱","四海好大 妳还好吗","死亡是一个容器吗 天天说得好像什么都能在它里面化解和消融一样"
-    ,"千言万语好","🐥🎗️🫘🌸🍜","侧躺着哭 左眼的眼泪划过右眼 像一种阅读 一种抚摸 突然间一阵温暖","对于这个世界此界彼界我还有很多不明白 但我先自拍 日子过起来 也许事后我们 你们 他们 会多一些默契？会被什么反而串联到一起？都说不定。祝妳再笑依然美丽"
+    ,"千言万语好","🐥🎗️🫘🌸🍜","侧躺着哭 左眼的眼泪划过右眼 像一种阅读 一种抚摸 突然间一阵温暖","对于这个世界此界彼界我还有很多不明白 但我先自拍 日子过起来 也许事后我们 妳们 他们 会多一些默契？会被什么反而串联到一起？都说不定。祝妳再笑依然美丽"
     ,"世界虽然已经很挤了。但还是有海量的缝隙语言没有填满，如果无限地趋向精确的话，那就会无限地趋向失语和沉默。所以妳现在看到的这些是我暂时放弃了精确，再企图放松而说出的话，冒昧了。"
     ,"于是到了近两年，我才突然意识到观察力是我们度过美好时光的一大关键，去观察的效果简单地说我能首先忘我，于是稳定情绪，然后学到知识，于是更有安全感，最后对事物越来越理解和尊重。"
     ,"妳翻看过的风和夜晚我也翻看过，在妳脚边晃动过的影子也跑到我这来晃动过，路过妳的那些路灯，也从我身边齐步走过，更不用说那些树，我都差不多认识。它们要去哪我不知道，我们要去哪，我也稀里糊涂。"
@@ -1977,15 +1977,15 @@ function calcTotalKM(list) {
     ,"退离时间轴一步，慢慢张开眼睛，过去现在未来一字排开，甜和苦，乐与怒，都如此确切、清晰无误。从今往后不再有波澜。阅读的重复，重复地阅读将变成一次又一次的验证。自然的无序与日常的无序交织，奏出美妙的乐音，奏出我们的逃逸，我们的藏身之所。响彻整个人生，整个悠长假期。"
     ,"大哉乾元，万物资始。<br>万物生万物，万事亦生万物。<br>我们人，有幸，经常年衍化，至今能有个人样。<br>遂，得意洋洋，做这做那，思绪万千，也终于达到前还没来得及仆，后已然继个不停的地步。<br>而很多事，就发生在这继与仆仆与继之间，种种种种，此消彼长，乏味有趣，痛苦欢愉。<br>然，当一切事物，在时间的带领下，有条不紊地进行时。我们，趁本能尚存，还有没有胆量，溯洄而行，去和某些早一点的自己，打个招呼呢？"
     ,"玩是一种古老的手段，贪图短暂一乐。<br>乐趣，一直不太好定义，但多半都是歪打正着。寻常的状态之外，偶发且欣喜。<br>太多灵感上的诉求，只有通过玩才能获取。但遗憾的是，并不是每一次的尝试都能得到满意的结果。久而久之，大家开始热衷于玩本身，而选择性淡忘了想要获取的些许。<br>终于，玩从一种手段，进化成了一种目的，进化成了一盘专辑。"
-    ,"奥德赛不仅是史诗，更是世界上第一台游戏机的名字；你已经记不清长岛冰茶前，还有哪款鸡尾酒能让人们为之欢呼；正弦是一种令人头疼的数学模型，但同时也能制造令人着迷的电子乐；惠比寿的青年喜欢用保鲜膜密封三文鱼，惠比寿的艺术家喜欢用保鲜膜密封情侣；至于陈粒呢，她还在鲜活的音乐道路上不停探寻，也偶尔在人工的室内草场上奋力蛙跳。"
-    ,"要挣钱，要养家，要过好日子，当时就那个水平，别人也都那么干，限制太多，给钱太少，社会不开明，市场不成熟，都是理由。但今天谁要听这些理由？大家只看结果，任何理由没有，这就是你干的，你的历史。"
+    ,"奥德赛不仅是史诗，更是世界上第一台游戏机的名字；妳已经记不清长岛冰茶前，还有哪款鸡尾酒能让人们为之欢呼；正弦是一种令人头疼的数学模型，但同时也能制造令人着迷的电子乐；惠比寿的青年喜欢用保鲜膜密封三文鱼，惠比寿的艺术家喜欢用保鲜膜密封情侣；至于陈粒呢，她还在鲜活的音乐道路上不停探寻，也偶尔在人工的室内草场上奋力蛙跳。"
+    ,"要挣钱，要养家，要过好日子，当时就那个水平，别人也都那么干，限制太多，给钱太少，社会不开明，市场不成熟，都是理由。但今天谁要听这些理由？大家只看结果，任何理由没有，这就是妳干的，妳的历史。"
     ,"爱若是绝望 以洒脱心体验刹那戏台<br>爱若是邪心 与其谈心与其俱飞起来<br>爱若灌我醉 我定踏入极地而不知还<br>爱若清我醒 何时渡过欲流到达彼岸"
     ,"冲回忆留个背影，<br>纠缠无用；<br>然后，赊一个愿，<br>再见不会觉得抱歉。","时间铸了镜和钟，<br>镜映出无限的空洞，<br>钟摆出成长的普通。<br>沉默不是低垂失落的恨不公，<br>是慢慢走向自己，<br>然后，撕破误解的轻松。"
     ,"草木攒动，传来细微的低语，<br>说累赘都放下，看树影和落花。<br>妳向我走来，伴着光晕和盛夏，<br>攥紧的双臂张开，终于找到妳啦。","夜灯映出单数背影，手掌摊开或攥紧，成像同一片风景。<br>谁在那里，看不清，叹不停。","得而方寸渐乱，<br>想象竟比拥有果敢。<br>不如，<br>顺然其万变，<br>让交织自由延展。"
     ,"奔向舍弃之前，不如缓行、走慢。<br>原地打个转，回过头看。<br>还没体验，还有许多，值得感叹。","不安 有多少<br>妳有 多重要<br>拜拜 到底是<br>句号 还是问号"
     ,"试探构造，有理想边界的世界。<br>春夏交接、金黄的秋、银白的冬，<br>与妳一起，无限扩充。","自然固有潮汐<br>热烈的、兴奋的，自然是欢欣鼓舞<br>质疑的、哀怨的，也得要待到从头<br>溯洄从之，道阻且长。<br>也如流淌，也如生活。"
-    ,"最后<br>在我掏出我的心窝子之后<br>妳们应该说的不是“我爱妳”<br>而是<br>“我也爱妳”","结果此生话题落到了别处，但重要的是我们都在慢慢慢慢告别居无定所，在远远远远祝福。特别好，可以把纹身挖开，用脚走路，走去你的祝福处，也就是我的现在啊。",
-    "那天下午，时间流逝，直至静止","后来对你的幻想 是我神秘的营养 是我神秘的营养","朝起早，夜眠迟；老易至，惜此时。","爱 爱过但是太疯狂全遗忘","今夜 让我们祈祷爱科技的朋友都是浪漫派怪咖 当然 就算不是的话 我的歌也不会太浪费 大家吃好喝好..."];
+    ,"最后<br>在我掏出我的心窝子之后<br>妳们应该说的不是“我爱妳”<br>而是<br>“我也爱妳”","结果此生话题落到了别处，但重要的是我们都在慢慢慢慢告别居无定所，在远远远远祝福。特别好，可以把纹身挖开，用脚走路，走去妳的祝福处，也就是我的现在啊。",
+    "那天下午，时间流逝，直至静止","后来对妳的幻想 是我神秘的营养 是我神秘的营养","朝起早，夜眠迟；老易至，惜此时。","爱 爱过但是太疯狂全遗忘","今夜 让我们祈祷爱科技的朋友都是浪漫派怪咖 当然 就算不是的话 我的歌也不会太浪费 大家吃好喝好..."];
 
     // 2. 核心函数
     // 替换第 216 行起的函数
@@ -2038,7 +2038,7 @@ function closeModal() {
     setTimeout(() => {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto'; // 恢复滚动
-        // 注意：如果你想保留“我在现场”的钩子，不要在这里重置 checkbox
+        // 注意：如果妳想保留“我在现场”的钩子，不要在这里重置 checkbox
     }, 300);
 }
 
@@ -2060,7 +2060,7 @@ function closeModal() {
     source.src = newSrc; 
     music.load(); 
     
-    // 2. 设定默认音量（和你原来 toggleMusic 里的设定保持一致）
+    // 2. 设定默认音量（和妳原来 toggleMusic 里的设定保持一致）
     music.volume = 0.3; 
     
     // 3. 强制播放音乐
@@ -3102,7 +3102,7 @@ window.toggleRibbon = function(id, el, event) {
     }
 };
 
-// 荧光棒切换函数 (保持你原有的，防止报错)
+// 荧光棒切换函数 (保持妳原有的，防止报错)
 window.toggleLightstick = function(city, el) {
     el.classList.toggle('active');
     localStorage.setItem(`stick_${city}`, el.classList.contains('active'));
@@ -3521,7 +3521,7 @@ function saveTonglouStatus(id, checked) {
         // --- 新增：趣味音效 ---
         if (e.target.checked) {
             // 使用一个清脆的“盖章”或“咔哒”声，这里使用了一个公开的音效地址
-            // 你也可以换成你自己喜欢的 mp3 链接
+            // 妳也可以换成妳自己喜欢的 mp3 链接
             const stampSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
             stampSound.volume = 0.4; // 音量调小一点，避免突兀
             stampSound.play();
