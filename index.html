@@ -1847,8 +1847,8 @@ window.saveBoxImage = function(elementId, fileName) {
         "1231": "环形时间里， \n我们奔跑，驻足，张望。 \n与旧我擦肩， \n牵起明天的手掌。 \n且歌且行，循着微光。 \n谢谢武汉，一起踏进新的一年。", 
         "0101": "新年~新的日光，新的希望。 \n愿妳天真，充满想象。 \n勇敢出发，保持形状。 \n谢谢武汉！给我们新的力量~" ,
         "260314": "给大家汇报假期:\n好吃，好喝，好玩，好爬，好游…\n也祝大家今天：\n好听，好看，好闻，好坐，好唱…\n\n好梦～\n谢谢成都，明天再见！（来听新歌～～ " ,
-        "260315":"春天好，\n我们呼吸，唱歌，舒展，流动…\n和万物一起生～长～\n\n谢谢成都！两天都玩得开心啦！ "
-        
+        "260315":"春天好，\n我们呼吸，唱歌，舒展，流动…\n和万物一起生～长～\n\n谢谢成都！两天都玩得开心啦！ ",
+        "260425":"在泛泛的生活里，\n拥抱一些小小的具体，\n和绿色打招呼！🦋🌿\n谢谢宁波，祝大家今天新鲜、美妙！"
     };
 // --- 修正后的顺序 ---
 const eggIcons = Array.from({length: 34}, (_, i) => `images/果实 (${i+1}).webp`); // 1. 先定义路径
@@ -1896,10 +1896,11 @@ window.addEventListener('load', () => {
         { id: "0101", city: "武汉", time: "2026.01.01", weather: "☀️", season: "winter",part: 1, guest: "", isSpecial: "元旦场🧨", personalPics: Array.from({length: 12}, (_, i) => `images/0101 (${i+1}).webp`), guestPics: [], 
         songs: [{n:"情景剧",t:"request" ,l:"https://music.163.com/dj?id=3710560736&uct2=U2FsdGVkX1/qbmgdNbpSj3VQLMsw43Cz/cr8WJrE8No=",},{n :"远游" , t :"request" , l :"https://music.163.com/dj?id=3710679728&uct2=U2FsdGVkX1+Qcliem47B+hMi8e0Wgv+AT71orJBAPIY= "} , { n :"乐园" , t :" request" , l :"https://music.163.com/dj?id=3710681688&uct2=U2FsdGVkX1/lmn5cgXGxLvqoRN5+zdsDC58X3XnjQqQ= "} , { n :"My Dear Art" , t :" request" , l :" https://music.163.com/dj?id=3710693610&uct2=U2FsdGVkX1/uMDMN/2+w7Fwu04e31m5x+wFY0/DPYAY="} , { n :"再度重相逢" , t :" request" , l :"https://music.163.com/dj?id=3710605715&uct2=U2FsdGVkX18B0puCA848rqa6TS+WCkk569zTk3dM2cE= "} , { n :"乱" , t :" surprise",l:"" } , { n :"剧烈" , t :" surprise",l:"https://music.163.com/dj?id=3710685678&uct2=U2FsdGVkX19OGpMhXaeVZDHblZY5RkAO7zwGPRGjY2E="} ] },
         { id: "260314", city: "成都", time: "2026.03.14", weather: "☁️", season: "spring",part: 2,  guest: "嘉宾：凯瑟琳🐹",personalPics: Array.from({length: 13}, (_, i) => `images/260314 (${i+1}).webp`), guestPics:  Array.from({length: 1}, (_, i) => `images/260314guest (${i+1}).webp`), 
-        songs: [{n:"飞白",t:"request",l:"https://music.163.com/dj?id=3715125431&uct2=U2FsdGVkX189Qg5TzOxe+InF9IIxouavWtvfrpW7PPw="},{n:"妳要的爱",t:"request",l:"https://music.163.com/dj?id=3715111445&uct2=U2FsdGVkX1+nCLfEMwo7us4wZxFM+gDNtmaqKV70Di8="},{n:"浪味仙地",t:"surprise",l:""},{n:"试运行",t:"surprise",l:"https://music.163.com/dj?id=3715083437&uct2=U2FsdGVkX18RlequJpB8GYWBCu/hewCwd0WlM1kRVq4="},{n:"超认真嬉戏",t:"surprise",l:"https://music.163.com/dj?id=3715093460&uct2=U2FsdGVkX1+EogPMMDkz15Nvorf0qp+tVBYDc9zrQ/0="},{n:"下世纪见",t:"surprise",l:"https://music.163.com/dj?id=3715179471&uct2=U2FsdGVkX19pRUe2KQ1CQG6LrD//ne5zy4v/aOOjzys="}] },
+        songs: [{n:"飞白",t:"request",l:"https://music.163.com/dj?id=3715125431&uct2=U2FsdGVkX189Qg5TzOxe+InF9IIxouavWtvfrpW7PPw="},{n:"你要的爱",t:"request",l:"https://music.163.com/dj?id=3715111445&uct2=U2FsdGVkX1+nCLfEMwo7us4wZxFM+gDNtmaqKV70Di8="},{n:"浪味仙地",t:"surprise",l:""},{n:"试运行",t:"surprise",l:"https://music.163.com/dj?id=3715083437&uct2=U2FsdGVkX18RlequJpB8GYWBCu/hewCwd0WlM1kRVq4="},{n:"超认真嬉戏",t:"surprise",l:"https://music.163.com/dj?id=3715093460&uct2=U2FsdGVkX1+EogPMMDkz15Nvorf0qp+tVBYDc9zrQ/0="},{n:"下世纪见",t:"surprise",l:"https://music.163.com/dj?id=3715179471&uct2=U2FsdGVkX19pRUe2KQ1CQG6LrD//ne5zy4v/aOOjzys="}] },
         { id: "260315", city: "成都", time: "2026.03.15", weather: "☁️", season: "spring",part: 2, guest: "嘉宾：胡彦斌🐯", personalPics: Array.from({length: 19}, (_, i) => `images/260315 (${i+1}).webp`),  guestPics: Array.from({length: 2}, (_, i) => `images/260315guest (${i+1}).webp`),
          songs: [{n:"小半（feat胡彦斌）",t:"guest",l:""},{n:"情不自禁",t:"guest",l:"https://music.163.com/dj?id=3715382225&uct2=U2FsdGVkX1+AYX1LPVoeix578XUkRiBFtM4aJYh/4X8="},{n:"游鱼",t:"request",l:""},{n:"小情歌",t:"request",l:"https://music.163.com/dj?id=3715270210&uct2=U2FsdGVkX1+l45c1YbqCRziVUY68o38a6eUOlXWYtUo="},{n:"浪味仙地",t:"surprise",l:""},{n:"七楼",t:"surprise",l:""},{n:"下世纪见",t:"surprise",l:""},{n:"超认真嬉戏",t:"surprise",l:""}] },
-        { id: "NB", city: "宁波", time: "2026.04.25", weather: "", season: "spring",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] }, 
+        { id: "260425", city: "宁波", time: "2026.04.25", weather: "☀️", season: "spring",part: 2, guest: "金海心🐱", personalPics: Array.from({length: 19}, (_, i) => `images/260425 (${i+1}).webp`), guestPics: Array.from({length: 1}, (_, i) => `images/260425guest (${i+1}).webp`), 
+        songs: [{n:"虚拟feat金海心",t:"guest",l:""},{n:"把耳朵叫醒",t:"guest",l:""},{n:"地球巡逻小分队",t:"request",l:""},{n:"当爱在靠近",t:"request",l:""}] }, 
         { id: "NC1", city: "南昌", time: "2026.05.30", weather: "", season: "summer",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
         { id: "NC2", city: "南昌", time: "2026.05.31", weather: "", season: "summer",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
         { id: "QD", city: "青岛", time: "2026.06.27", weather: "", season: "summer",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
@@ -2990,7 +2991,9 @@ function renderEquip(container) {
         { name: "西安", color: "#B2C089" }, { name: "济南", color: "#EEABA1" },
         { name: "重庆", color: "#E3BDD0" }, { name: "厦门", color: "#B6D9D6" },
         { name: "深圳", color: "#9C9DCF" }, { name: "苏州", color: "#D5BE4F" },
-        { name: "武汉", color: "#F69393" }, { name: "成都", color: "#A2C957" }
+        { name: "武汉", color: "#F69393" }, { name: "成都", color: "#A2C957" },
+        { name: "宁波", color: "#F56C7A" }
+
     ];
     let lightstickHTML = cityData.map(city => {
         const isCollected = localStorage.getItem(`stick_${city.name}`) === 'true';
