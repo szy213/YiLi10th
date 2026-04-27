@@ -109,7 +109,8 @@
 
 /* 4. 给未选中的卡片也加一个平滑过渡，确保视觉丝滑 */
 .tour-card {
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1.0) !important;
+    /* 只对会发生视觉变化的属性进行过渡，救下GPU的命 */
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1.0), box-shadow 0.4s, background-color 0.4s !important;
 }
 
         /* --- 样式部分保持不变 --- */
@@ -2097,17 +2098,8 @@ function closeModal() {
     // 1. 设置背景图片路径
     document.body.style.backgroundImage = "url('images/my_grain_bg.webp')";
     
-    // 2. 设置重复模式：建议使用 'repeat' 让纹理铺满整个背景
-    document.body.style.backgroundRepeat = "repeat"; 
-    
-    // 3. 设置背景大小：'100% auto' 确保宽度撑满，高度根据原图比例自适应（方便重复）
-    document.body.style.backgroundSize = "100% auto"; 
-
-    // 4. 核心：锁定背景，不随滚动条滑动
+    document.body.style.backgroundSize = "100% auto";
     document.body.style.backgroundAttachment = "fixed";
-
-    // 5. 辅助：确保背景图片从顶部居中开始铺设
-    document.body.style.backgroundPosition = "top center";
 }else {
         document.body.style.backgroundImage = "linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 25%, transparent 40%), url('images/bg.jpg')";
         document.body.style.backgroundSize = "100% auto";
@@ -3539,10 +3531,6 @@ function saveTonglouStatus(id, checked) {
 
 <script>
 (function() {
-    let touchStartTime = 0;
-    let touchStartX = 0;
-    let touchStartY = 0;
-
     function openLightbox(src) {
         const overlay = document.createElement('div');
         overlay.style.cssText = `
@@ -3554,7 +3542,6 @@ function saveTonglouStatus(id, checked) {
             cursor: zoom-out;
         `;
 
-        // 右上角关闭小叉叉
         const closeBtn = document.createElement('div');
         closeBtn.innerHTML = '×';
         closeBtn.style.cssText = `
@@ -3565,6 +3552,8 @@ function saveTonglouStatus(id, checked) {
 
         const bigImg = document.createElement('img');
         bigImg.src = src;
+        // 添加一个专用类名，防止自己触发自己
+        bigImg.className = 'lightbox-ignore'; 
         bigImg.style.cssText = `
             max-width: 96%; max-height: 96%;
             object-fit: contain; border-radius: 4px;
@@ -3575,10 +3564,11 @@ function saveTonglouStatus(id, checked) {
         overlay.appendChild(bigImg);
         document.body.appendChild(overlay);
 
-        setTimeout(() => {
+        // 触发动画
+        requestAnimationFrame(() => {
             overlay.style.opacity = '1';
             bigImg.style.transform = 'scale(1)';
-        }, 20);
+        });
 
         const closeBox = (e) => {
             if (e) e.stopPropagation();
@@ -3590,39 +3580,15 @@ function saveTonglouStatus(id, checked) {
         overlay.onclick = closeBox;
     }
 
-    // 监听整个页面的触摸，精准判断“单击”
-    window.addEventListener('touchstart', function(e) {
-        touchStartTime = Date.now();
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-    }, {passive: true, capture: true});
-
-    window.addEventListener('touchend', function(e) {
-        const moveX = Math.abs(e.changedTouches[0].clientX - touchStartX);
-        const moveY = Math.abs(e.changedTouches[0].clientY - touchStartY);
-        const duration = Date.now() - touchStartTime;
-
-        // 只有位移很小（<10px）且时间很短（<250ms）才认为是点击，否则是滑动
-        if (moveX < 10 && moveY < 10 && duration < 250) {
-            const target = e.target;
-            // 过滤条件：是图片 + 路径含 images/ + 必须是 .webp 后缀
-            if (target.tagName === 'IMG' && 
-    target.classList.contains('slider-img') && // 关键：只允许巡演轮播图
-    target.src.includes('images/') && 
-    target.src.toLowerCase().endsWith('.webp')) {
-    openLightbox(target.src);
-}
-        }
-    }, {passive: true, capture: true});
-
-    // 电脑端点击保持不变，但也增加 webp 过滤
- window.addEventListener('click', function(e) {
+    // 仅保留 click 事件即可，现代手机浏览器已彻底消除 300ms 点击延迟
+    window.addEventListener('click', function(e) {
         const target = e.target;
+        
+        // 严格限制：必须是轮播图的图片 (classList 包含 slider-img) 才能触发大图
         if (target.tagName === 'IMG' && 
-            target.src.includes('images/') && 
-            target.src.toLowerCase().endsWith('.webp')&& 
-        !target.classList.contains('shiguan-egg') && // 排除带有 shiguan-egg 类的图片
-        !target.src.includes('load.webp')  ) {
+            target.classList.contains('slider-img') && 
+            !target.classList.contains('lightbox-ignore')) {
+            
             openLightbox(target.src);
         }
     }, {capture: true});
