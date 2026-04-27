@@ -109,8 +109,7 @@
 
 /* 4. 给未选中的卡片也加一个平滑过渡，确保视觉丝滑 */
 .tour-card {
-    /* 只对会发生视觉变化的属性进行过渡，救下GPU的命 */
-    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1.0), box-shadow 0.4s, background-color 0.4s !important;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1.0) !important;
 }
 
         /* --- 样式部分保持不变 --- */
@@ -142,7 +141,7 @@ body {
     /* 顺延设置 */
     background-repeat: repeat-y;
     background-size: 100% auto; /* 必须是 auto，否则无法对齐渐变 */
-    
+    background-attachment: scroll;
     background-position: top center;
     background-color: #f2f2f2; /* 确保背景底色一致 */
     
@@ -1773,34 +1772,16 @@ document.head.appendChild(style);
 
 <script>
 
-window.addEventListener('scroll', () => {
-    // 【修改】只在 Part 1 和 Part 2 处理月度标尺
-    if (currentPart === 3 || currentPart === 4) return;
-
-    // 【修改】从当前显示的容器里寻找卡片
-    const currentContainer = document.getElementById('container-part-' + currentPart);
-    if (!currentContainer) return;
-    
-    const cards = currentContainer.querySelectorAll('.tour-card');
-    let activeMonth = "";
-
-    cards.forEach(card => {
-        const rect = card.getBoundingClientRect();
-        if (rect.top < 200 && rect.bottom > 200) {
-            const dateElement = card.querySelector('.date-num');
-            if (dateElement) {
-                const m = dateElement.innerText.split('.')[1];
-                if (m) activeMonth = m;
-            }
-        }
-    });
-
-    document.querySelectorAll('.ruler-tick').forEach(tick => {
-        tick.classList.remove('active');
-        if (tick.id === 'tick-' + activeMonth) {
-            tick.classList.add('active');
-        }
-    });
+window.addEventListener('load', function() {
+    const loader = document.getElementById('loading-overlay');
+    if (loader) {
+        // 延迟 0.5 秒消失，避免闪现，增加丝滑感
+        setTimeout(() => {
+            loader.style.transition = 'opacity 3s ease';
+            loader.style.opacity = '0';
+            setTimeout(() => loader.remove(), 3000); // 彻底移除节点
+        }, 3000);
+    }
 });
 
 // 确保这个函数在全局作用域，任何地方都能调用
@@ -2104,34 +2085,59 @@ function closeModal() {
         }
     }
 
-let currentPart = 1;
-function changePart(part, btn) {
+    let currentPart = 1;
+    function changePart(part, btn) {
     currentPart = part;
-    
     // 1. 切换按钮高亮状态
     document.querySelectorAll('.part-btn').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
 
-    // 2. 背景切换逻辑
+    // 2. 背景切换核心逻辑
     if (part === 3 || part === 4) {
-        document.body.style.backgroundImage = "url('images/my_grain_bg.webp')";
-        document.body.style.backgroundSize = "100% auto";
-        document.body.style.backgroundAttachment = "fixed";
-    } else {
+    // 1. 设置背景图片路径
+    document.body.style.backgroundImage = "url('images/my_grain_bg.webp')";
+    
+    // 2. 设置重复模式：建议使用 'repeat' 让纹理铺满整个背景
+    document.body.style.backgroundRepeat = "repeat"; 
+    
+    // 3. 设置背景大小：'100% auto' 确保宽度撑满，高度根据原图比例自适应（方便重复）
+    document.body.style.backgroundSize = "100% auto"; 
+
+    // 4. 核心：锁定背景，不随滚动条滑动
+    document.body.style.backgroundAttachment = "fixed";
+
+    // 5. 辅助：确保背景图片从顶部居中开始铺设
+    document.body.style.backgroundPosition = "top center";
+}else {
         document.body.style.backgroundImage = "linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 25%, transparent 40%), url('images/bg.jpg')";
         document.body.style.backgroundSize = "100% auto";
         document.body.style.backgroundAttachment = "scroll";
     }
 
-    // 3. 核心：统一交由 render 调度处理（它现在具备缓存功能了）
-    render(); 
+    // 3. 内容渲染逻辑
+    const grid = document.getElementById('mainGrid');
+    
+    // 隐藏/显示 Part 1/2 特有的时间刻度尺
+    const ruler = document.querySelector('.time-ruler');
+    
+    if (part === 4) {
+        if (ruler) ruler.style.display = 'none';
+        // 关键：这里直接调用 renderEquip，并阻止执行下方的 render()
+        renderEquip(grid);
+    } else {
+        if (ruler) ruler.style.display = 'flex';
+        // 执行原有的渲染逻辑（Part 1, 2, 3）
+        render(); 
+    }
 
-    // 4. 底部三个功能按钮的显示/隐藏控制
+    // 4. 页面滚动反馈
+    // --- 新增：控制底部三个功能按钮的显示/隐藏 ---
     const changelogBtn = document.getElementById('changelog-btn');
     const infoBtn = document.getElementById('info-btn');
     const thanksBtn = document.getElementById('thanks-btn');
     
-    if (part === 3 || part === 4) {
+    if (part === 2 |part === 3 || part === 4) {
+        // 在 Part 3 和 Part 4 强制隐藏
         [changelogBtn, infoBtn, thanksBtn].forEach(b => {
             if (b) {
                 b.style.visibility = 'hidden';
@@ -2139,6 +2145,7 @@ function changePart(part, btn) {
             }
         });
     } else {
+        // 在 Part 1 和 Part 2 时，只有页面在顶部（<300px）才恢复显示
         if (window.scrollY <= 300) {
             [changelogBtn, infoBtn, thanksBtn].forEach(b => {
                 if (b) {
@@ -2601,112 +2608,82 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
 
 
 
-// 在外部定义一个全局变量，用来记录哪些模块已经渲染过 HTML 了
-const renderedParts = { 1: false, 2: false };
-
 function render() {
-    const mainGrid = document.getElementById('mainGrid');
+    const grid = document.getElementById('mainGrid');
     const ruler = document.getElementById('monthRuler');
-    if(!mainGrid) return; 
+    if(!grid) return; grid.innerHTML = '';
 
-    // 【关键优化】不使用 innerHTML = '' 暴力清空！而是将现有所有 Part 容器隐藏起来
-    let partContainers = mainGrid.querySelectorAll('.part-container');
-    partContainers.forEach(el => el.style.display = 'none');
-
-    // 获取或创建当前 part 专属的容器
-    let currentContainer = document.getElementById('container-part-' + currentPart);
-    if (!currentContainer) {
-        currentContainer = document.createElement('div');
-        currentContainer.id = 'container-part-' + currentPart;
-        currentContainer.className = 'part-container';
-        // 继承原来 tour-grid 的布局属性
-        currentContainer.style.display = 'flex';
-        currentContainer.style.flexDirection = 'column';
-        currentContainer.style.gap = '50px';
-        currentContainer.style.width = '100%';
-        mainGrid.appendChild(currentContainer);
-    }
-    
-    // 显示当前的专属容器
-    currentContainer.style.display = 'flex'; 
-
-    // 刻度尺的显隐逻辑
-    if (currentPart === 3 || currentPart === 4) {
-        if(ruler) ruler.style.display = 'none';
-    } else {
-        if(ruler) ruler.style.display = 'flex';
-    }
-
-    // Part 3 和 Part 4 是动态计算的数据，需要每次点开时刷新
+    // 板块 3 处理
     if (currentPart === 3) {
-        currentContainer.innerHTML = ''; 
-        renderMyGrain(currentContainer);
+        renderMyGrain(grid);
+        if(ruler) ruler.style.display = 'none';
         return;
     }
     if (currentPart === 4) {
-        currentContainer.innerHTML = ''; 
-        renderEquip(currentContainer);
+        renderEquip(grid);
+        if(ruler) ruler.style.display = 'none';
         return;
     }
 
-    // 【秒切核心】对于 Part 1 和 Part 2，如果之前渲染过，就不再重复绘制 DOM，直接瞬间展示！
-    if (renderedParts[currentPart]) {
-        return; 
+    // 刻度尺初始化
+    if(ruler) {
+        ruler.innerHTML = '';
+        ruler.style.display = 'flex';
     }
-
-    // ————————— 以下是首次加载对应 Part 的渲染逻辑 —————————
-    renderedParts[currentPart] = true;
-    currentContainer.innerHTML = ''; // 确保初始状态干净
     
     const filteredData = tourData.filter(item => item.part === currentPart);
     
-    // 生成刻度尺
-    if(ruler) {
-        ruler.innerHTML = '';
-        const uniqueMonths = [...new Set(filteredData.map(item => {
-            const m = item.time.split('.')[1];
-            return m && m !== "coming soon" ? m : null;
-        }))].filter(Boolean);
+    // 提取不重复的月份用于生成刻度
+    const uniqueMonths = [...new Set(filteredData.map(item => {
+        const m = item.time.split('.')[1];
+        return m && m !== "coming soon" ? m : null;
+    }))].filter(Boolean);
 
-        uniqueMonths.forEach(m => {
-            const tick = document.createElement('div');
-            tick.className = 'ruler-tick';
-            tick.setAttribute('data-month', m + '月');
-            tick.id = 'tick-' + m;
-            
-            tick.onclick = function() {
-                const allCards = currentContainer.querySelectorAll('.tour-card');
-                for (let card of allCards) {
-                    const dateElement = card.querySelector('.date-num');
-                    if (dateElement && dateElement.innerText.split('.')[1] === m) {
-                        const topOffset = card.getBoundingClientRect().top + window.pageYOffset - 100;
-                        window.scrollTo({ top: topOffset, behavior: 'smooth' });
-                        break;
-                    }
+    uniqueMonths.forEach(m => {
+        const tick = document.createElement('div');
+        tick.className = 'ruler-tick';
+        tick.setAttribute('data-month', m + '月');
+        tick.id = 'tick-' + m;
+        
+        // 点击跳转逻辑
+        tick.onclick = function() {
+            const allCards = document.querySelectorAll('.tour-card');
+            for (let card of allCards) {
+                const dateElement = card.querySelector('.date-num');
+                if (dateElement && dateElement.innerText.split('.')[1] === m) {
+                    const topOffset = card.getBoundingClientRect().top + window.pageYOffset - 100;
+                    window.scrollTo({ top: topOffset, behavior: 'smooth' });
+                    break;
                 }
-            };
-            ruler.appendChild(tick);
-        });
-    }
+            }
+        };
+        ruler.appendChild(tick);
+    });
 
-    // 生成演出卡片
+    // 渲染卡片
+    // 渲染卡片
     filteredData.forEach(item => {
         const card = document.createElement('div');
         card.className = `tour-card ${item.status === 'unplayed' ? 'unplayed' : ''}`;
         
+        // 渲染前先去“保险柜”查一下这个 ID 之前有没有被勾选过
         const isChecked = localStorage.getItem('checked_' + item.id) === 'true';
         
-        const tonglouIds = ['0726', '0727', '0920', '0921', '1101']; 
+        // === 新增：痛楼打卡专属逻辑 ===
+        const tonglouIds = ['0726', '0727', '0920', '0921', '1101']; // 需要显示痛楼打卡的场次ID
         const hasTonglou = tonglouIds.includes(item.id);
         const isTonglouChecked = localStorage.getItem('tonglou_' + item.id) === 'true';
+        
+        // 如果属于痛楼场次，生成对应的 checkbox，并加一点右边距与“我在现场”隔开
         const tonglouHTML = hasTonglou ? `
-            <label style="cursor: pointer; margin-right: 15px;">
-                <input type="checkbox" 
-                ${isTonglouChecked ? 'checked' : ''} 
-                onchange="saveTonglouStatus('${item.id}', this.checked); if(this.checked) spawnRabbit();"> 
-                痛楼打卡
-            </label>
-        ` : '';
+    <label style="cursor: pointer; margin-right: 15px;">
+        <input type="checkbox" 
+        ${isTonglouChecked ? 'checked' : ''} 
+        onchange="saveTonglouStatus('${item.id}', this.checked); if(this.checked) spawnRabbit();"> 
+        痛楼打卡
+    </label>
+` : '';
+        // ============================
 
         const badgeHTML = item.isSpecial ? `<div class="special-badge">${item.isSpecial}</div>` : '';
         const unplayedHTML = item.status === 'unplayed' ? `<span class="unplayed-label">(已官宣)</span>` : '';
@@ -2743,19 +2720,26 @@ function render() {
             </div>  
             <div class="edit-note-btn" onclick="editNote('${item.id}')">🪶</div>
             <div class="note-bubble" id="bubble-${item.id}">${localStorage.getItem('note-' + item.id) || '点击羽毛笔记录心情...'}</div>`;
-        
-        // 渲染到专门的 container 里面
-        currentContainer.appendChild(card);
+        grid.appendChild(card);
     });
 
-    // 随机生成果实彩蛋逻辑
+    // 彩蛋果实逻辑
+    // 彩蛋果实逻辑
+    // 1. 准备原始的 34 张图片路径
     const allEggIcons = Array.from({length: 34}, (_, i) => `images/果实 (${i+1}).webp`);
-    const selectedIcons = [...allEggIcons].sort(() => Math.random() - 0.5).slice(0, 12);
-    
-    const gridWidth = mainGrid.clientWidth || window.innerWidth;
-    const gridHeight = mainGrid.clientHeight || window.innerHeight * 3; 
-    const placedEggs = []; 
 
+    // 2. 随机打乱并截取前 12 张（保证这 12 张各不相同）
+    const selectedIcons = [...allEggIcons]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 12);
+
+    // --- 新增：获取容器宽高，用于计算绝对像素位置以避免重叠 ---
+    const gridWidth = grid.clientWidth || window.innerWidth;
+    // 卡片渲染完后 grid 会有高度，做个兜底
+    const gridHeight = grid.clientHeight || window.innerHeight * 3; 
+    const placedEggs = []; // 用于存放已生成果实的坐标
+
+    // 3. 循环 12 次，生成 12 个不重复且不重叠的果实
     for(let i = 0; i < 12; i++) {
         const egg = document.createElement('img');
         egg.className = 'shiguan-egg';
@@ -2765,11 +2749,15 @@ function render() {
         let isOverlapping = true;
         let attempts = 0;
         
+        // 碰撞检测核心：最多尝试 100 次，避免死循环
         while (isOverlapping && attempts < 100) {
+            // 先把百分比转成实际像素进行随机 (left: 15%~85%, top: 0%~95%)
             randomX = (Math.random() * 70 + 15) / 100 * gridWidth; 
             randomY = (Math.random() * 95) / 100 * gridHeight;
+            
             isOverlapping = false;
             for (let pos of placedEggs) {
+                // 果实是 100x100，设定 110px 的安全距离以防边角重叠
                 if (Math.abs(randomX - pos.x) < 110 && Math.abs(randomY - pos.y) < 110) {
                     isOverlapping = true;
                     break;
@@ -2777,8 +2765,11 @@ function render() {
             }
             attempts++;
         }
+        
+        // 将成功生成的不重叠坐标存入数组
         placedEggs.push({x: randomX, y: randomY});
         
+        // 把像素位置转换回原本的百分比赋值，兼容响应式
         egg.style.left = (randomX / gridWidth * 100) + "%"; 
         egg.style.top = (randomY / gridHeight * 100) + "%";
         egg.style.animationDelay = (Math.random() * 2) + "s";
@@ -2786,6 +2777,7 @@ function render() {
         if (typeof usedQuoteIndices === 'undefined') window.usedQuoteIndices = []; 
 
         egg.onclick = function(e) {
+            // --- 视觉特效 ---
             let ripple = document.createElement('div');
             ripple.style.cssText = `position:fixed; left:${e.clientX-25}px; top:${e.clientY-25}px; width:50px; height:50px; border:2px solid var(--tag-special); border-radius:50%; animation: rippleOut 0.5s ease-out; pointer-events:none; z-index:9999;`;
             document.body.appendChild(ripple);
@@ -2794,6 +2786,7 @@ function render() {
             e.stopPropagation();
             this.remove(); 
 
+            // --- 文案随机逻辑 ---
             let availableIndices = [];
             for (let j = 0; j < eggQuotes.length; j++) {
                 if (!usedQuoteIndices.includes(j)) availableIndices.push(j);
@@ -2806,6 +2799,7 @@ function render() {
             usedQuoteIndices.push(chosenIndex);
             const randomQuote = eggQuotes[chosenIndex];
 
+            // --- 弹窗逻辑 ---
             const modalContent = document.querySelector('.modal-content');
             modalContent.id = "capture-egg-box"; 
             modalContent.style.setProperty('--seal-emoji', '"🍒"');
@@ -2828,8 +2822,7 @@ function render() {
             modalContent.appendChild(saveBtn);
             showModal();
         };
-        // 添加到当前的专属容器
-        currentContainer.appendChild(egg);
+        grid.appendChild(egg);
     }
 }
 
@@ -3546,6 +3539,10 @@ function saveTonglouStatus(id, checked) {
 
 <script>
 (function() {
+    let touchStartTime = 0;
+    let touchStartX = 0;
+    let touchStartY = 0;
+
     function openLightbox(src) {
         const overlay = document.createElement('div');
         overlay.style.cssText = `
@@ -3557,6 +3554,7 @@ function saveTonglouStatus(id, checked) {
             cursor: zoom-out;
         `;
 
+        // 右上角关闭小叉叉
         const closeBtn = document.createElement('div');
         closeBtn.innerHTML = '×';
         closeBtn.style.cssText = `
@@ -3567,8 +3565,6 @@ function saveTonglouStatus(id, checked) {
 
         const bigImg = document.createElement('img');
         bigImg.src = src;
-        // 添加一个专用类名，防止自己触发自己
-        bigImg.className = 'lightbox-ignore'; 
         bigImg.style.cssText = `
             max-width: 96%; max-height: 96%;
             object-fit: contain; border-radius: 4px;
@@ -3579,11 +3575,10 @@ function saveTonglouStatus(id, checked) {
         overlay.appendChild(bigImg);
         document.body.appendChild(overlay);
 
-        // 触发动画
-        requestAnimationFrame(() => {
+        setTimeout(() => {
             overlay.style.opacity = '1';
             bigImg.style.transform = 'scale(1)';
-        });
+        }, 20);
 
         const closeBox = (e) => {
             if (e) e.stopPropagation();
@@ -3595,15 +3590,39 @@ function saveTonglouStatus(id, checked) {
         overlay.onclick = closeBox;
     }
 
-    // 仅保留 click 事件即可，现代手机浏览器已彻底消除 300ms 点击延迟
-    window.addEventListener('click', function(e) {
+    // 监听整个页面的触摸，精准判断“单击”
+    window.addEventListener('touchstart', function(e) {
+        touchStartTime = Date.now();
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }, {passive: true, capture: true});
+
+    window.addEventListener('touchend', function(e) {
+        const moveX = Math.abs(e.changedTouches[0].clientX - touchStartX);
+        const moveY = Math.abs(e.changedTouches[0].clientY - touchStartY);
+        const duration = Date.now() - touchStartTime;
+
+        // 只有位移很小（<10px）且时间很短（<250ms）才认为是点击，否则是滑动
+        if (moveX < 10 && moveY < 10 && duration < 250) {
+            const target = e.target;
+            // 过滤条件：是图片 + 路径含 images/ + 必须是 .webp 后缀
+            if (target.tagName === 'IMG' && 
+    target.classList.contains('slider-img') && // 关键：只允许巡演轮播图
+    target.src.includes('images/') && 
+    target.src.toLowerCase().endsWith('.webp')) {
+    openLightbox(target.src);
+}
+        }
+    }, {passive: true, capture: true});
+
+    // 电脑端点击保持不变，但也增加 webp 过滤
+ window.addEventListener('click', function(e) {
         const target = e.target;
-        
-        // 严格限制：必须是轮播图的图片 (classList 包含 slider-img) 才能触发大图
         if (target.tagName === 'IMG' && 
-            target.classList.contains('slider-img') && 
-            !target.classList.contains('lightbox-ignore')) {
-            
+            target.src.includes('images/') && 
+            target.src.toLowerCase().endsWith('.webp')&& 
+        !target.classList.contains('shiguan-egg') && // 排除带有 shiguan-egg 类的图片
+        !target.src.includes('load.webp')  ) {
             openLightbox(target.src);
         }
     }, {capture: true});
