@@ -776,16 +776,12 @@ body {
     display: block; /* 悬停卡片显示气泡 */
 }
 
-const style = document.createElement('style');
-style.textContent = `
     @keyframes pinDrop {
         0% { transform: translate(-50%, -200%); opacity: 0; }
         60% { transform: translate(-50%, -90%); opacity: 1; }
         80% { transform: translate(-50%, -110%); }
         100% { transform: translate(-50%, -100%); opacity: 1; }
     }
-`;
-document.head.appendChild(style);
 
 
 
@@ -2136,7 +2132,7 @@ function closeModal() {
     const infoBtn = document.getElementById('info-btn');
     const thanksBtn = document.getElementById('thanks-btn');
     
-    if (part === 2 |part === 3 || part === 4) {
+    if (part === 2 || part === 3 || part === 4) {
         // 在 Part 3 和 Part 4 强制隐藏
         [changelogBtn, infoBtn, thanksBtn].forEach(b => {
             if (b) {
@@ -2296,7 +2292,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             item.time !== 'coming soon' &&
             localStorage.getItem('checked_' + item.id) === 'true'
         )
-        .sort((a, b) => new Date(a.time.replace(/\ Scaled/g, '/')) - new Date(b.time.replace(/\./g, '/')));
+        .sort((a, b) => new Date(a.time.replace(/\./g, '/')) - new Date(b.time.replace(/\./g, '/')));
     const nextShow = upcomingTours.length > 0 ? upcomingTours[0] : null;
 
     const getDiffDays = (targetDateStr) => {
@@ -2635,8 +2631,9 @@ function render() {
     
     // 提取不重复的月份用于生成刻度
     const uniqueMonths = [...new Set(filteredData.map(item => {
-        const m = item.time.split('.')[1];
-        return m && m !== "coming soon" ? m : null;
+        if (!item.time || item.time === 'coming soon') return null;
+        const parts = item.time.split('.');
+        return parts.length > 1 ? parts[1] : null;
     }))].filter(Boolean);
 
     uniqueMonths.forEach(m => {
@@ -2663,6 +2660,7 @@ function render() {
     // 渲染卡片
     // 渲染卡片
     filteredData.forEach(item => {
+        if (!item || !item.id) return;
         const card = document.createElement('div');
         card.className = `tour-card ${item.status === 'unplayed' ? 'unplayed' : ''}`;
         
@@ -2670,28 +2668,30 @@ function render() {
         const isChecked = localStorage.getItem('checked_' + item.id) === 'true';
         
         // === 新增：痛楼打卡专属逻辑 ===
-        const tonglouIds = ['0726', '0727', '0920', '0921', '1101']; // 需要显示痛楼打卡的场次ID
+        const tonglouIds = ['0726', '0727', '0920', '0921', '1101']; 
         const hasTonglou = tonglouIds.includes(item.id);
         const isTonglouChecked = localStorage.getItem('tonglou_' + item.id) === 'true';
         
-        // 如果属于痛楼场次，生成对应的 checkbox，并加一点右边距与“我在现场”隔开
         const tonglouHTML = hasTonglou ? `
     <label style="cursor: pointer; margin-right: 15px;">
         <input type="checkbox" 
         ${isTonglouChecked ? 'checked' : ''} 
-        onchange="saveTonglouStatus('${item.id}', this.checked); if(this.checked) spawnRabbit();"> 
+        onchange="saveTonglouStatus('${item.id}', this.checked); if(this.checked) typeof spawnRabbit === 'function' && spawnRabbit();"> 
         痛楼打卡
     </label>
 ` : '';
-        // ============================
 
         const badgeHTML = item.isSpecial ? `<div class="special-badge">${item.isSpecial}</div>` : '';
         const unplayedHTML = item.status === 'unplayed' ? `<span class="unplayed-label">(已官宣)</span>` : '';
         
-        const tags = item.songs.map(s => {
+        const songs = item.songs || [];
+        const tags = songs.map(s => {
+            if (!s || !s.n) return '';
             const targetUrl = s.l ? s.l : `https://music.163.com/#/search/m/?s=${encodeURIComponent(s.n)}`;
-            return `<span class="song-tag ${s.t}" onclick="window.open('${targetUrl}', '_blank'); event.stopPropagation();">${s.n}</span>`;
+            return `<span class="song-tag ${s.t || ''}" onclick="window.open('${targetUrl}', '_blank'); event.stopPropagation();">${s.n}</span>`;
         }).join('');
+        
+        const personalPics = item.personalPics || [];
         
         card.innerHTML = `
             ${badgeHTML} 
@@ -2703,9 +2703,9 @@ function render() {
                </span>
                <span class="tour-guest" onclick="switchPics('${item.id}', 'guest')">${item.guest}</span>
             </div>
-            ${item.personalPics.length > 0 ? `
+            ${personalPics.length > 0 ? `
                 <div class="image-slider" id="slider-${item.id}">
-                    ${item.personalPics.map(src => `<img src="${src}" class="slider-img" loading="lazy" >`).join('')}
+                    ${personalPics.map(src => `<img src="${src}" class="slider-img" loading="lazy" >`).join('')}
                 </div>` : '<div style="height:20px"></div>'}
             <div class="special-songs-box">${tags}</div>
             <div class="check-area">
@@ -2722,8 +2722,6 @@ function render() {
             <div class="note-bubble" id="bubble-${item.id}">${localStorage.getItem('note-' + item.id) || '点击羽毛笔记录心情...'}</div>`;
         grid.appendChild(card);
     });
-
-    // 彩蛋果实逻辑
     // 彩蛋果实逻辑
     // 1. 准备原始的 34 张图片路径
     const allEggIcons = Array.from({length: 34}, (_, i) => `images/果实 (${i+1}).webp`);
