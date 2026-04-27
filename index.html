@@ -516,9 +516,9 @@ body {
 
         .part-selector {
     display: flex;
-    justify-content: center; /* 居中排列 */
+    justify-content: space-between; /* 均匀分布 */
     align-items: center;
-    gap: 10px;               /* 手机端需要缩小间距，否则放不下 */
+    gap: 0;                  /* 移除间距，改用宽度控制 */
     margin-bottom: 40px;
     width: 100%;             /* 确保占满全宽 */
     flex-wrap: nowrap;       /* 强制不换行 */
@@ -527,8 +527,7 @@ body {
 .part-btn {
     font-family: "STSong", "SimSun", serif;
     /* 使用 clamp 让字号在手机上自动变小，在电脑上保持大字号 */
-    /* 12px 是最小值，2.5vw 是首选值，24px 是最大值 */
-    font-size: clamp(12px, 2.5vw, 24px); 
+    font-size: clamp(14px, 2.5vw, 24px); 
     
     white-space: nowrap;    /* 文字本身不换行 */
     background: none;
@@ -536,14 +535,13 @@ body {
     border-bottom: 2px solid transparent;
     color: #666;
     cursor: pointer;
-    padding: 5px 2px;       /* 缩小左右内边距 */
+    padding: 10px 0;       /* 增加上下内边距 */
     transition: all 0.3s;
-    letter-spacing: 1px;    /* 缩小字间距以节省空间 */
+    letter-spacing: 1px;
     
-    /* 关键属性：允许按钮在空间不足时自动收缩 */
-    flex: 1 1 auto;         
+    flex: 1;                /* 核心：平分宽度，每个占 1/3 */
     text-align: center;
-    min-width: 0;           /* 允许 flex 项目压缩到小于内容宽度 */
+    min-width: 0;
 }
 
 .part-btn.active {
@@ -642,62 +640,63 @@ body {
     pointer-events: none;
 }
 
-/* 垂直刻度尺容器 */
-.time-ruler {
-    position: fixed;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 45px;
-    display: none; 
-    flex-direction: column;
-    align-items: center;
-    z-index: 1000;
-}
+/* 导航栏下拉菜单样式 */
+ .dropdown {
+     position: relative;
+     display: inline-block;
+     flex: 1; /* 新增：平分宽度 */
+ }
 
-/* 刻度线：始终显示为1红色 */
-.ruler-tick {
-    width: 15px; 
-    height: 2px;
-    background: var(--tag-special); 
-    margin: 12px 0;
-    position: relative;
-    transition: all 0.3s;
-    cursor: pointer;
-}
+ .dropdown .part-btn {
+     width: 100%; /* 确保按钮填满 dropdown 容器 */
+ }
 
-/* 激活或悬停时：线条加长 */
-.ruler-tick:hover, .ruler-tick.active {
-    width: 25px;
-}
+ .dropdown-content {
+     display: none;
+     position: absolute;
+     background-color: rgba(255, 255, 255, 0.95);
+     min-width: 100%; /* 修改：对齐按钮宽度 */
+     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+     z-index: 2000;
+     border-radius: 8px;
+     top: 100%;
+     left: 50%;
+     transform: translateX(-50%);
+     overflow: hidden;
+     backdrop-filter: blur(10px);
+     -webkit-backdrop-filter: blur(10px);
+ }
+ 
+ .dropdown-content a {
+     color: #666;
+     padding: 12px 16px;
+     text-decoration: none;
+     display: block;
+     font-size: 14px;
+     transition: all 0.3s;
+     text-align: center; /* 新增：文字居中 */
+ }
+ 
+ .dropdown-content a:hover {
+     background-color: var(--tag-special);
+     color: white;
+ }
+ 
+ .dropdown:hover .dropdown-content {
+     display: block;
+ }
+ 
+ .dropdown:hover #yearBtn::after {
+     content: ' ▲';
+ }
+ 
+ #yearBtn::after {
+     content: ' ▼';
+     font-size: 0.8em;
+ }
 
-/* 月份文字：默认隐藏 (opacity: 0) */
-.ruler-tick::after {
-    content: attr(data-month);
-    position: absolute;
-    right: 35px;
-    top: -6px;
-    font-size: 11px;
-    font-family: 'Times New Roman', serif;
-    color: var(--tag-special);
-    opacity: 0; /* 平时隐藏文字 */
-    white-space: nowrap;
-    transition: all 0.3s ease;
-    pointer-events: none;
-    font-weight: bold;
-}
+/* 垂直刻度尺容器 - 已删除相关样式 */
 
-/* 关键改动：只有鼠标碰到 (hover) 或者 处于激活态 (active) 时显示文字 */
-.ruler-tick:hover::after, 
-.ruler-tick.active::after {
-    opacity: 1; /* 显示文字 */
-    transform: translateX(-5px); /* 增加一点滑入动画 */
-}
-
-/* 激活态额外效果：给线条加一个发光感 */
-.ruler-tick.active {
-    box-shadow: 0 0 8px var(--tag-special);
-}
 /* 舞台光扫过特效 */
 .tour-card::after {
     content: "";
@@ -1471,8 +1470,13 @@ body {
 </div>
 
 <div class="part-selector">
-    <button class="part-btn active" onclick="changePart(1, this)">PART I</button>
-    <button class="part-btn" onclick="changePart(2, this)">PART II</button>
+    <div class="dropdown">
+        <button class="part-btn active" id="yearBtn">2025</button>
+        <div class="dropdown-content">
+            <a href="javascript:void(0)" onclick="selectYear('2025')">2025</a>
+            <a href="javascript:void(0)" onclick="selectYear('2026')">2026</a>
+        </div>
+    </div>
     <button class="part-btn" onclick="changePart(3, this)">我的一粒</button>
     <button class="part-btn" onclick="changePart(4, this)">道具收集</button>
 </div>
@@ -1892,19 +1896,19 @@ window.addEventListener('load', () => {
         songs: [{n:"亲爱的妳",t:"request",l:"https://music.163.com/dj?id=3710530674&uct2=U2FsdGVkX1+Ae6bX3d63OlJ2A6RPmSG/YRX9dZj2VY4="},{n:"Best Better Ever",t:"request",l:"https://music.163.com/dj?id=3710602764&uct2=U2FsdGVkX19npNvmbvjWxf1Wpbhq8zX21Rzup3oxisA="},{n:"庆祝",t:"request",l:"https://music.163.com/dj?id=3710597693&uct2=U2FsdGVkX19TNN5HuvNvaMGW6+M5gaoZwojlhm+JBsc="},{n:"银泰",t:"request",l:"https://music.163.com/dj?id=3710581758&uct2=U2FsdGVkX1+Qm4gbGrKD9dZj0rw5vtyjMZKhiCOgBac="},{n:"独行侠",t:"request",l:"https://music.163.com/dj?id=3710529718&uct2=U2FsdGVkX1/moXpqp7+s5pm92kv6VqztObD9dBBWYx8="},{n:"乱",t:"surprise",l:"https://music.163.com/dj?id=3712522224&uct2=U2FsdGVkX18BFuzKxsemcAx1geNx0oAkdIdbmXeCVmM="},{n:"比如世界",t:"surprise",l:"https://music.163.com/dj?id=3712693208&uct2=U2FsdGVkX183XWQpVHipN/kIqpiNGSX/EMUZyZS+CUk="},{n:"海市蜃楼",t:"surprise",l:"https://music.163.com/dj?id=3712669216&uct2=U2FsdGVkX19SJDSNRCfBi6J5oR2fIrNAbmQuBmWr9Y8="}] },
         { id: "0101", city: "武汉", time: "2026.01.01", weather: "☀️", season: "winter",part: 1, guest: "", isSpecial: "元旦场🧨", personalPics: Array.from({length: 12}, (_, i) => `images/0101 (${i+1}).webp`), guestPics: [], 
         songs: [{n:"情景剧",t:"request" ,l:"https://music.163.com/dj?id=3710560736&uct2=U2FsdGVkX1/qbmgdNbpSj3VQLMsw43Cz/cr8WJrE8No=",},{n :"远游" , t :"request" , l :"https://music.163.com/dj?id=3710679728&uct2=U2FsdGVkX1+Qcliem47B+hMi8e0Wgv+AT71orJBAPIY= "} , { n :"乐园" , t :" request" , l :"https://music.163.com/dj?id=3710681688&uct2=U2FsdGVkX1/lmn5cgXGxLvqoRN5+zdsDC58X3XnjQqQ= "} , { n :"My Dear Art" , t :" request" , l :" https://music.163.com/dj?id=3710693610&uct2=U2FsdGVkX1/uMDMN/2+w7Fwu04e31m5x+wFY0/DPYAY="} , { n :"再度重相逢" , t :" request" , l :"https://music.163.com/dj?id=3710605715&uct2=U2FsdGVkX18B0puCA848rqa6TS+WCkk569zTk3dM2cE= "} , { n :"乱" , t :" surprise",l:"" } , { n :"剧烈" , t :" surprise",l:"https://music.163.com/dj?id=3710685678&uct2=U2FsdGVkX19OGpMhXaeVZDHblZY5RkAO7zwGPRGjY2E="} ] },
-        { id: "260314", city: "成都", time: "2026.03.14", weather: "☁️", season: "spring",part: 2,  guest: "嘉宾：凯瑟琳🐹",personalPics: Array.from({length: 13}, (_, i) => `images/260314 (${i+1}).webp`), guestPics:  Array.from({length: 1}, (_, i) => `images/260314guest (${i+1}).webp`), 
+        { id: "260314", city: "成都", time: "2026.03.14", weather: "☁️", season: "spring",part: 1,  guest: "嘉宾：凯瑟琳🐹",personalPics: Array.from({length: 13}, (_, i) => `images/260314 (${i+1}).webp`), guestPics:  Array.from({length: 1}, (_, i) => `images/260314guest (${i+1}).webp`), 
         songs: [{n:"飞白",t:"request",l:"https://music.163.com/dj?id=3715125431&uct2=U2FsdGVkX189Qg5TzOxe+InF9IIxouavWtvfrpW7PPw="},{n:"你要的爱",t:"request",l:"https://music.163.com/dj?id=3715111445&uct2=U2FsdGVkX1+nCLfEMwo7us4wZxFM+gDNtmaqKV70Di8="},{n:"浪味仙地",t:"surprise",l:""},{n:"试运行",t:"surprise",l:"https://music.163.com/dj?id=3715083437&uct2=U2FsdGVkX18RlequJpB8GYWBCu/hewCwd0WlM1kRVq4="},{n:"超认真嬉戏",t:"surprise",l:"https://music.163.com/dj?id=3715093460&uct2=U2FsdGVkX1+EogPMMDkz15Nvorf0qp+tVBYDc9zrQ/0="},{n:"下世纪见",t:"surprise",l:"https://music.163.com/dj?id=3715179471&uct2=U2FsdGVkX19pRUe2KQ1CQG6LrD//ne5zy4v/aOOjzys="}] },
-        { id: "260315", city: "成都", time: "2026.03.15", weather: "☁️", season: "spring",part: 2, guest: "嘉宾：胡彦斌🐯", personalPics: Array.from({length: 19}, (_, i) => `images/260315 (${i+1}).webp`),  guestPics: Array.from({length: 2}, (_, i) => `images/260315guest (${i+1}).webp`),
+        { id: "260315", city: "成都", time: "2026.03.15", weather: "☁️", season: "spring",part: 1, guest: "嘉宾：胡彦斌🐯", personalPics: Array.from({length: 19}, (_, i) => `images/260315 (${i+1}).webp`),  guestPics: Array.from({length: 2}, (_, i) => `images/260315guest (${i+1}).webp`),
          songs: [{n:"小半（feat胡彦斌）",t:"guest",l:""},{n:"情不自禁",t:"guest",l:"https://music.163.com/dj?id=3715382225&uct2=U2FsdGVkX1+AYX1LPVoeix578XUkRiBFtM4aJYh/4X8="},{n:"游鱼",t:"request",l:""},{n:"小情歌",t:"request",l:"https://music.163.com/dj?id=3715270210&uct2=U2FsdGVkX1+l45c1YbqCRziVUY68o38a6eUOlXWYtUo="},{n:"浪味仙地",t:"surprise",l:""},{n:"试运行",t:"surprise",l:""}] },
-        { id: "260425", city: "宁波", time: "2026.04.25", weather: "☀️", season: "spring",part: 2, guest: "金海心🐱", personalPics: Array.from({length: 19}, (_, i) => `images/260425 (${i+1}).webp`), guestPics: Array.from({length: 1}, (_, i) => `images/260425guest (${i+1}).webp`), 
+        { id: "260425", city: "宁波", time: "2026.04.25", weather: "☀️", season: "spring",part: 1, guest: "金海心🐱", personalPics: Array.from({length: 19}, (_, i) => `images/260425 (${i+1}).webp`), guestPics: Array.from({length: 1}, (_, i) => `images/260425guest (${i+1}).webp`), 
         songs: [{n:"虚拟feat金海心",t:"guest",l:""},{n:"把耳朵叫醒",t:"guest",l:""},{n:"地球巡逻小分队",t:"request",l:""},{n:"当爱在靠近",t:"request",l:""}] }, 
-        { id: "NC1", city: "南昌", time: "2026.05.30", weather: "", season: "summer",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
-        { id: "NC2", city: "南昌", time: "2026.05.31", weather: "", season: "summer",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
-        { id: "QD", city: "青岛", time: "2026.06.27", weather: "", season: "summer",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
-        { id: "QZ", city: "泉州", time: "2026.07.25", weather: "", season: "summer",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
-        { id: "SY", city:"沈阳" , time:"2026.08.22" , weather:"" , season:"" , part : 2 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ ]},
-        { id:"ZZ" , city:"郑州" , time:"coming soon" , weather:"" , season:"" , part : 2 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ ] },
-        { id: "HF", city: "合肥", time: "coming soon", weather: "", season: "",part: 2, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "NC1", city: "南昌", time: "2026.05.30", weather: "", season: "summer",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "NC2", city: "南昌", time: "2026.05.31", weather: "", season: "summer",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "QD", city: "青岛", time: "2026.06.27", weather: "", season: "summer",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "QZ", city: "泉州", time: "2026.07.25", weather: "", season: "summer",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "SY", city:"沈阳" , time:"2026.08.22" , weather:"" , season:"" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ ]},
+        { id:"ZZ" , city:"郑州" , time:"coming soon" , weather:"" , season:"" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ ] },
+        { id: "HF", city: "合肥", time: "coming soon", weather: "", season: "",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
     ];
 
 // 城市经纬度坐标库（用于计算两地距离）
@@ -2083,6 +2087,21 @@ function closeModal() {
     }
 
     let currentPart = 1;
+
+    function selectYear(year) {
+        const yearBtn = document.getElementById('yearBtn');
+        if (yearBtn) yearBtn.innerText = year;
+        
+        // 切换到 Part 1 (巡演列表)
+        changePart(1, yearBtn);
+        
+        if (year === '2026') {
+            setTimeout(() => scrollToTour('0101'), 100);
+        } else {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+    }
+
     function changePart(part, btn) {
     currentPart = part;
     // 1. 切换按钮高亮状态
@@ -2091,21 +2110,12 @@ function closeModal() {
 
     // 2. 背景切换核心逻辑
     if (part === 3 || part === 4) {
-    // 1. 设置背景图片路径
-    document.body.style.backgroundImage = "url('images/my_grain_bg.webp')";
-    
-    // 2. 设置重复模式：建议使用 'repeat' 让纹理铺满整个背景
-    document.body.style.backgroundRepeat = "repeat"; 
-    
-    // 3. 设置背景大小：'100% auto' 确保宽度撑满，高度根据原图比例自适应（方便重复）
-    document.body.style.backgroundSize = "100% auto"; 
-
-    // 4. 核心：锁定背景，不随滚动条滑动
-    document.body.style.backgroundAttachment = "fixed";
-
-    // 5. 辅助：确保背景图片从顶部居中开始铺设
-    document.body.style.backgroundPosition = "top center";
-}else {
+        document.body.style.backgroundImage = "url('images/my_grain_bg.webp')";
+        document.body.style.backgroundRepeat = "repeat"; 
+        document.body.style.backgroundSize = "100% auto"; 
+        document.body.style.backgroundAttachment = "fixed";
+        document.body.style.backgroundPosition = "top center";
+    } else {
         document.body.style.backgroundImage = "linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 25%, transparent 40%), url('images/bg.jpg')";
         document.body.style.backgroundSize = "100% auto";
         document.body.style.backgroundAttachment = "scroll";
@@ -2114,16 +2124,11 @@ function closeModal() {
     // 3. 内容渲染逻辑
     const grid = document.getElementById('mainGrid');
     
-    // 隐藏/显示 Part 1/2 特有的时间刻度尺
-    const ruler = document.querySelector('.time-ruler');
-    
     if (part === 4) {
-        if (ruler) ruler.style.display = 'none';
         // 关键：这里直接调用 renderEquip，并阻止执行下方的 render()
         renderEquip(grid);
     } else {
-        if (ruler) ruler.style.display = 'flex';
-        // 执行原有的渲染逻辑（Part 1, 2, 3）
+        // 执行原有的渲染逻辑（Part 1, 3）
         render(); 
     }
 
@@ -2133,7 +2138,7 @@ function closeModal() {
     const infoBtn = document.getElementById('info-btn');
     const thanksBtn = document.getElementById('thanks-btn');
     
-    if (part === 2 || part === 3 || part === 4) {
+    if (part === 3 || part === 4) {
         // 在 Part 3 和 Part 4 强制隐藏
         [changelogBtn, infoBtn, thanksBtn].forEach(b => {
             if (b) {
@@ -2142,7 +2147,7 @@ function closeModal() {
             }
         });
     } else {
-        // 在 Part 1 和 Part 2 时，只有页面在顶部（<300px）才恢复显示
+        // 在 2025/2026 时，只有页面在顶部（<300px）才恢复显示
         if (window.scrollY <= 300) {
             [changelogBtn, infoBtn, thanksBtn].forEach(b => {
                 if (b) {
@@ -2151,6 +2156,14 @@ function closeModal() {
                 }
             });
         }
+    }
+}
+
+function scrollToTour(id) {
+    const element = document.getElementById('tour-' + id);
+    if (element) {
+        const topOffset = element.getBoundingClientRect().top + window.pageYOffset - 100;
+        window.scrollTo({ top: topOffset, behavior: 'smooth' });
     }
 }
 
@@ -2609,62 +2622,25 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
 
     function render() {
     const grid = document.getElementById('mainGrid');
-    const ruler = document.getElementById('monthRuler');
     if(!grid) return; grid.innerHTML = '';
 
     // 板块 3 处理
     if (currentPart === 3) {
         renderMyGrain(grid);
-        if(ruler) ruler.style.display = 'none';
         return;
     }
     if (currentPart === 4) {
         renderEquip(grid);
-        if(ruler) ruler.style.display = 'none';
         return;
     }
 
-    // 刻度尺初始化
-    if(ruler) {
-        ruler.innerHTML = '';
-        ruler.style.display = 'flex';
-    }
-    
     const filteredData = tourData.filter(item => item.part === currentPart);
     
-    // 提取不重复的月份用于生成刻度
-    const uniqueMonths = [...new Set(filteredData.map(item => {
-        if (!item.time || item.time === 'coming soon') return null;
-        const parts = item.time.split('.');
-        return parts.length > 1 ? parts[1] : null;
-    }))].filter(Boolean);
-
-    uniqueMonths.forEach(m => {
-        const tick = document.createElement('div');
-        tick.className = 'ruler-tick';
-        tick.setAttribute('data-month', m + '月');
-        tick.id = 'tick-' + m;
-        
-        // 点击跳转逻辑
-        tick.onclick = function() {
-            const allCards = document.querySelectorAll('.tour-card');
-            for (let card of allCards) {
-                const dateElement = card.querySelector('.date-num');
-                if (dateElement && dateElement.innerText.split('.')[1] === m) {
-                    const topOffset = card.getBoundingClientRect().top + window.pageYOffset - 100;
-                    window.scrollTo({ top: topOffset, behavior: 'smooth' });
-                    break;
-                }
-            }
-        };
-        ruler.appendChild(tick);
-    });
-
-    // 渲染卡片
     // 渲染卡片
     filteredData.forEach(item => {
         if (!item || !item.id) return;
         const card = document.createElement('div');
+        card.id = `tour-${item.id}`;
         card.className = `tour-card ${item.status === 'unplayed' ? 'unplayed' : ''}`;
         
         // 渲染前先去“保险柜”查一下这个 ID 之前有没有被勾选过
