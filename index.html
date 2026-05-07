@@ -1480,7 +1480,7 @@ body {
         </div>
     </div>
     <button class="part-btn" onclick="changePart(3, this)">我的一粒</button>
-    <button class="part-btn" onclick="changePart(4, this)">道具收集</button>
+
 </div>
 
 <div class="tour-grid" id="mainGrid"></div>
@@ -2158,7 +2158,7 @@ function closeModal() {
     if (btn) btn.classList.add('active');
 
     // 2. 背景切换核心逻辑
-    if (part === 3 || part === 4) {
+    if (part === 3) {
         document.body.style.backgroundImage = "url('images/my_grain_bg.webp')";
         document.body.style.backgroundRepeat = "repeat"; 
         document.body.style.backgroundSize = "100% auto"; 
@@ -2171,15 +2171,7 @@ function closeModal() {
     }
 
     // 3. 内容渲染逻辑
-    const grid = document.getElementById('mainGrid');
-    
-    if (part === 4) {
-        // 关键：这里直接调用 renderEquip，并阻止执行下方的 render()
-        renderEquip(grid);
-    } else {
-        // 执行原有的渲染逻辑（Part 1, 3）
-        render(); 
-    }
+    render();
 
     // 4. 页面滚动反馈
     // --- 新增：控制底部三个功能按钮的显示/隐藏 ---
@@ -2187,7 +2179,7 @@ function closeModal() {
     const infoBtn = document.getElementById('info-btn');
     const thanksBtn = document.getElementById('thanks-btn');
     
-    if (part === 3 || part === 4) {
+    if (part === 3) {
         // 在 Part 3 和 Part 4 强制隐藏
         [changelogBtn, infoBtn, thanksBtn].forEach(b => {
             if (b) {
@@ -2309,6 +2301,40 @@ function toggleStick(name, el) {
 
 
 function renderMyGrain(container) {
+    // --- 模块：荧光棒收集 ---
+    const stickBox = document.createElement('div');
+    stickBox.className = 'achievement-box';
+    stickBox.id = 'capture-lightstick';
+
+    const cityData = [
+        { name: "北京", color: "#F2524B" }, { name: "上海", color: "#86A9F1" } ,
+        { name: "杭州", color: "#F4F492" }, { name: "南京", color: "#82C8E4" },
+        { name: "西安", color: "#B2C089" }, { name: "济南", color: "#EEABA1" },
+        { name: "重庆", color: "#E3BDD0" }, { name: "厦门", color: "#B6D9D6" },
+        { name: "深圳", color: "#9C9DCF" }, { name: "苏州", color: "#D5BE4F" },
+        { name: "武汉", color: "#F69393" }, { name: "成都", color: "#A2C957" },
+        { name: "宁波", color: "#F56C7A" }
+    ];
+    let lightstickHTML = cityData.map(city => {
+        const isCollected = localStorage.getItem(`stick_${city.name}`) === 'true';
+        return `
+            <div class="lightstick-item ${isCollected ? 'active' : ''}"
+                 onclick="toggleLightstick('${city.name}', this)">
+                <div class="lightstick-body" style="--city-color: ${city.color}; background-color: ${city.color};">
+                    <span class="city-label">${city.name}</span>
+                </div>
+                <div class="lightstick-silver"></div>
+                <div class="lightstick-grey"></div>
+            </div>
+        `;
+    }).join('');
+
+    stickBox.innerHTML = `
+        <div class="module-title">荧光棒收集</div>
+        <div class="lightstick-container">${lightstickHTML}</div>
+    `;
+    container.appendChild(stickBox);
+
     // 1. 数据准备（保留原逻辑）
     // 1. 数据准备（核心修改点：在所有统计前过滤掉 unplayed 场次）
     const now = new Date();
@@ -2676,10 +2702,6 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     // 板块 3 处理
     if (currentPart === 3) {
         renderMyGrain(grid);
-        return;
-    }
-    if (currentPart === 4) {
-        renderEquip(grid);
         return;
     }
 
