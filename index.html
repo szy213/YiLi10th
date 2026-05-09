@@ -1575,9 +1575,11 @@ body {
 
 /* ========== 小粒之家 论坛样式 ========== */
 .forum-container {
+    width: 100%;
     max-width: 800px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 .forum-auth-hint {
@@ -1884,6 +1886,247 @@ body {
 }
 /* ========== 小粒之家 样式结束 ========== */
 
+/* ========== 物料空间 样式 ========== */
+.wuliao-post {
+    position: relative;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 0;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s;
+    overflow: hidden;
+}
+.wuliao-post:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    transform: translateY(-2px);
+}
+
+.wuliao-post .wl-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    display: block;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+.wuliao-post .wl-image:hover {
+    opacity: 0.92;
+}
+
+.wuliao-post .wl-body {
+    padding: 16px 20px;
+}
+
+.wuliao-post .wl-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.wuliao-post .wl-name {
+    font-size: 17px;
+    font-weight: bold;
+    color: #333;
+    letter-spacing: 1px;
+}
+.wuliao-post .wl-date {
+    font-size: 12px;
+    color: #999;
+    background: rgba(0,0,0,0.04);
+    padding: 3px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+
+.wuliao-post .wl-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+}
+.wuliao-post .wl-author {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #666;
+}
+.wuliao-post .wl-author .pf-avatar {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #eee;
+    background: #f0f0f0;
+}
+.wuliao-post .wl-author .pf-avatar-placeholder {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1px solid #eee;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #ccc;
+}
+
+.wuliao-post .wl-actions {
+    display: flex;
+    gap: 14px;
+}
+.wuliao-post .wl-actions .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: #999;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 12px;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+.wuliao-post .wl-actions .action-btn:hover {
+    color: var(--tag-guest);
+    background: rgba(82,90,107,0.06);
+}
+.wuliao-post .wl-actions .action-btn.liked {
+    color: var(--tag-special);
+    font-weight: bold;
+}
+
+.wuliao-post .post-delete {
+    position: absolute;
+    top: 10px; right: 14px;
+    font-size: 16px;
+    color: #fff;
+    cursor: pointer;
+    background: rgba(0,0,0,0.35);
+    border: none;
+    padding: 2px 8px;
+    border-radius: 12px;
+    transition: all 0.2s;
+    font-family: inherit;
+    line-height: 1.5;
+    z-index: 2;
+}
+.wuliao-post .post-delete:hover {
+    background: rgba(231,76,60,0.8);
+}
+
+/* 发物料表单 */
+.wuliao-form {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+.wuliao-form .wl-form-row {
+    margin-bottom: 12px;
+}
+.wuliao-form label {
+    font-size: 13px;
+    color: #888;
+    display: block;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+}
+.wuliao-form input[type="text"],
+.wuliao-form select {
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+    background: rgba(255,255,255,0.6);
+}
+.wuliao-form input[type="text"]:focus,
+.wuliao-form select:focus {
+    border-color: var(--tag-guest);
+}
+.wuliao-form .wl-image-upload {
+    width: 100%;
+    min-height: 100px;
+    border: 2px dashed #ddd;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.3s;
+    position: relative;
+    overflow: hidden;
+    background: rgba(255,255,255,0.4);
+}
+.wuliao-form .wl-image-upload:hover {
+    border-color: var(--tag-guest);
+}
+.wuliao-form .wl-image-upload.has-image {
+    padding: 0;
+    border-style: solid;
+}
+.wuliao-form .wl-image-upload img {
+    width: 100%;
+    max-height: 250px;
+    object-fit: contain;
+    display: block;
+}
+.wuliao-form .wl-image-upload .placeholder {
+    color: #bbb;
+    font-size: 14px;
+    letter-spacing: 1px;
+    padding: 30px;
+    text-align: center;
+}
+.wuliao-form .wl-submit-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+}
+.wuliao-form .wl-submit-row .wl-submit {
+    font-family: "STSong", "SimSun", serif;
+    font-size: 14px;
+    padding: 8px 24px;
+    background: var(--tag-guest);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: opacity 0.3s;
+}
+.wuliao-form .wl-submit-row .wl-submit:hover { opacity: 0.85; }
+.wuliao-form .wl-submit-row .wl-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* 物料评论区复用小粒之家样式 */
+.wuliao-post .comments-section {
+    margin: 0 20px 16px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    padding-top: 12px;
+    display: none;
+}
+.wuliao-post .comments-section.open {
+    display: block;
+}
+/* ========== 物料空间 样式结束 ========== */
+
 </style>
 </head>
 <body>
@@ -1934,6 +2177,7 @@ body {
     </div>
     <button class="part-btn" onclick="changePart(3, this)">我的一粒</button>
     <button class="part-btn" onclick="changePart(4, this)">小粒之家</button>
+    <button class="part-btn" onclick="changePart(5, this)">物料空间</button>
 
 </div>
 
@@ -2913,7 +3157,7 @@ function closeModal() {
 
     // 2. 背景切换核心逻辑
     var bgLayer = document.getElementById('bg-layer');
-    if (part === 3 || part === 4) {
+    if (part === 3 || part === 4 || part === 5) {
         document.body.style.backgroundImage = "url('images/my_grain_bg.webp')";
         document.body.style.backgroundRepeat = "repeat";
         document.body.style.backgroundSize = "100% auto";
@@ -2940,7 +3184,7 @@ function closeModal() {
     const infoBtn = document.getElementById('info-btn');
     const thanksBtn = document.getElementById('thanks-btn');
     
-    if (part === 3 || part === 4) {
+    if (part === 3 || part === 4 || part === 5) {
         // 在 Part 3 和 Part 4 强制隐藏
         [changelogBtn, infoBtn, thanksBtn].forEach(b => {
             if (b) {
@@ -3822,6 +4066,369 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     };
     // =========================================
 
+    // =========================================
+    // 物料空间 - 论坛模块
+    // =========================================
+    var wuliaoSelectedFile = null;
+
+    async function loadMaterials() {
+        if (!supabaseClient) return [];
+        const { data: materials, error } = await supabaseClient
+            .from('materials')
+            .select('*')
+            .order('created_at', { ascending: false });
+        if (error) { console.warn('加载物料失败:', error.message); return []; }
+        if (!materials || materials.length === 0) return [];
+
+        const ids = materials.map(m => m.id);
+        const [{ data: likes }, { data: comments }] = await Promise.all([
+            supabaseClient.from('material_likes').select('material_id, user_id').in('material_id', ids),
+            supabaseClient.from('material_comments').select('material_id').in('material_id', ids)
+        ]);
+
+        const myLikes = new Set();
+        if (currentUser && likes) {
+            likes.forEach(l => { if (l.user_id === currentUser.id) myLikes.add(l.material_id); });
+        }
+        const likeCounts = {};
+        if (likes) likes.forEach(l => { likeCounts[l.material_id] = (likeCounts[l.material_id] || 0) + 1; });
+        const commentCounts = {};
+        if (comments) comments.forEach(c => { commentCounts[c.material_id] = (commentCounts[c.material_id] || 0) + 1; });
+
+        return materials.map(m => ({
+            ...m,
+            likeCount: likeCounts[m.id] || 0,
+            commentCount: commentCounts[m.id] || 0,
+            likedByMe: myLikes.has(m.id)
+        }));
+    }
+
+    async function submitMaterial(name, tourDate, file) {
+        if (!supabaseClient || !currentUser) return null;
+        // Upload image
+        const fileExt = file.name.split('.').pop();
+        const filePath = 'materials/' + currentUser.id + '/' + Date.now() + '.' + fileExt;
+        const { error: uploadErr } = await supabaseClient.storage
+            .from('materials')
+            .upload(filePath, file, { upsert: true });
+        if (uploadErr) { console.warn('物料图片上传失败:', uploadErr.message); return null; }
+        const { data: urlData } = supabaseClient.storage.from('materials').getPublicUrl(filePath);
+        const imageUrl = urlData ? urlData.publicUrl : '';
+
+        const nickname = currentUser.user_metadata?.nickname || '一粒';
+        const avatarUrl = currentUser.user_metadata?.avatar_url || '';
+        const { data, error } = await supabaseClient
+            .from('materials')
+            .insert({
+                user_id: currentUser.id,
+                material_name: name,
+                tour_date: tourDate || '无',
+                image_url: imageUrl,
+                nickname: nickname,
+                avatar_url: avatarUrl
+            })
+            .select()
+            .single();
+        if (error) { console.warn('发布物料失败:', error.message); return null; }
+        return data;
+    }
+
+    async function deleteMaterial(materialId) {
+        if (!supabaseClient || !currentUser) return false;
+        const { error } = await supabaseClient
+            .from('materials')
+            .delete()
+            .eq('id', materialId)
+            .eq('user_id', currentUser.id);
+        if (error) { console.warn('删除物料失败:', error.message); return false; }
+        return true;
+    }
+
+    async function toggleMaterialLike(materialId) {
+        if (!supabaseClient || !currentUser) return;
+        const { data: existing } = await supabaseClient
+            .from('material_likes')
+            .select('id')
+            .eq('material_id', materialId)
+            .eq('user_id', currentUser.id)
+            .maybeSingle();
+        if (existing) {
+            await supabaseClient.from('material_likes').delete().eq('id', existing.id);
+        } else {
+            await supabaseClient.from('material_likes').insert({ material_id: materialId, user_id: currentUser.id });
+        }
+    }
+
+    async function loadMaterialComments(materialId) {
+        if (!supabaseClient) return [];
+        const { data, error } = await supabaseClient
+            .from('material_comments')
+            .select('*')
+            .eq('material_id', materialId)
+            .order('created_at', { ascending: true });
+        if (error) { console.warn('加载评论失败:', error.message); return []; }
+        return data || [];
+    }
+
+    async function submitMaterialComment(materialId, content) {
+        if (!supabaseClient || !currentUser) return null;
+        const nickname = currentUser.user_metadata?.nickname || '一粒';
+        const avatarUrl = currentUser.user_metadata?.avatar_url || '';
+        const { data, error } = await supabaseClient
+            .from('material_comments')
+            .insert({
+                material_id: materialId,
+                user_id: currentUser.id,
+                content: content,
+                nickname: nickname,
+                avatar_url: avatarUrl
+            })
+            .select()
+            .single();
+        if (error) { console.warn('评论失败:', error.message); return null; }
+        return data;
+    }
+
+    function renderWuliaoCards(container, materials) {
+        if (materials.length === 0) {
+            container.innerHTML = '<div class="forum-empty">暂无物料，快来分享第一个吧</div>';
+            return;
+        }
+        materials.forEach(m => {
+            const card = document.createElement('div');
+            card.className = 'wuliao-post';
+            const isOwner = currentUser && m.user_id === currentUser.id;
+            card.innerHTML = `
+                ${isOwner ? `<button class="post-delete" onclick="window._wuliaoDeletePost(${m.id})" type="button">×</button>` : ''}
+                <img src="${m.image_url}" class="wl-image" onclick="openLightbox('${m.image_url}')" loading="lazy">
+                <div class="wl-body">
+                    <div class="wl-header">
+                        <span class="wl-name">${escapeHtml(m.material_name)}</span>
+                        <span class="wl-date">${escapeHtml(m.tour_date || '无')}</span>
+                    </div>
+                    <div class="wl-footer">
+                        <div class="wl-author">
+                            ${m.avatar_url ? `<img src="${m.avatar_url}" class="pf-avatar" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><span class="pf-avatar-placeholder" style="display:none">粒</span>` : `<span class="pf-avatar-placeholder">粒</span>`}
+                            <span>${escapeHtml(m.nickname || '一粒')}</span>
+                        </div>
+                        <div class="wl-actions">
+                            <button class="action-btn ${m.likedByMe ? 'liked' : ''}" onclick="window._wuliaoToggleLike(${m.id}, this)" type="button">
+                                <span>${m.likedByMe ? '❤️' : '🤍'}</span>
+                                <span>${m.likeCount || 0}</span>
+                            </button>
+                            <button class="action-btn" onclick="window._wuliaoToggleComments(${m.id}, this)" type="button">
+                                <span>💬</span>
+                                <span>${m.commentCount || 0}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="comments-section" id="wl-comments-${m.id}"></div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    async function renderWuliaoSpace(container) {
+        container.innerHTML = '';
+        const wrapper = document.createElement('div');
+        wrapper.className = 'forum-container';
+
+        // --- 发布表单 ---
+        const formBox = document.createElement('div');
+        formBox.className = 'wuliao-form';
+        if (currentUser) {
+            // Build tour date options from tourData
+            const dates = [...new Set(tourData.map(t => t.time))].filter(Boolean).sort();
+            const dateOptions = '<option value="">无</option>' + dates.map(d => `<option value="${d}">${d}</option>`).join('');
+
+            formBox.innerHTML = `
+                <div class="wl-form-row">
+                    <label>上传图片 *</label>
+                    <div class="wl-image-upload" id="wl-image-upload" onclick="document.getElementById('wl-file-input').click()">
+                        <span class="placeholder">点击选择物料图片</span>
+                    </div>
+                    <input type="file" id="wl-file-input" accept="image/*" style="display:none;" onchange="window._wuliaoHandleFile(event)">
+                </div>
+                <div class="wl-form-row">
+                    <label>物料名称 *</label>
+                    <input type="text" id="wl-name-input" placeholder="如：巡演海报、纪念票根..." maxlength="100">
+                </div>
+                <div class="wl-form-row">
+                    <label>关联场次</label>
+                    <select id="wl-date-select">${dateOptions}</select>
+                </div>
+                <div class="wl-submit-row">
+                    <span style="font-size:12px;color:#bbb;">* 为必填项</span>
+                    <button class="wl-submit" id="wl-submit-btn" onclick="window._wuliaoSubmit()" type="button">发布</button>
+                </div>
+            `;
+        } else {
+            formBox.innerHTML = `<div class="forum-auth-hint">请先<a onclick="toggleAuthModal()">登录</a>后分享物料</div>`;
+        }
+        wrapper.appendChild(formBox);
+
+        const list = document.createElement('div');
+        list.id = 'wl-post-list';
+        list.innerHTML = '<div class="forum-loading">加载中...</div>';
+        wrapper.appendChild(list);
+        container.appendChild(wrapper);
+
+        const materials = await loadMaterials();
+        const listEl = document.getElementById('wl-post-list');
+        if (listEl) {
+            listEl.innerHTML = '';
+            renderWuliaoCards(listEl, materials);
+        }
+    }
+
+    // 全局回调
+    window._wuliaoHandleFile = function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        wuliaoSelectedFile = file;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const uploadDiv = document.getElementById('wl-image-upload');
+            if (uploadDiv) {
+                uploadDiv.classList.add('has-image');
+                uploadDiv.innerHTML = `<img src="${e.target.result}">`;
+            }
+        };
+        reader.readAsDataURL(file);
+    };
+
+    window._wuliaoSubmit = async function() {
+        const nameInput = document.getElementById('wl-name-input');
+        const dateSelect = document.getElementById('wl-date-select');
+        const btn = document.getElementById('wl-submit-btn');
+        if (!nameInput || !nameInput.value.trim()) { alert('请填写物料名称'); return; }
+        if (!wuliaoSelectedFile) { alert('请上传物料图片'); return; }
+        btn.disabled = true;
+        btn.textContent = '发布中...';
+        const result = await submitMaterial(nameInput.value.trim(), dateSelect ? dateSelect.value : '', wuliaoSelectedFile);
+        if (result) {
+            nameInput.value = '';
+            if (dateSelect) dateSelect.value = '';
+            wuliaoSelectedFile = null;
+            const uploadDiv = document.getElementById('wl-image-upload');
+            if (uploadDiv) {
+                uploadDiv.classList.remove('has-image');
+                uploadDiv.innerHTML = '<span class="placeholder">点击选择物料图片</span>';
+            }
+            document.getElementById('wl-file-input').value = '';
+            const materials = await loadMaterials();
+            const listEl = document.getElementById('wl-post-list');
+            if (listEl) { listEl.innerHTML = ''; renderWuliaoCards(listEl, materials); }
+        } else {
+            alert('发布失败，请稍后重试');
+        }
+        btn.disabled = false;
+        btn.textContent = '发布';
+    };
+
+    window._wuliaoToggleLike = async function(materialId, btn) {
+        if (!currentUser) { alert('请先登录'); return; }
+        await toggleMaterialLike(materialId);
+        const materials = await loadMaterials();
+        const listEl = document.getElementById('wl-post-list');
+        if (listEl) { listEl.innerHTML = ''; renderWuliaoCards(listEl, materials); }
+    };
+
+    window._wuliaoDeletePost = async function(materialId) {
+        if (!currentUser) return;
+        if (!confirm('确定要删除这条物料吗？')) return;
+        const ok = await deleteMaterial(materialId);
+        if (ok) {
+            const materials = await loadMaterials();
+            const listEl = document.getElementById('wl-post-list');
+            if (listEl) { listEl.innerHTML = ''; renderWuliaoCards(listEl, materials); }
+        } else {
+            alert('删除失败，请稍后重试');
+        }
+    };
+
+    window._wuliaoToggleComments = async function(materialId, btn) {
+        const section = document.getElementById('wl-comments-' + materialId);
+        if (!section) return;
+        if (section.classList.contains('open')) {
+            section.classList.remove('open');
+            return;
+        }
+        const comments = await loadMaterialComments(materialId);
+        let html = '';
+        comments.forEach(c => {
+            const cAvatar = c.avatar_url
+                ? `<img src="${c.avatar_url}" class="cm-avatar" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="cm-avatar-placeholder" style="display:none">粒</div>`
+                : `<div class="cm-avatar-placeholder">粒</div>`;
+            html += `
+                <div class="comment-item">
+                    ${cAvatar}
+                    <div class="cm-body">
+                        <div class="cm-nickname">${escapeHtml(c.nickname || '一粒')}</div>
+                        <div class="cm-content">${escapeHtml(c.content)}</div>
+                        <div class="cm-time">${formatForumTime(c.created_at)}</div>
+                    </div>
+                </div>
+            `;
+        });
+        if (!html) html = '<div style="text-align:center;color:#ccc;padding:10px;font-size:13px;">暂无评论</div>';
+        html += currentUser ? `
+            <div class="comment-input-row">
+                <input type="text" id="wl-cm-input-${materialId}" placeholder="写评论..." maxlength="200">
+                <button class="cm-submit" onclick="window._wuliaoSubmitComment(${materialId})" type="button">发送</button>
+            </div>
+        ` : `
+            <div style="text-align:center;font-size:12px;color:#bbb;padding:8px;">请<a onclick="toggleAuthModal()" style="color:var(--tag-guest);cursor:pointer;">登录</a>后评论</div>
+        `;
+        section.innerHTML = html;
+        section.classList.add('open');
+    };
+
+    window._wuliaoSubmitComment = async function(materialId) {
+        const input = document.getElementById('wl-cm-input-' + materialId);
+        if (!input || !input.value.trim()) return;
+        const content = input.value.trim();
+        input.disabled = true;
+        const result = await submitMaterialComment(materialId, content);
+        if (result) {
+            const comments = await loadMaterialComments(materialId);
+            const section = document.getElementById('wl-comments-' + materialId);
+            if (section) {
+                let html = '';
+                comments.forEach(c => {
+                    const cAvatar = c.avatar_url
+                        ? `<img src="${c.avatar_url}" class="cm-avatar" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="cm-avatar-placeholder" style="display:none">粒</div>`
+                        : `<div class="cm-avatar-placeholder">粒</div>`;
+                    html += `
+                        <div class="comment-item">
+                            ${cAvatar}
+                            <div class="cm-body">
+                                <div class="cm-nickname">${escapeHtml(c.nickname || '一粒')}</div>
+                                <div class="cm-content">${escapeHtml(c.content)}</div>
+                                <div class="cm-time">${formatForumTime(c.created_at)}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                if (!html) html = '<div style="text-align:center;color:#ccc;padding:10px;font-size:13px;">暂无评论</div>';
+                html += currentUser ? `
+                    <div class="comment-input-row">
+                        <input type="text" id="wl-cm-input-${materialId}" placeholder="写评论..." maxlength="200">
+                        <button class="cm-submit" onclick="window._wuliaoSubmitComment(${materialId})" type="button">发送</button>
+                    </div>
+                ` : '';
+                section.innerHTML = html;
+            }
+            const materials = await loadMaterials();
+            const listEl = document.getElementById('wl-post-list');
+            if (listEl) { listEl.innerHTML = ''; renderWuliaoCards(listEl, materials); }
+        } else {
+            alert('评论失败，请稍后重试');
+        }
+    };
+    // =========================================
+
     function render() {
     const grid = document.getElementById('mainGrid');
     if(!grid) return; grid.innerHTML = '';
@@ -3835,6 +4442,12 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     // 板块 4 处理
     if (currentPart === 4) {
         renderXiaoliHome(grid);
+        return;
+    }
+
+    // 板块 5 处理
+    if (currentPart === 5) {
+        renderWuliaoSpace(grid);
         return;
     }
 
@@ -4095,7 +4708,7 @@ backToTopBtn.onmouseleave = () => {
     window.onload = render;
 
     window.addEventListener('scroll', () => {
-    if (currentPart === 3 || currentPart === 4) return;
+    if (currentPart === 3 || currentPart === 4 || currentPart === 5) return;
 
     const cards = document.querySelectorAll('.tour-card');
     let activeMonth = "";
