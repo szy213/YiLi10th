@@ -114,10 +114,24 @@
 
         /* --- 样式部分保持不变 --- */
         * { box-sizing: border-box; }
+/* 固定背景层（解决移动端 background-attachment: fixed 失效） */
+#bg-layer {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+    background-repeat: repeat;
+    background-size: 100% auto;
+    background-position: top center;
+}
+#bg-layer.active { display: block; }
+
 body {
-    margin: 0; 
+    margin: 0;
     padding: 0;
-    
+
     /* 核心修改：三层叠加逻辑 */
     background-image: 
         /* 第一层：全局顶部遮罩，保留页面最上方的设计感 */
@@ -1458,7 +1472,7 @@ body {
 /* ========== Supabase Auth 样式 ========== */
 #auth-btn {
     position: fixed;
-    top: 16px;
+    top: 24px;
     right: 16px;
     z-index: 5000;
     font-family: "STSong", "SimSun", serif;
@@ -1559,6 +1573,8 @@ body {
 </style>
 </head>
 <body>
+
+<div id="bg-layer"></div>
 
 <body>
     <div id="loading-overlay">
@@ -2581,16 +2597,23 @@ function closeModal() {
     if (btn) btn.classList.add('active');
 
     // 2. 背景切换核心逻辑
+    var bgLayer = document.getElementById('bg-layer');
     if (part === 3) {
         document.body.style.backgroundImage = "url('images/my_grain_bg.webp')";
-        document.body.style.backgroundRepeat = "repeat"; 
-        document.body.style.backgroundSize = "100% auto"; 
+        document.body.style.backgroundRepeat = "repeat";
+        document.body.style.backgroundSize = "100% auto";
         document.body.style.backgroundAttachment = "fixed";
         document.body.style.backgroundPosition = "top center";
+        // 移动端 fixed 背景层（解决 iOS Safari background-attachment:fixed 失效）
+        if (bgLayer) {
+            bgLayer.style.backgroundImage = "url('images/my_grain_bg.webp')";
+            bgLayer.classList.add('active');
+        }
     } else {
         document.body.style.backgroundImage = "linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 25%, transparent 40%), url('images/bg.jpg')";
         document.body.style.backgroundSize = "100% auto";
         document.body.style.backgroundAttachment = "scroll";
+        if (bgLayer) bgLayer.classList.remove('active');
     }
 
     // 3. 内容渲染逻辑
