@@ -1455,6 +1455,106 @@ body {
     z-index: -1;
 }
 
+/* ========== Supabase Auth 样式 ========== */
+#auth-btn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 5000;
+    font-family: "STSong", "SimSun", serif;
+    font-size: 13px;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 6px 16px;
+    cursor: pointer;
+    color: #666;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.3s;
+}
+#auth-btn:hover { background: #fff; color: #333; border-color: #999; }
+#auth-btn.logged-in { color: var(--tag-guest, #c97b5b); border-color: var(--tag-guest, #c97b5b); }
+
+.auth-overlay {
+    display: none;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); z-index: 10001;
+    justify-content: center; align-items: center;
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+}
+.auth-overlay.show { display: flex; }
+
+.auth-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px 32px 32px;
+    width: 90%; max-width: 380px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    text-align: center;
+    position: relative;
+    animation: authFadeIn 0.3s ease;
+}
+@keyframes authFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+.auth-close {
+    position: absolute; top: 12px; right: 16px;
+    font-size: 24px; color: #999; cursor: pointer;
+    background: none; border: none; line-height: 1;
+}
+.auth-close:hover { color: #333; }
+
+.auth-box h3 {
+    font-family: "STSong", "SimSun", serif;
+    font-size: 20px; margin-bottom: 24px; color: #333; font-weight: normal;
+}
+
+.auth-box input {
+    width: 100%; padding: 12px 16px; margin-bottom: 12px;
+    border: 1px solid #ddd; border-radius: 10px;
+    font-size: 15px; font-family: inherit;
+    box-sizing: border-box; outline: none;
+    transition: border-color 0.3s;
+}
+.auth-box input:focus { border-color: var(--tag-guest, #c97b5b); }
+
+.auth-box .auth-submit {
+    width: 100%; padding: 12px;
+    background: var(--tag-guest, #c97b5b); color: #fff;
+    border: none; border-radius: 10px;
+    font-size: 16px; font-family: "STSong", "SimSun", serif;
+    cursor: pointer; margin-top: 4px;
+    transition: opacity 0.3s;
+}
+.auth-box .auth-submit:hover { opacity: 0.9; }
+
+.auth-switch {
+    margin-top: 14px; font-size: 13px; color: #999;
+}
+.auth-switch a { color: var(--tag-guest, #c97b5b); cursor: pointer; text-decoration: none; }
+.auth-switch a:hover { text-decoration: underline; }
+
+.auth-error { color: #e74c3c; font-size: 13px; margin-bottom: 8px; display: none; }
+.auth-error.show { display: block; }
+
+/* Register-only fields */
+.auth-register-only { display: none; }
+.auth-box.register-mode .auth-register-only { display: block; }
+#auth-avatar-area {
+    width: 80px; height: 80px;
+    margin: 0 auto 12px;
+    border: 2px dashed #ccc; border-radius: 12px;
+    display: none !important;
+    align-items: center; justify-content: center;
+    cursor: pointer; overflow: hidden;
+    transition: border-color 0.3s;
+    background: #fafafa;
+}
+.auth-box.register-mode #auth-avatar-area { display: flex !important; }
+#auth-avatar-area:hover { border-color: var(--tag-guest, #c97b5b); }
+#auth-avatar-placeholder { font-size: 36px; color: #ccc; line-height: 1; }
+#auth-avatar-area img { width: 100%; height: 100%; object-fit: cover; }
+/* ========== Auth 样式结束 ========== */
 
 </style>
 </head>
@@ -1469,6 +1569,29 @@ body {
 <div class="header">
     <h1>一粒 · 巡演全纪录 </h1>
     <p> 陪着妳 爱着妳 常常想起妳 </p>
+</div>
+
+<!-- 登录按钮 -->
+<button id="auth-btn" onclick="toggleAuthModal()">登录</button>
+
+<!-- 登录/注册弹窗 -->
+<div class="auth-overlay" id="auth-overlay" onclick="if(event.target===this)closeAuthModal()">
+    <div class="auth-box">
+        <button class="auth-close" onclick="closeAuthModal()">&times;</button>
+        <h3 id="auth-title">登录</h3>
+        <div class="auth-error" id="auth-error"></div>
+        <input type="text" id="auth-email" placeholder="账号" autocomplete="username">
+        <input type="password" id="auth-password" placeholder="密码" autocomplete="current-password">
+        <input type="text" id="auth-nickname" class="auth-register-only" placeholder="昵称" autocomplete="off">
+        <div id="auth-avatar-area" class="auth-register-only" onclick="document.getElementById('auth-avatar-input').click()">
+            <span id="auth-avatar-placeholder">+</span>
+        </div>
+        <input type="file" id="auth-avatar-input" accept="image/*" onchange="handleAvatarSelect(event)" style="display:none;">
+        <button class="auth-submit" id="auth-submit-btn" onclick="handleAuth()">登录</button>
+        <div class="auth-switch" id="auth-switch">
+            还没有账号？<a onclick="switchAuthMode()">去注册</a>
+        </div>
+    </div>
 </div>
 
 <div class="part-selector">
@@ -1773,6 +1896,306 @@ body {
 <div id="monthRuler" class="time-ruler"></div>
 
 <script>
+// =========================================
+// Supabase Auth 初始化（动态加载 SDK，不阻塞页面渲染）
+// =========================================
+var supabaseClient = null;
+var currentUser = null;
+
+(function initSupabase() {
+    console.log('[Supabase] 开始加载配置文件...');
+    var configScript = document.createElement('script');
+    configScript.src = 'supabase-config.js';
+    configScript.onload = function() {
+        console.log('[Supabase] 配置文件加载成功');
+        var sdkScript = document.createElement('script');
+        sdkScript.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+        console.log('[Supabase] 开始加载 SDK...');
+        sdkScript.onload = function() {
+            console.log('[Supabase] SDK 加载成功');
+            var url = window.SUPABASE_URL || '';
+            var key = window.SUPABASE_ANON_KEY || '';
+            console.log('[Supabase] URL:', url ? url : '(空)', 'Key:', key ? '已设置' : '(空)');
+            if (!url || !key) {
+                console.error('[Supabase] 配置缺失，请检查 supabase-config.js');
+                return;
+            }
+            if (!window.supabase || typeof window.supabase.createClient !== 'function') {
+                console.error('[Supabase] SDK 对象异常，window.supabase 类型:', typeof window.supabase);
+                return;
+            }
+            supabaseClient = window.supabase.createClient(url, key);
+            console.log('[Supabase] Client 创建成功');
+
+            supabaseClient.auth.onAuthStateChange((event, session) => {
+                if (session && session.user) {
+                    currentUser = session.user;
+                    updateAuthUI(true);
+                    syncCheckInsFromCloud();
+                } else {
+                    currentUser = null;
+                    updateAuthUI(false);
+                }
+            });
+
+            supabaseClient.auth.getSession().then(({ data: { session } }) => {
+                if (session && session.user) {
+                    currentUser = session.user;
+                    updateAuthUI(true);
+                    syncCheckInsFromCloud();
+                }
+            }).catch(err => {
+                console.warn('Supabase 连接失败:', err.message);
+                supabaseClient = null;
+            });
+        };
+        sdkScript.onerror = function() {
+            console.error('[Supabase] SDK 加载失败！cdn.jsdelivr.net 可能不可达，请检查网络');
+        };
+        document.head.appendChild(sdkScript);
+    };
+    configScript.onerror = function() {
+        console.error('[Supabase] 配置文件 supabase-config.js 未找到！请确认文件存在');
+    };
+    document.head.appendChild(configScript);
+})();
+
+// --- Auth UI 函数 ---
+function updateAuthUI(loggedIn) {
+    const btn = document.getElementById('auth-btn');
+    if (!btn) return;
+    if (loggedIn && currentUser) {
+        const nickname = currentUser.user_metadata?.nickname || '';
+        btn.textContent = nickname || '已登录';
+        btn.classList.add('logged-in');
+        btn.onclick = handleSignOut;
+    } else {
+        btn.textContent = '登录';
+        btn.classList.remove('logged-in');
+        btn.onclick = toggleAuthModal;
+    }
+}
+
+function toggleAuthModal() {
+    const overlay = document.getElementById('auth-overlay');
+    if (!overlay) return;
+    overlay.classList.toggle('show');
+    resetAuthForm();
+}
+
+function closeAuthModal() {
+    const overlay = document.getElementById('auth-overlay');
+    if (overlay) overlay.classList.remove('show');
+}
+
+function resetAuthForm() {
+    document.getElementById('auth-title').textContent = '登录';
+    document.getElementById('auth-submit-btn').textContent = '登录';
+    document.getElementById('auth-switch').innerHTML = '还没有账号？<a onclick="switchAuthMode()">去注册</a>';
+    document.getElementById('auth-email').value = '';
+    document.getElementById('auth-password').value = '';
+    document.getElementById('auth-nickname').value = '';
+    clearAvatarPreview();
+    hideAuthError();
+}
+
+function showAuthError(msg) {
+    const err = document.getElementById('auth-error');
+    err.textContent = msg;
+    err.classList.add('show');
+}
+
+function hideAuthError() {
+    const err = document.getElementById('auth-error');
+    err.classList.remove('show');
+}
+
+let authMode = 'login'; // 'login' | 'register'
+
+function switchAuthMode() {
+    const authBox = document.querySelector('.auth-box');
+    if (authMode === 'login') {
+        authMode = 'register';
+        authBox.classList.add('register-mode');
+        document.getElementById('auth-title').textContent = '注册';
+        document.getElementById('auth-submit-btn').textContent = '注册';
+        document.getElementById('auth-switch').innerHTML = '已有账号？<a onclick="switchAuthMode()">去登录</a>';
+    } else {
+        authMode = 'login';
+        authBox.classList.remove('register-mode');
+        document.getElementById('auth-nickname').value = '';
+        clearAvatarPreview();
+        document.getElementById('auth-title').textContent = '登录';
+        document.getElementById('auth-submit-btn').textContent = '登录';
+        document.getElementById('auth-switch').innerHTML = '还没有账号？<a onclick="switchAuthMode()">去注册</a>';
+    }
+    hideAuthError();
+}
+
+let selectedAvatarFile = null;
+
+async function handleAuth() {
+    hideAuthError();
+    const account = document.getElementById('auth-email').value.trim();
+    const password = document.getElementById('auth-password').value;
+
+    if (!account || !password) {
+        showAuthError('请填写账号和密码');
+        return;
+    }
+    if (!supabaseClient) {
+        showAuthError('服务未就绪，请刷新页面后重试');
+        return;
+    }
+
+    // 将自定义账号转换为代理邮箱（如果用户输入了真实邮箱也兼容）
+    const email = account.includes('@') ? account : account + '@user.local';
+
+    if (authMode === 'register') {
+        const nickname = document.getElementById('auth-nickname').value.trim();
+        if (!nickname) {
+            showAuthError('请填写昵称');
+            return;
+        }
+        const { data, error } = await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: { data: { nickname: nickname } }
+        });
+        if (error) {
+            showAuthError(error.message);
+        } else if (data.user && data.user.identities && data.user.identities.length === 0) {
+            showAuthError('该账号已注册，请直接登录');
+        } else {
+            // 上传头像（如有选择）
+            if (selectedAvatarFile && data.user) {
+                await uploadAvatar(data.user.id);
+            }
+            alert('注册成功！');
+            closeAuthModal();
+        }
+    } else {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) {
+            showAuthError(error.message);
+        } else {
+            closeAuthModal();
+        }
+    }
+}
+
+async function uploadAvatar(userId) {
+    const file = selectedAvatarFile;
+    const fileExt = file.name.split('.').pop();
+    const filePath = userId + '/' + Date.now() + '.' + fileExt;
+    const { error } = await supabaseClient.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true });
+    if (error) {
+        console.warn('头像上传失败:', error.message);
+        return;
+    }
+    // 获取公开 URL 并更新用户 metadata
+    const { data: urlData } = supabaseClient.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+    if (urlData && urlData.publicUrl) {
+        await supabaseClient.auth.updateUser({
+            data: { avatar_url: urlData.publicUrl }
+        });
+    }
+}
+
+function handleAvatarSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    selectedAvatarFile = file;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const area = document.getElementById('auth-avatar-area');
+        const placeholder = document.getElementById('auth-avatar-placeholder');
+        // 移除旧预览图
+        const oldImg = area.querySelector('img');
+        if (oldImg) oldImg.remove();
+        // 插入新预览图
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        area.appendChild(img);
+        placeholder.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearAvatarPreview() {
+    selectedAvatarFile = null;
+    const area = document.getElementById('auth-avatar-area');
+    const placeholder = document.getElementById('auth-avatar-placeholder');
+    const oldImg = area ? area.querySelector('img') : null;
+    if (oldImg) oldImg.remove();
+    if (placeholder) placeholder.style.display = '';
+    const fileInput = document.getElementById('auth-avatar-input');
+    if (fileInput) fileInput.value = '';
+}
+
+async function handleSignOut() {
+    if (!supabaseClient) return;
+    if (confirm('确定要退出登录吗？')) {
+        await supabaseClient.auth.signOut();
+        currentUser = null;
+        updateAuthUI(false);
+    }
+}
+
+// --- 云端同步函数 ---
+async function syncCheckInsFromCloud() {
+    if (!supabaseClient || !currentUser) return;
+
+    const { data, error } = await supabaseClient
+        .from('check_ins')
+        .select('city_id')
+        .eq('user_id', currentUser.id);
+
+    if (error) {
+        console.warn('同步打卡记录失败:', error.message);
+        return;
+    }
+
+    // 合并到 localStorage（云端优先）
+    const cloudIds = new Set(data.map(row => row.city_id));
+    cloudIds.forEach(id => {
+        localStorage.setItem('checked_' + id, 'true');
+    });
+
+    // 刷新当前页面显示
+    if (typeof render === 'function') {
+        render();
+    }
+}
+
+async function saveCheckInToCloud(cityId, isChecked) {
+    if (!supabaseClient || !currentUser) return;
+
+    if (isChecked) {
+        const { error } = await supabaseClient
+            .from('check_ins')
+            .upsert({ user_id: currentUser.id, city_id: cityId, timestamp: new Date().toISOString() })
+            .select();
+        if (error && error.code === '23505') {
+            // 唯一约束冲突，忽略
+        } else if (error) {
+            console.warn('云端保存失败:', error.message);
+        }
+    } else {
+        const { error } = await supabaseClient
+            .from('check_ins')
+            .delete()
+            .eq('user_id', currentUser.id)
+            .eq('city_id', cityId);
+        if (error) {
+            console.warn('云端删除失败:', error.message);
+        }
+    }
+}
 
 window.addEventListener('load', function() {
     const loader = document.getElementById('loading-overlay');
@@ -2211,15 +2634,20 @@ function scrollToTour(id) {
 function saveCheckState(id, isChecked) {
     // 使用 tourData 中的 id 作为存储键名，确保唯一性
     localStorage.setItem('checked_' + id, isChecked);
-    
+
+    // 同步到 Supabase 云端（已登录时）
+    if (currentUser) {
+        saveCheckInToCloud(id, isChecked);
+    }
+
     // 如果是勾选（点亮），显示语录
     if (isChecked) {
         showQuote(id);
         // 新增：播放专属音频并调低背景音乐
         playIdAudio(id);
     }
-    
-    // 如果在“我的一粒”页面，立即刷新以同步足迹图和统计数据
+
+    // 如果在”我的一粒”页面，立即刷新以同步足迹图和统计数据
     if (currentPart === 3) {
         render();
     }
