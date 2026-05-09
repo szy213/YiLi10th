@@ -3889,6 +3889,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     // 小粒之家 - 论坛模块
     // =========================================
     var _forumCurrentSort = 'default';   // 排序：default / time / likes
+    var _forumCurrentMyFilter = '';      // 筛选：空=全部，mine=我的帖子
     var _forumAllPosts = [];             // 缓存全部帖子
 
     async function loadPosts() {
@@ -4125,10 +4126,15 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         }
         wrapper.appendChild(formBox);
 
-        // --- 排序条 ---
+        // --- 筛选 & 排序条 ---
         const sortBar = document.createElement('div');
         sortBar.className = 'wl-filter-bar';
         sortBar.innerHTML = `
+            <label>筛选</label>
+            <select id="forum-my-filter">
+                <option value="">全部帖子</option>
+                <option value="mine">我的帖子</option>
+            </select>
             <label>排序</label>
             <select id="forum-sort-select">
                 <option value="default">默认</option>
@@ -4146,8 +4152,16 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
 
         container.appendChild(wrapper);
 
-        // 设置排序事件
+        // 设置筛选 & 排序事件
+        const myFilterSelect = document.getElementById('forum-my-filter');
         const sortSelect = document.getElementById('forum-sort-select');
+        if (myFilterSelect) {
+            myFilterSelect.value = _forumCurrentMyFilter;
+            myFilterSelect.addEventListener('change', function() {
+                _forumCurrentMyFilter = this.value;
+                _forumRenderSorted();
+            });
+        }
         if (sortSelect) {
             sortSelect.value = _forumCurrentSort;
             sortSelect.addEventListener('change', function() {
@@ -4160,13 +4174,19 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         _forumRenderSorted();
     }
 
-    // 根据当前排序条件渲染帖子列表
+    // 根据当前筛选/排序条件渲染帖子列表
     function _forumRenderSorted() {
         const listEl = document.getElementById('forum-post-list');
         if (!listEl) return;
         listEl.innerHTML = '';
         let posts = [..._forumAllPosts];
 
+        // 筛选：我的帖子
+        if (_forumCurrentMyFilter === 'mine' && currentUser) {
+            posts = posts.filter(p => p.user_id === currentUser.id);
+        }
+
+        // 排序
         if (_forumCurrentSort === 'time') {
             posts.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
         } else if (_forumCurrentSort === 'likes') {
@@ -4364,6 +4384,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     var wuliaoSelectedFile = null;
     var _wuliaoCurrentFilter = '';        // 当前场次筛选，空=全部
     var _wuliaoCurrentSort = 'default';   // 排序：default / time / likes
+    var _wuliaoCurrentMyFilter = '';      // 筛选：空=全部，mine=我的帖子
     var _wuliaoAllMaterials = [];         // 缓存全部物料
 
     async function loadMaterials() {
@@ -4577,6 +4598,11 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         const filterBar = document.createElement('div');
         filterBar.className = 'wl-filter-bar';
         filterBar.innerHTML = `
+            <label>筛选</label>
+            <select id="wl-my-filter">
+                <option value="">全部</option>
+                <option value="mine">我的帖子</option>
+            </select>
             <label>场次</label>
             <select id="wl-filter-select">
                 <option value="">全部</option>
@@ -4597,9 +4623,17 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         wrapper.appendChild(list);
         container.appendChild(wrapper);
 
-        // 设置筛选事件
+        // 设置筛选 & 排序事件
+        const myFilterSelect = document.getElementById('wl-my-filter');
         const filterSelect = document.getElementById('wl-filter-select');
         const sortSelect = document.getElementById('wl-sort-select');
+        if (myFilterSelect) {
+            myFilterSelect.value = _wuliaoCurrentMyFilter;
+            myFilterSelect.addEventListener('change', function() {
+                _wuliaoCurrentMyFilter = this.value;
+                _wuliaoRenderFiltered();
+            });
+        }
         if (filterSelect) {
             filterSelect.value = _wuliaoCurrentFilter;
             filterSelect.addEventListener('change', function() {
@@ -4627,6 +4661,11 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         let filtered = _wuliaoCurrentFilter
             ? _wuliaoAllMaterials.filter(m => (m.tour_date || '无').includes(_wuliaoCurrentFilter))
             : [..._wuliaoAllMaterials];
+
+        // 筛选：我的帖子
+        if (_wuliaoCurrentMyFilter === 'mine' && currentUser) {
+            filtered = filtered.filter(m => m.user_id === currentUser.id);
+        }
 
         // 排序
         if (_wuliaoCurrentSort === 'time') {
