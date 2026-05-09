@@ -1907,8 +1907,7 @@ body {
 
 .wuliao-post .wl-image {
     width: 100%;
-    max-height: 400px;
-    object-fit: cover;
+    object-fit: contain;
     display: block;
     cursor: pointer;
     transition: opacity 0.3s;
@@ -1936,6 +1935,12 @@ body {
 .wuliao-post .wl-date {
     font-size: 12px;
     color: #999;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: flex-end;
+}
+.wl-date-tag {
     background: rgba(0,0,0,0.04);
     padding: 3px 10px;
     border-radius: 12px;
@@ -2114,6 +2119,36 @@ body {
 }
 .wuliao-form .wl-submit-row .wl-submit:hover { opacity: 0.85; }
 .wuliao-form .wl-submit-row .wl-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.wl-date-checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-height: 120px;
+    overflow-y: auto;
+}
+.wl-date-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #666;
+    cursor: pointer;
+    background: rgba(255,255,255,0.5);
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    padding: 4px 10px;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.wl-date-check:has(input:checked) {
+    background: var(--tag-guest);
+    color: #fff;
+    border-color: var(--tag-guest);
+}
+.wl-date-check input {
+    display: none;
+}
 
 /* 物料评论区复用小粒之家样式 */
 .wuliao-post .comments-section {
@@ -4104,14 +4139,13 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     }
 
     async function submitMaterial(name, tourDate, file) {
-        if (!supabaseClient || !currentUser) return null;
-        // Upload image
+        if (!supabaseClient || !currentUser) return { data: null, error: '未登录或服务未就绪' };
         const fileExt = file.name.split('.').pop();
         const filePath = 'materials/' + currentUser.id + '/' + Date.now() + '.' + fileExt;
         const { error: uploadErr } = await supabaseClient.storage
             .from('materials')
             .upload(filePath, file, { upsert: true });
-        if (uploadErr) { console.warn('物料图片上传失败:', uploadErr.message); return null; }
+        if (uploadErr) { return { data: null, error: '图片上传失败: ' + uploadErr.message }; }
         const { data: urlData } = supabaseClient.storage.from('materials').getPublicUrl(filePath);
         const imageUrl = urlData ? urlData.publicUrl : '';
 
@@ -4129,8 +4163,8 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             })
             .select()
             .single();
-        if (error) { console.warn('发布物料失败:', error.message); return null; }
-        return data;
+        if (error) { return { data: null, error: '入库失败: ' + error.message }; }
+        return { data, error: null };
     }
 
     async function deleteMaterial(materialId) {
@@ -4204,7 +4238,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
                 <div class="wl-body">
                     <div class="wl-header">
                         <span class="wl-name">${escapeHtml(m.material_name)}</span>
-                        <span class="wl-date">${escapeHtml(m.tour_date || '无')}</span>
+                        <span class="wl-date">${(m.tour_date || '无').split(', ').map(d => `<span class="wl-date-tag">${escapeHtml(d)}</span>`).join(' ')}</span>
                     </div>
                     <div class="wl-footer">
                         <div class="wl-author">
@@ -4240,7 +4274,9 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         if (currentUser) {
             // Build tour date options from tourData
             const dates = [...new Set(tourData.map(t => t.time))].filter(Boolean).sort();
-            const dateOptions = '<option value="">无</option>' + dates.map(d => `<option value="${d}">${d}</option>`).join('');
+            const dateCheckboxes = dates.map(d => `
+                <label class="wl-date-check"><input type="checkbox" value="${d}"> ${d}</label>
+            `).join('');
 
             formBox.innerHTML = `
                 <div class="wl-form-row">
@@ -4256,7 +4292,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
                 </div>
                 <div class="wl-form-row">
                     <label>关联场次</label>
-                    <select id="wl-date-select">${dateOptions}</select>
+                    <div class="wl-date-checks" id="wl-date-checks">${dateCheckboxes}</div>
                 </div>
                 <div class="wl-submit-row">
                     <span style="font-size:12px;color:#bbb;">* 为必填项</span>
@@ -4300,16 +4336,19 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
 
     window._wuliaoSubmit = async function() {
         const nameInput = document.getElementById('wl-name-input');
-        const dateSelect = document.getElementById('wl-date-select');
         const btn = document.getElementById('wl-submit-btn');
         if (!nameInput || !nameInput.value.trim()) { alert('请填写物料名称'); return; }
         if (!wuliaoSelectedFile) { alert('请上传物料图片'); return; }
+        // Collect selected dates
+        const checkedDates = document.querySelectorAll('#wl-date-checks input[type="checkbox"]:checked');
+        const selectedDates = Array.from(checkedDates).map(cb => cb.value).join(', ');
         btn.disabled = true;
         btn.textContent = '发布中...';
-        const result = await submitMaterial(nameInput.value.trim(), dateSelect ? dateSelect.value : '', wuliaoSelectedFile);
+        const { data: result, error: submitErr } = await submitMaterial(nameInput.value.trim(), selectedDates, wuliaoSelectedFile);
         if (result) {
             nameInput.value = '';
-            if (dateSelect) dateSelect.value = '';
+            // Uncheck all dates
+            document.querySelectorAll('#wl-date-checks input[type="checkbox"]').forEach(cb => cb.checked = false);
             wuliaoSelectedFile = null;
             const uploadDiv = document.getElementById('wl-image-upload');
             if (uploadDiv) {
@@ -4321,7 +4360,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             const listEl = document.getElementById('wl-post-list');
             if (listEl) { listEl.innerHTML = ''; renderWuliaoCards(listEl, materials); }
         } else {
-            alert('发布失败，请稍后重试');
+            alert('发布失败: ' + (submitErr || '未知错误'));
         }
         btn.disabled = false;
         btn.textContent = '发布';
