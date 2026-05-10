@@ -1800,11 +1800,28 @@ body {
     gap: 8px;
     margin-top: 10px;
 }
-.forum-post-form .pf-image-preview {
+.forum-post-form .pf-image-preview-wrapper {
+    position: relative;
     width: 64px; height: 64px;
+    flex-shrink: 0;
+}
+.forum-post-form .pf-image-preview {
+    width: 100%; height: 100%;
     border-radius: 8px;
     object-fit: cover;
     border: 1px solid #eee;
+}
+.forum-post-form .pf-image-delete {
+    position: absolute;
+    top: -6px; right: -6px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    cursor: pointer;
 }
 .forum-post-form .pf-add-image {
     width: 64px; height: 64px;
@@ -1836,8 +1853,6 @@ body {
 }
 
 .comment-item {
-    display: flex;
-    gap: 8px;
     padding: 8px 0;
     border-bottom: 1px dashed rgba(0,0,0,0.05);
 }
@@ -1895,39 +1910,65 @@ body {
     color: var(--tag-guest);
 }
 
-.comment-reply-input {
+/* 回复弹窗 */
+.reply-modal-overlay {
     display: none;
-    margin-top: 6px;
-    margin-left: 36px;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); z-index: 10002;
+    justify-content: center; align-items: center;
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
 }
-.comment-reply-input.active {
-    display: flex;
-    gap: 6px;
-    align-items: center;
+.reply-modal-overlay.show { display: flex; }
+.reply-modal-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 28px 24px 24px;
+    width: 90%; max-width: 380px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    text-align: center;
+    animation: authFadeIn 0.3s ease;
 }
-.comment-reply-input input {
-    flex: 1;
-    border: 1px solid #ddd;
-    border-radius: 14px;
-    padding: 6px 12px;
-    font-size: 12px;
-    font-family: inherit;
+.reply-modal-box h3 {
+    margin: 0 0 14px;
+    font-size: 16px;
+    color: #333;
+}
+.reply-modal-box textarea {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    resize: none;
+    min-height: 80px;
     outline: none;
-    transition: border-color 0.3s;
-    background: rgba(255,255,255,0.5);
-}
-.comment-reply-input input:focus { border-color: var(--tag-guest); }
-.comment-reply-input .cm-submit {
     font-family: inherit;
-    font-size: 11px;
-    padding: 5px 12px;
+    box-sizing: border-box;
+}
+.reply-modal-box textarea:focus { border-color: var(--tag-guest); }
+.reply-modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    justify-content: flex-end;
+}
+.reply-modal-actions button {
+    padding: 8px 22px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+}
+.reply-modal-cancel {
+    background: #f0f0f0;
+    color: #666;
+}
+.reply-modal-submit {
     background: var(--tag-guest);
     color: #fff;
-    border: none;
-    border-radius: 14px;
-    cursor: pointer;
-    white-space: nowrap;
 }
+.reply-modal-submit:hover { opacity: 0.85; }
 
 .comment-replies {
     margin-left: 28px;
@@ -2332,6 +2373,18 @@ body {
         <button class="auth-submit" id="auth-submit-btn" onclick="handleAuth()">登录</button>
         <div class="auth-switch" id="auth-switch">
             还没有账号？<a onclick="switchAuthMode()">去注册</a>
+        </div>
+    </div>
+</div>
+
+<!-- 回复弹窗 -->
+<div class="reply-modal-overlay" id="reply-modal-overlay" onclick="if(event.target===this)closeReplyModal()">
+    <div class="reply-modal-box">
+        <h3 id="reply-modal-title">回复</h3>
+        <textarea id="reply-modal-input" placeholder="写下回复..." maxlength="200"></textarea>
+        <div class="reply-modal-actions">
+            <button class="reply-modal-cancel" onclick="closeReplyModal()" type="button">取消</button>
+            <button class="reply-modal-submit" onclick="window._submitReplyModal()" type="button">发送</button>
         </div>
     </div>
 </div>
@@ -4207,12 +4260,30 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         for (var i = 0; i < files.length && forumSelectedFiles.length < 9; i++) {
             forumSelectedFiles.push(files[i]);
             var reader = new FileReader();
-            reader.onload = function(e) {
-                var img = document.createElement('img');
-                img.src = e.target.result;
-                img.className = 'pf-image-preview';
-                if (area) area.insertBefore(img, area.lastElementChild);
-            };
+            reader.onload = (function(file) {
+                return function(e) {
+                    var wrapper = document.createElement('span');
+                    wrapper.className = 'pf-image-preview-wrapper';
+                    var img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'pf-image-preview';
+                    var delBtn = document.createElement('span');
+                    delBtn.className = 'pf-image-delete';
+                    delBtn.textContent = '×';
+                    delBtn.onclick = function(ev) {
+                        ev.stopPropagation();
+                        ev.preventDefault();
+                        // Find the index of this wrapper among its siblings (excluding the + button)
+                        var wrappers = area.querySelectorAll('.pf-image-preview-wrapper');
+                        var idx = Array.prototype.indexOf.call(wrappers, wrapper);
+                        if (idx > -1) forumSelectedFiles.splice(idx, 1);
+                        wrapper.remove();
+                    };
+                    wrapper.appendChild(img);
+                    wrapper.appendChild(delBtn);
+                    if (area) area.insertBefore(wrapper, area.lastElementChild);
+                };
+            })(files[i]);
             reader.readAsDataURL(files[i]);
         }
         event.target.value = '';
@@ -4231,7 +4302,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             forumSelectedFiles = [];
             var area = document.getElementById('pf-images-area');
             if (area) {
-                area.querySelectorAll('.pf-image-preview').forEach(function(el) { el.remove(); });
+                area.querySelectorAll('.pf-image-preview-wrapper').forEach(function(el) { el.remove(); });
             }
             document.getElementById('pf-file-input').value = '';
             _forumAllPosts = await loadPosts();
@@ -4262,24 +4333,24 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         }
     };
 
-    function buildCommentHTML(comments, prefix, submitFn) {
+    function buildCommentHTML(comments, prefix) {
         // Separate top-level and replies
         var topLevel = comments.filter(function(c) { return !c.parent_id; });
         var replies = comments.filter(function(c) { return !!c.parent_id; });
+        var type = prefix.indexOf('fp') === 0 ? 'forum' : 'wuliao';
+        var ownerId = prefix.substring(2);
         var html = '';
         topLevel.forEach(function(c) {
             var cAvatar = c.avatar_url
                 ? '<img src="' + c.avatar_url + '" class="cm-avatar" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="cm-avatar-placeholder" style="display:none">粒</div>'
                 : '<div class="cm-avatar-placeholder">粒</div>';
+            var safeNick = (c.nickname || '一粒').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
             html += '<div class="comment-item" data-cid="' + c.id + '">' +
                 cAvatar +
                 '<div class="cm-body">' +
                     '<div class="cm-nickname">' + escapeHtml(c.nickname || '一粒') + '</div>' +
                     '<div class="cm-content">' + escapeHtml(c.content) + '</div>' +
-                    '<div class="cm-time">' + formatForumTime(c.created_at) + ' <span class="cm-reply-btn" onclick="window._showReplyInput(\'' + prefix + '\', ' + c.id + ')">回复</span></div>' +
-                '</div>' +
-                '<div class="comment-reply-input" id="rp-' + prefix + '-' + c.id + '">' +
-                    (currentUser ? '<input type="text" id="rp-input-' + prefix + '-' + c.id + '" placeholder="回复 ' + escapeHtml(c.nickname || '一粒') + '..." maxlength="200"><button class="cm-submit" onclick="window.' + submitFn + '(' + c.id + ')" type="button">发送</button>' : '') +
+                    '<div class="cm-time">' + formatForumTime(c.created_at) + ' <span class="cm-reply-btn" onclick="openReplyModal(\'' + type + '\', \'' + ownerId + '\', ' + c.id + ', \'' + safeNick + '\')">回复</span></div>' +
                 '</div>';
             // Add replies under this comment
             var childReplies = replies.filter(function(r) { return r.parent_id == c.id; });
@@ -4289,12 +4360,13 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
                     var rAvatar = r.avatar_url
                         ? '<img src="' + r.avatar_url + '" class="cm-avatar" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="cm-avatar-placeholder" style="display:none">粒</div>'
                         : '<div class="cm-avatar-placeholder">粒</div>';
+                    var rSafeNick = (r.nickname || '一粒').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
                     html += '<div class="comment-item">' +
                         rAvatar +
                         '<div class="cm-body">' +
                             '<div class="cm-nickname">' + escapeHtml(r.nickname || '一粒') + '</div>' +
                             '<div class="cm-content">' + escapeHtml(r.content) + '</div>' +
-                            '<div class="cm-time">' + formatForumTime(r.created_at) + '</div>' +
+                            '<div class="cm-time">' + formatForumTime(r.created_at) + ' <span class="cm-reply-btn" onclick="openReplyModal(\'' + type + '\', \'' + ownerId + '\', ' + r.id + ', \'' + rSafeNick + '\')">回复</span></div>' +
                         '</div>' +
                     '</div>';
                 });
@@ -4305,19 +4377,35 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         return html || '<div style="text-align:center;color:#ccc;padding:10px;font-size:13px;">暂无评论</div>';
     }
 
-    // Show reply input
-    var _activeReplyInput = null;
-    window._showReplyInput = function(prefix, commentId) {
-        // Hide previously active
-        if (_activeReplyInput) _activeReplyInput.classList.remove('active');
-        var el = document.getElementById('rp-' + prefix + '-' + commentId);
-        if (el) {
-            if (el === _activeReplyInput) { _activeReplyInput = null; return; }
-            el.classList.add('active');
-            _activeReplyInput = el;
-            var input = el.querySelector('input');
-            if (input) setTimeout(function() { input.focus(); }, 100);
+    // 回复弹窗
+    var _replyContext = null; // {type: 'forum'|'wuliao', ownerId, parentId}
+    window.openReplyModal = function(type, ownerId, parentId, nickname) {
+        if (!currentUser) { alert('请先登录'); return; }
+        _replyContext = {type: type, ownerId: ownerId, parentId: parentId};
+        document.getElementById('reply-modal-title').textContent = '回复 ' + (nickname || '一粒');
+        document.getElementById('reply-modal-input').value = '';
+        document.getElementById('reply-modal-overlay').classList.add('show');
+        setTimeout(function() {
+            document.getElementById('reply-modal-input').focus();
+        }, 100);
+    };
+    window.closeReplyModal = function() {
+        document.getElementById('reply-modal-overlay').classList.remove('show');
+        _replyContext = null;
+    };
+    window._submitReplyModal = async function() {
+        if (!_replyContext) return;
+        var input = document.getElementById('reply-modal-input');
+        if (!input || !input.value.trim()) return;
+        var val = input.value.trim();
+        if (_replyContext.type === 'forum') {
+            await submitComment(_replyContext.ownerId, val, _replyContext.parentId);
+            window._forumRefreshComments(_replyContext.ownerId);
+        } else {
+            await submitMaterialComment(_replyContext.ownerId, val, _replyContext.parentId);
+            window._wuliaoRefreshComments(_replyContext.ownerId);
         }
+        window.closeReplyModal();
     };
 
     window._forumToggleComments = async function(postId, btn) {
@@ -4326,7 +4414,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         if (!section) return;
         if (section.classList.contains('open')) { section.classList.remove('open'); return; }
         var comments = await loadComments(postId);
-        var html = buildCommentHTML(comments, 'fp' + postId, '_forumReplyComment');
+        var html = buildCommentHTML(comments, 'fp' + postId);
         html += currentUser ? `
             <div class="comment-input-row" style="margin-top:10px;">
                 <input type="text" id="cm-input-${postId}" placeholder="写评论..." maxlength="200">
@@ -4337,22 +4425,12 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         section.classList.add('open');
     };
 
-    window._forumReplyComment = async function(parentId) {
-        // The prefix is embedded as rp-fp{postId}-{parentId}
-        var input = document.getElementById('rp-input-fp' + window._forumLastPostId + '-' + parentId);
-        if (!input || !input.value.trim()) return;
-        await submitComment(window._forumLastPostId, input.value.trim(), parentId);
-        // Refresh
-        window._forumLastCommentInput = input;
-        window._forumRefreshComments(window._forumLastPostId);
-    };
-
     window._forumLastPostId = null;
     window._forumRefreshComments = async function(postId) {
         var section = document.getElementById('comments-' + postId);
         if (!section) return;
         var comments = await loadComments(postId);
-        var html = buildCommentHTML(comments, 'fp' + postId, '_forumReplyComment');
+        var html = buildCommentHTML(comments, 'fp' + postId);
         html += currentUser ? `
             <div class="comment-input-row" style="margin-top:10px;">
                 <input type="text" id="cm-input-${postId}" placeholder="写评论..." maxlength="200">
@@ -4383,7 +4461,6 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     // =========================================
     var wuliaoSelectedFile = null;
     var _wuliaoCurrentFilter = '';        // 当前场次筛选，空=全部
-    var _wuliaoCurrentSort = 'default';   // 排序：default / time / likes
     var _wuliaoCurrentMyFilter = '';      // 筛选：空=全部，mine=我的帖子
     var _wuliaoAllMaterials = [];         // 缓存全部物料
 
@@ -4608,12 +4685,6 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
                 <option value="">全部</option>
                 ${dates.map(d => `<option value="${d}">${d}</option>`).join('')}
             </select>
-            <label>排序</label>
-            <select id="wl-sort-select">
-                <option value="default">默认</option>
-                <option value="time">时间顺序</option>
-                <option value="likes">点赞最多</option>
-            </select>
         `;
         wrapper.appendChild(filterBar);
 
@@ -4626,7 +4697,6 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         // 设置筛选 & 排序事件
         const myFilterSelect = document.getElementById('wl-my-filter');
         const filterSelect = document.getElementById('wl-filter-select');
-        const sortSelect = document.getElementById('wl-sort-select');
         if (myFilterSelect) {
             myFilterSelect.value = _wuliaoCurrentMyFilter;
             myFilterSelect.addEventListener('change', function() {
@@ -4641,14 +4711,6 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
                 _wuliaoRenderFiltered();
             });
         }
-        if (sortSelect) {
-            sortSelect.value = _wuliaoCurrentSort;
-            sortSelect.addEventListener('change', function() {
-                _wuliaoCurrentSort = this.value;
-                _wuliaoRenderFiltered();
-            });
-        }
-
         _wuliaoAllMaterials = await loadMaterials();
         _wuliaoRenderFiltered();
     }
@@ -4666,14 +4728,6 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         if (_wuliaoCurrentMyFilter === 'mine' && currentUser) {
             filtered = filtered.filter(m => m.user_id === currentUser.id);
         }
-
-        // 排序
-        if (_wuliaoCurrentSort === 'time') {
-            filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-        } else if (_wuliaoCurrentSort === 'likes') {
-            filtered.sort((a, b) => (b.likeCount || 0) - (a.likeCount || 0));
-        }
-        // default: 保持 loadMaterials 返回的顺序（created_at 降序）
 
         renderWuliaoCards(listEl, filtered);
     }
@@ -4754,7 +4808,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         if (!section) return;
         if (section.classList.contains('open')) { section.classList.remove('open'); return; }
         var comments = await loadMaterialComments(materialId);
-        var html = buildCommentHTML(comments, 'wm' + materialId, '_wuliaoReplyComment');
+        var html = buildCommentHTML(comments, 'wm' + materialId);
         html += currentUser ? `
             <div class="comment-input-row" style="margin-top:10px;">
                 <input type="text" id="wl-cm-input-${materialId}" placeholder="写评论..." maxlength="200">
@@ -4765,18 +4819,11 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         section.classList.add('open');
     };
 
-    window._wuliaoReplyComment = async function(parentId) {
-        var input = document.getElementById('rp-input-wm' + _wuliaoLastMaterialId + '-' + parentId);
-        if (!input || !input.value.trim()) return;
-        await submitMaterialComment(_wuliaoLastMaterialId, input.value.trim(), parentId);
-        window._wuliaoRefreshComments(_wuliaoLastMaterialId);
-    };
-
     window._wuliaoRefreshComments = async function(materialId) {
         var section = document.getElementById('wl-comments-' + materialId);
         if (!section) return;
         var comments = await loadMaterialComments(materialId);
-        var html = buildCommentHTML(comments, 'wm' + materialId, '_wuliaoReplyComment');
+        var html = buildCommentHTML(comments, 'wm' + materialId);
         html += currentUser ? `
             <div class="comment-input-row" style="margin-top:10px;">
                 <input type="text" id="wl-cm-input-${materialId}" placeholder="写评论..." maxlength="200">
