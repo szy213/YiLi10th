@@ -714,6 +714,14 @@ body {
      font-size: 0.8em;
  }
 
+#xiaoliBtn::after {
+    content: ' ▼';
+    font-size: 0.8em;
+}
+.dropdown:hover #xiaoliBtn::after {
+    content: ' ▲';
+}
+
 /* 垂直刻度尺容器 - 已删除相关样式 */
 
 /* 舞台光扫过特效 */
@@ -2072,6 +2080,10 @@ body {
     font-weight: bold;
     color: #333;
     letter-spacing: 1px;
+    display: inline-block;
+    border: 1px solid rgba(0,0,0,0.12);
+    border-radius: 6px;
+    padding: 2px 10px;
 }
 .wuliao-post .wl-date {
     font-size: 12px;
@@ -2397,9 +2409,14 @@ body {
             <a href="javascript:void(0)" onclick="selectYear('2026')">2026</a>
         </div>
     </div>
+    <div class="dropdown">
+        <button class="part-btn" id="xiaoliBtn">小粒之家</button>
+        <div class="dropdown-content">
+            <a href="javascript:void(0)" onclick="switchXiaoliPart(4, '小粒之家')">小粒之家</a>
+            <a href="javascript:void(0)" onclick="switchXiaoliPart(5, '物料空间')">物料空间</a>
+        </div>
+    </div>
     <button class="part-btn" onclick="changePart(3, this)">我的一粒</button>
-    <button class="part-btn" onclick="changePart(4, this)">小粒之家</button>
-    <button class="part-btn" onclick="changePart(5, this)">物料空间</button>
 
 </div>
 
@@ -3369,6 +3386,12 @@ function closeModal() {
         } else {
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
+    }
+
+    function switchXiaoliPart(part, label) {
+        var btn = document.getElementById('xiaoliBtn');
+        if (btn) btn.textContent = label;
+        changePart(part, btn);
     }
 
     function changePart(part, btn) {
