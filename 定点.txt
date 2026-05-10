@@ -1,0 +1,48 @@
+// 地图定点器：鼠标悬停显示坐标，点击记录坐标                                             
+      3959 +    let coordPicking = false;                                                                 
+      3960 +    window.toggleCoordPicker = function() {                                                   
+      3961 +        const wrapper = mapBox.querySelector('#map-wrapper');                               
+      3962 +        const btn = document.getElementById('coord-toggle');                                  
+      3963 +        coordPicking = !coordPicking;                                                         
+      3964 +        if (coordPicking) {                                                                   
+      3965 +            wrapper.classList.add('picking');                                                 
+      3966 +            btn.classList.add('active');                                                      
+      3967 +            btn.textContent = '📍 定点中...';                                          
+      3968 +        } else {                                                                       
+      3969 +            wrapper.classList.remove('picking');                                       
+      3970 +            btn.classList.remove('active');                                            
+      3971 +            btn.textContent = '📍 定点';                                               
+      3972 +            const tooltip = mapBox.querySelector('#coord-tooltip');                    
+      3973 +            tooltip.classList.remove('show');                                          
+      3974 +        }                                                                              
+      3975 +    };                                                                                 
+      3976 +                                                                                       
+      3977 +    const coordTooltip = mapBox.querySelector('#coord-tooltip');                       
+      3978 +    const coordPicked = mapBox.querySelector('#coord-picked');                         
+      3979 +    const mapWrapperEl = mapBox.querySelector('#map-wrapper');                         
+      3980 +                                                                                       
+      3981 +    mapWrapperEl.addEventListener('mousemove', function(e) {                           
+      3982 +        if (!coordPicking) return;                                                     
+      3983 +        const rect = this.getBoundingClientRect();                                     
+      3984 +        const leftPct = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);       
+      3985 +        const topPct = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);        
+      3986 +        coordTooltip.textContent = `left: ${leftPct}%  top: ${topPct}%`;               
+      3987 +        coordTooltip.classList.add('show');                                            
+      3988 +        coordTooltip.style.left = (e.clientX - rect.left + 12) + 'px';                 
+      3989 +        coordTooltip.style.top = (e.clientY - rect.top - 28) + 'px';                   
+      3990 +    });                                                                                
+      3991 +                                                                                       
+      3992 +    mapWrapperEl.addEventListener('mouseleave', function() {                           
+      3993 +        coordTooltip.classList.remove('show');                                         
+      3994 +    });                                                                                
+      3995 +                                                                                       
+      3996 +    mapWrapperEl.addEventListener('click', function(e) {                               
+      3997 +        if (!coordPicking) return;                                                     
+      3998 +        const rect = this.getBoundingClientRect();                                     
+      3999 +        const leftPct = (e.clientX - rect.left) / rect.width * 100;                    
+      4000 +        const topPct = (e.clientY - rect.top) / rect.height * 100;                     
+      4001 +        const coordStr = `{ left: "${leftPct.toFixed(1)}%", top: "${topPct.toFixed(1)}%
+           +" }`;                                                                                  
+      4002 +        coordPicked.textContent = '已定点: ' + coordStr;                               
+      4003 +        navigator.clipboard.writeText(coordStr).catch(() => {});                       
+      4004 +    });   
