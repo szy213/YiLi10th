@@ -842,52 +842,6 @@ body {
     font-family: serif;
 }
 
-/* 地图坐标定点器 */
-#coord-toggle {
-    display: inline-block;
-    margin-left: 10px;
-    padding: 4px 12px;
-    font-size: 0.75em;
-    background: var(--tag-special);
-    color: #fff;
-    border: none;
-    border-radius: 15px;
-    cursor: pointer;
-    letter-spacing: 2px;
-    vertical-align: middle;
-    transition: opacity 0.2s;
-}
-#coord-toggle:hover { opacity: 0.8; }
-#coord-toggle.active { background: #555; }
-
-#coord-tooltip {
-    position: absolute;
-    pointer-events: none;
-    z-index: 99;
-    display: none;
-    background: rgba(0,0,0,0.78);
-    color: #0f0;
-    font-family: 'Courier New', monospace;
-    font-size: 11px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
-    line-height: 1.5;
-}
-#coord-tooltip.show { display: block; }
-
-#coord-picked {
-    text-align: center;
-    margin-top: 8px;
-    font-size: 0.8em;
-    color: var(--tag-special);
-    font-family: 'Courier New', monospace;
-    min-height: 20px;
-    letter-spacing: 1px;
-}
-#map-wrapper.picking { cursor: crosshair; }
-#map-wrapper.picking .pin-dot { pointer-events: none; }
-
 /* 切换选项卡 */
 .tab-header {
     display: flex;
@@ -3925,12 +3879,10 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     mapBox.className = 'achievement-box';
     mapBox.id = 'capture-footprint';
     mapBox.innerHTML = `
-        <p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 25px; text-align:center; font-family: serif;">足迹地图<button id="coord-toggle" onclick="toggleCoordPicker()">📍 定点</button></p>
+        <p style="font-size: 1.5em; color: #666; letter-spacing: 5px; margin-bottom: 25px; text-align:center; font-family: serif;">足迹地图</p>
         <div id="map-wrapper" style="position: relative; width: 100%; height: 0; padding-top: 80%; background: url('images/china_outline.webp') no-repeat center; background-size: contain;">
             <div id="pins-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
-            <div id="coord-tooltip"></div>
         </div>
-        <div id="coord-picked"></div>
         <div style="text-align: center; margin-top: 20px; padding: 0 10px;">
             <p style="font-size: 0.9em; color: var(--tag-special); letter-spacing: 3px; font-weight: 500;">希望妳活成诗 去喜欢的城市</p>
         </div>
@@ -3958,54 +3910,6 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             pinsLayer.appendChild(pin);
         }
     });
-
-    // // 地图定点器：鼠标悬停显示坐标，点击记录坐标
-    // let coordPicking = false;
-    // window.toggleCoordPicker = function() {
-    //     const wrapper = mapBox.querySelector('#map-wrapper');
-    //     const btn = document.getElementById('coord-toggle');
-    //     coordPicking = !coordPicking;
-    //     if (coordPicking) {
-    //         wrapper.classList.add('picking');
-    //         btn.classList.add('active');
-    //         btn.textContent = '📍 定点中...';
-    //     } else {
-    //         wrapper.classList.remove('picking');
-    //         btn.classList.remove('active');
-    //         btn.textContent = '📍 定点';
-    //         const tooltip = mapBox.querySelector('#coord-tooltip');
-    //         tooltip.classList.remove('show');
-    //     }
-    // };
-
-    // const coordTooltip = mapBox.querySelector('#coord-tooltip');
-    // const coordPicked = mapBox.querySelector('#coord-picked');
-    // const mapWrapperEl = mapBox.querySelector('#map-wrapper');
-
-    // mapWrapperEl.addEventListener('mousemove', function(e) {
-    //     if (!coordPicking) return;
-    //     const rect = this.getBoundingClientRect();
-    //     const leftPct = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
-    //     const topPct = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
-    //     coordTooltip.textContent = `left: ${leftPct}%  top: ${topPct}%`;
-    //     coordTooltip.classList.add('show');
-    //     coordTooltip.style.left = (e.clientX - rect.left + 12) + 'px';
-    //     coordTooltip.style.top = (e.clientY - rect.top - 28) + 'px';
-    // });
-
-    // mapWrapperEl.addEventListener('mouseleave', function() {
-    //     coordTooltip.classList.remove('show');
-    // });
-
-    // mapWrapperEl.addEventListener('click', function(e) {
-    //     if (!coordPicking) return;
-    //     const rect = this.getBoundingClientRect();
-    //     const leftPct = (e.clientX - rect.left) / rect.width * 100;
-    //     const topPct = (e.clientY - rect.top) / rect.height * 100;
-    //     const coordStr = `{ left: "${leftPct.toFixed(1)}%", top: "${topPct.toFixed(1)}%" }`;
-    //     coordPicked.textContent = '已定点: ' + coordStr;
-    //     navigator.clipboard.writeText(coordStr).catch(() => {});
-    // });
 
     const btnFootprint = document.createElement('div');
     btnFootprint.className = 'save-trigger';
