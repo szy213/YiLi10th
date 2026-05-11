@@ -3777,11 +3777,12 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     achBox.id = 'capture-achievements'; 
     achBox.className = 'achievement-box'; 
 
-    const totalPossible = 19 ; 
-    const currentUnlocked = (myIds.includes('0726')?1:0) + (myIds.includes('1231')?1:0) + (myIds.includes('0101')?1:0) +
+    const totalPossible = 18;
+    const currentUnlocked = (myIds.includes('0726')?2:0) + (myIds.includes('1231')?1:0) + (myIds.includes('0101')?1:0) +
                             Array.from(myWeathers).length + Array.from(mySeasons).length +
+                            (hasAnyTonglou?1:0) +
                             ((myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314'))?1:0) +
-                            (hasLongVacation?1:0) + (totalKM >= 5000?1:0) + (isFourSeasonsComplete?1:0);
+                            (hasLongVacation?1:0) + (totalKM >= 500?1:0) + (isFourSeasonsComplete?1:0);
     
     const progressPercent = Math.round((currentUnlocked / totalPossible) * 100);
 
