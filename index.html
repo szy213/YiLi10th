@@ -37,8 +37,15 @@
     #loading-overlay {
         display: block;
     }
-    #auth-btn {
+    .top-right-actions {
         top: 44px;
+    }
+    #notification-dropdown {
+        top: 86px;
+        right: 4px;
+        left: 4px;
+        width: auto;
+        max-height: 340px;
     }
 }
 
@@ -1481,11 +1488,17 @@ body {
 }
 
 /* ========== Supabase Auth 样式 ========== */
-#auth-btn {
+/* 右上角操作区 */
+.top-right-actions {
     position: fixed;
     top: 24px;
     right: 16px;
     z-index: 5000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+#auth-btn {
     font-family: "STSong", "SimSun", serif;
     font-size: 13px;
     background: rgba(255,255,255,0.85);
@@ -1782,23 +1795,64 @@ body {
     background: rgba(231,76,60,0.06);
 }
 
-/* 帖子图片 */
+/* 帖子图片 - 横向滑动 */
 .forum-post .post-images {
     display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+    flex-wrap: nowrap;
+    gap: 8px;
     margin-top: 10px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+}
+.forum-post .post-images::-webkit-scrollbar {
+    display: none;
 }
 .forum-post .post-images img {
-    max-width: 100%;
     max-height: 260px;
+    height: 260px;
+    width: auto;
+    min-width: auto;
     object-fit: contain;
     border-radius: 8px;
     cursor: pointer;
     transition: opacity 0.2s;
+    scroll-snap-align: start;
+}
+.forum-post .post-images.single-image img {
+    width: auto;
+    min-width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    scroll-snap-align: none;
 }
 .forum-post .post-images img:hover {
     opacity: 0.85;
+}
+
+/* 图片滚动进度条 */
+.forum-post .post-images-scrollbar {
+    height: 3px;
+    background: rgba(0,0,0,0.08);
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+    position: relative;
+    display: none;
+}
+.forum-post .post-images-scrollbar.multi-image {
+    display: block;
+}
+.forum-post .post-images-scrollbar .scrollbar-thumb {
+    height: 100%;
+    background: var(--tag-guest, #7B8B9A);
+    border-radius: 2px;
+    transition: margin-left 0.15s ease, width 0.15s ease;
+    min-width: 20%;
 }
 
 /* 发帖图片上传 */
@@ -2033,6 +2087,192 @@ body {
     font-size: 14px;
     letter-spacing: 2px;
 }
+/* ========== 通知系统 样式 ========== */
+.notif-bell {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.85);
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+.notif-bell:hover {
+    background: #fff;
+    border-color: #999;
+}
+.notif-bell .bell-icon {
+    font-size: 18px;
+    line-height: 1;
+}
+.notif-bell.has-unread {
+    border-color: var(--seal-red);
+    animation: bellPulse 2s ease-in-out infinite;
+}
+@keyframes bellPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.notif-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    background: var(--seal-red);
+    color: #fff;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 16px;
+    text-align: center;
+    padding: 0 4px;
+    box-sizing: border-box;
+}
+
+/* 下拉面板 */
+.notif-dropdown {
+    position: fixed;
+    top: 66px;
+    right: 12px;
+    z-index: 5001;
+    width: 340px;
+    max-height: 420px;
+    background: rgba(255,255,255,0.97);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: notifSlideIn 0.2s ease;
+}
+@keyframes notifSlideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.notif-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    font-size: 15px;
+    font-weight: bold;
+    color: #333;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+}
+.notif-mark-all {
+    font-size: 12px;
+    font-weight: normal;
+    color: var(--tag-guest);
+    cursor: pointer;
+}
+.notif-mark-all:hover { text-decoration: underline; }
+
+.notif-list {
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    max-height: 360px;
+}
+
+.notif-loading {
+    text-align: center;
+    padding: 30px;
+    color: #ccc;
+    font-size: 13px;
+}
+
+.notif-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #bbb;
+    font-size: 13px;
+}
+
+/* 单条通知 */
+.notif-item {
+    position: relative;
+    display: flex;
+    gap: 10px;
+    padding: 12px 18px;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.notif-item:hover { background: rgba(0,0,0,0.02); }
+.notif-item.unread { background: rgba(140,34,34,0.03); }
+.notif-item.unread::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--seal-red);
+}
+.notif-item .notif-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #eee;
+    flex-shrink: 0;
+    background: #f0f0f0;
+}
+.notif-item .notif-avatar-placeholder {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid #eee;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #ccc;
+    flex-shrink: 0;
+}
+.notif-item .notif-body { flex: 1; min-width: 0; }
+.notif-item .notif-text {
+    font-size: 13px;
+    color: #444;
+    line-height: 1.5;
+    word-break: break-word;
+}
+.notif-item .notif-text .notif-nickname {
+    font-weight: bold;
+    color: #333;
+}
+.notif-item .notif-text .notif-preview {
+    color: #999;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    display: inline-block;
+    vertical-align: bottom;
+}
+.notif-item .notif-time {
+    font-size: 10px;
+    color: #bbb;
+    margin-top: 4px;
+}
+/* ========== 通知系统 样式结束 ========== */
+
 /* ========== 小粒之家 样式结束 ========== */
 
 /* ========== 物料空间 样式 ========== */
@@ -2366,8 +2606,25 @@ body {
     <p> 陪着妳 爱着妳 常常想起妳 </p>
 </div>
 
-<!-- 登录按钮 -->
-<button id="auth-btn" onclick="toggleAuthModal()">登录</button>
+<!-- 右上角操作区 -->
+<div class="top-right-actions">
+    <button id="auth-btn" onclick="toggleAuthModal()">登录</button>
+    <div id="notification-bell" class="notif-bell" onclick="toggleNotificationDropdown()" style="display:none;">
+        <span class="bell-icon">🔔</span>
+        <span id="notif-badge" class="notif-badge" style="display:none;">0</span>
+    </div>
+</div>
+
+<!-- 通知下拉面板 -->
+<div id="notification-dropdown" class="notif-dropdown" style="display:none;">
+    <div class="notif-header">
+        <span>通知</span>
+        <span class="notif-mark-all" onclick="markAllNotificationsRead()">全部已读</span>
+    </div>
+    <div id="notif-list" class="notif-list">
+        <div class="notif-loading">加载中...</div>
+    </div>
+</div>
 
 <!-- 登录/注册弹窗 -->
 <div class="auth-overlay" id="auth-overlay" onclick="if(event.target===this)closeAuthModal()">
@@ -2784,10 +3041,20 @@ function updateAuthUI(loggedIn) {
         btn.textContent = nickname || '已登录';
         btn.classList.add('logged-in');
         btn.onclick = handleSignOut;
+        // 显示通知铃铛并开始轮询
+        var bell = document.getElementById('notification-bell');
+        if (bell) bell.style.display = 'flex';
+        startNotificationPolling();
     } else {
         btn.textContent = '登录';
         btn.classList.remove('logged-in');
         btn.onclick = toggleAuthModal;
+        // 隐藏通知铃铛并停止轮询
+        var bell = document.getElementById('notification-bell');
+        if (bell) bell.style.display = 'none';
+        stopNotificationPolling();
+        _notificationUnreadCount = 0;
+        updateNotificationBadge();
     }
 }
 
@@ -3974,6 +4241,9 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     var _forumCurrentSort = 'default';   // 排序：default / time / likes
     var _forumCurrentMyFilter = '';      // 筛选：空=全部，mine=我的帖子
     var _forumAllPosts = [];             // 缓存全部帖子
+    var _notificationPollingInterval = null;
+    var _notificationUnreadCount = 0;
+    var _notificationDropdownOpen = false;
 
     async function loadPosts() {
         if (!supabaseClient) return [];
@@ -4058,6 +4328,8 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             await supabaseClient.from('likes').delete().eq('id', existing.id);
         } else {
             await supabaseClient.from('likes').insert({ post_id: postId, user_id: currentUser.id });
+            // 创建通知（若点赞的不是自己的帖子）
+            _createLikeNotification(postId);
         }
     }
 
@@ -4101,8 +4373,23 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             .select()
             .single();
         if (error) { console.warn('评论失败:', error.message); return null; }
+        // 创建通知（若评论的不是自己的帖子）
+        _createCommentNotification(postId, content);
         return data;
     }
+
+    window._forumUpdateScrollbar = function(container) {
+        var bar = container.nextElementSibling;
+        if (!bar || !bar.classList.contains('post-images-scrollbar')) return;
+        var thumb = bar.querySelector('.scrollbar-thumb');
+        if (!thumb) return;
+        var maxScroll = container.scrollWidth - container.clientWidth;
+        if (maxScroll <= 0) { thumb.style.marginLeft = '0'; thumb.style.width = '100%'; return; }
+        var pct = container.scrollLeft / maxScroll;
+        var thumbW = Math.max(20, (container.clientWidth / container.scrollWidth) * 100);
+        thumb.style.width = thumbW + '%';
+        thumb.style.marginLeft = (pct * (100 - thumbW)) + '%';
+    };
 
     function escapeHtml(text) {
         var div = document.createElement('div');
@@ -4120,6 +4407,234 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         if (diff < 604800000) return Math.floor(diff/86400000) + '天前';
         return d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate();
     }
+
+    // ======== 通知系统 ========
+
+    function startNotificationPolling() {
+        stopNotificationPolling();
+        if (!supabaseClient || !currentUser) return;
+        fetchUnreadNotificationCount();
+        _notificationPollingInterval = setInterval(fetchUnreadNotificationCount, 20000);
+    }
+
+    function stopNotificationPolling() {
+        if (_notificationPollingInterval) {
+            clearInterval(_notificationPollingInterval);
+            _notificationPollingInterval = null;
+        }
+    }
+
+    async function fetchUnreadNotificationCount() {
+        if (!supabaseClient || !currentUser) return;
+        try {
+            var { count, error } = await supabaseClient
+                .from('notifications')
+                .select('*', { count: 'exact', head: true })
+                .eq('recipient_user_id', currentUser.id)
+                .eq('read', false);
+            if (error) return;
+            _notificationUnreadCount = count || 0;
+            updateNotificationBadge();
+        } catch(e) { /* ignore */ }
+    }
+
+    function updateNotificationBadge() {
+        var bell = document.getElementById('notification-bell');
+        var badge = document.getElementById('notif-badge');
+        if (!bell || !badge) return;
+        if (_notificationUnreadCount > 0) {
+            badge.style.display = 'block';
+            badge.textContent = _notificationUnreadCount > 99 ? '99+' : _notificationUnreadCount;
+            bell.classList.add('has-unread');
+        } else {
+            badge.style.display = 'none';
+            bell.classList.remove('has-unread');
+        }
+    }
+
+    async function toggleNotificationDropdown() {
+        var dropdown = document.getElementById('notification-dropdown');
+        if (!dropdown) return;
+        if (_notificationDropdownOpen) {
+            closeNotificationDropdown();
+            return;
+        }
+        _notificationDropdownOpen = true;
+        dropdown.style.display = 'flex';
+        await loadNotificationsIntoDropdown();
+        setTimeout(function() {
+            document.addEventListener('click', _closeNotifOnOutside);
+        }, 0);
+    }
+
+    function closeNotificationDropdown() {
+        _notificationDropdownOpen = false;
+        var dropdown = document.getElementById('notification-dropdown');
+        if (dropdown) dropdown.style.display = 'none';
+        document.removeEventListener('click', _closeNotifOnOutside);
+    }
+
+    function _closeNotifOnOutside(e) {
+        var bell = document.getElementById('notification-bell');
+        var dropdown = document.getElementById('notification-dropdown');
+        if (!dropdown || !bell) return;
+        if (!dropdown.contains(e.target) && !bell.contains(e.target)) {
+            closeNotificationDropdown();
+        }
+    }
+
+    async function loadNotificationsIntoDropdown() {
+        var list = document.getElementById('notif-list');
+        if (!list || !supabaseClient || !currentUser) return;
+        list.innerHTML = '<div class="notif-loading">加载中...</div>';
+
+        var { data: notifs, error } = await supabaseClient
+            .from('notifications')
+            .select('*')
+            .eq('recipient_user_id', currentUser.id)
+            .order('created_at', { ascending: false })
+            .limit(30);
+
+        if (error || !notifs || notifs.length === 0) {
+            list.innerHTML = '<div class="notif-empty">暂无通知</div>';
+            return;
+        }
+
+        list.innerHTML = '';
+        notifs.forEach(function(n) {
+            var item = document.createElement('div');
+            item.className = 'notif-item' + (n.read ? '' : ' unread');
+            item.onclick = function() { handleNotificationClick(n); };
+
+            var avatarHTML = n.actor_avatar_url
+                ? '<img src="' + n.actor_avatar_url + '" class="notif-avatar" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><div class="notif-avatar-placeholder" style="display:none">粒</div>'
+                : '<div class="notif-avatar-placeholder">粒</div>';
+
+            var textHTML = '';
+            if (n.type === 'like') {
+                textHTML = '<span class="notif-nickname">' + escapeHtml(n.actor_nickname || '一粒') + '</span> 赞了你的帖子';
+            } else {
+                textHTML = '<span class="notif-nickname">' + escapeHtml(n.actor_nickname || '一粒') + '</span> 评论了你的帖子';
+                if (n.comment_preview) {
+                    textHTML += '<br><span class="notif-preview">"' + escapeHtml(n.comment_preview) + '"</span>';
+                }
+            }
+
+            item.innerHTML = avatarHTML +
+                '<div class="notif-body">' +
+                    '<div class="notif-text">' + textHTML + '</div>' +
+                    '<div class="notif-time">' + formatForumTime(n.created_at) + '</div>' +
+                '</div>';
+            list.appendChild(item);
+        });
+    }
+
+    async function handleNotificationClick(notif) {
+        if (!notif.read) {
+            await supabaseClient
+                .from('notifications')
+                .update({ read: true })
+                .eq('id', notif.id);
+            _notificationUnreadCount = Math.max(0, _notificationUnreadCount - 1);
+            updateNotificationBadge();
+        }
+        closeNotificationDropdown();
+
+        // 切换到小粒之家
+        if (typeof currentPart !== 'undefined' && currentPart !== 4) {
+            switchXiaoliPart(4, '小粒之家');
+        }
+
+        // 滚动到对应帖子
+        setTimeout(function() {
+            var postEl = document.getElementById('post-' + notif.post_id);
+            if (postEl) {
+                postEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                postEl.style.boxShadow = '0 0 0 3px var(--seal-red)';
+                setTimeout(function() { postEl.style.boxShadow = ''; }, 2000);
+            }
+        }, 600);
+    }
+
+    async function markAllNotificationsRead() {
+        if (!supabaseClient || !currentUser) return;
+        await supabaseClient
+            .from('notifications')
+            .update({ read: true })
+            .eq('recipient_user_id', currentUser.id)
+            .eq('read', false);
+        _notificationUnreadCount = 0;
+        updateNotificationBadge();
+        var items = document.querySelectorAll('.notif-item.unread');
+        items.forEach(function(el) { el.classList.remove('unread'); });
+    }
+
+    async function _createLikeNotification(postId) {
+        // 获取帖子作者
+        var { data: post } = await supabaseClient
+            .from('posts').select('user_id').eq('id', postId).maybeSingle();
+        if (!post || post.user_id === currentUser.id) return;
+
+        // 去重：检查是否存在未读的同类通知
+        var { data: existing } = await supabaseClient
+            .from('notifications')
+            .select('id')
+            .eq('recipient_user_id', post.user_id)
+            .eq('actor_user_id', currentUser.id)
+            .eq('post_id', postId)
+            .eq('type', 'like')
+            .eq('read', false)
+            .maybeSingle();
+
+        var nickname = currentUser.user_metadata?.nickname || '一粒';
+        var avatarUrl = currentUser.user_metadata?.avatar_url || '';
+
+        if (existing) {
+            // 更新时间戳，不产生重复通知
+            await supabaseClient
+                .from('notifications')
+                .update({ created_at: new Date().toISOString() })
+                .eq('id', existing.id);
+        } else {
+            await supabaseClient
+                .from('notifications')
+                .insert({
+                    recipient_user_id: post.user_id,
+                    actor_user_id: currentUser.id,
+                    actor_nickname: nickname,
+                    actor_avatar_url: avatarUrl,
+                    type: 'like',
+                    post_id: postId,
+                    read: false
+                });
+        }
+    }
+
+    async function _createCommentNotification(postId, commentContent) {
+        var { data: post } = await supabaseClient
+            .from('posts').select('user_id').eq('id', postId).maybeSingle();
+        if (!post || post.user_id === currentUser.id) return;
+
+        var nickname = currentUser.user_metadata?.nickname || '一粒';
+        var avatarUrl = currentUser.user_metadata?.avatar_url || '';
+        var preview = (commentContent || '').substring(0, 60);
+        if (commentContent && commentContent.length > 60) preview += '...';
+
+        await supabaseClient
+            .from('notifications')
+            .insert({
+                recipient_user_id: post.user_id,
+                actor_user_id: currentUser.id,
+                actor_nickname: nickname,
+                actor_avatar_url: avatarUrl,
+                type: 'comment',
+                post_id: postId,
+                read: false,
+                comment_preview: preview
+            });
+    }
+
+    // ======== 通知系统结束 ========
 
     function renderForumPosts(container, posts) {
         if (posts.length === 0) {
@@ -4141,9 +4656,11 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             try {
                 var imgs = typeof post.images === 'string' ? JSON.parse(post.images || '[]') : (post.images || []);
                 if (imgs && imgs.length > 0) {
-                    imagesHTML = '<div class="post-images">' + imgs.map(function(url) {
+                    var isSingle = imgs.length === 1;
+                    imagesHTML = '<div class="post-images' + (isSingle ? ' single-image' : '') + '" onscroll="window._forumUpdateScrollbar(this)">' + imgs.map(function(url) {
                         return '<img src="' + url + '" onclick="openLightbox(\'' + url + '\')" loading="lazy">';
-                    }).join('') + '</div>';
+                    }).join('') + '</div>'
+                    + '<div class="post-images-scrollbar' + (isSingle ? '' : ' multi-image') + '"><div class="scrollbar-thumb" style="width:100%"></div></div>';
                 }
             } catch(e) {}
             card.innerHTML = `
@@ -4171,6 +4688,12 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             `;
             container.appendChild(card);
         });
+        // 初始化所有图片滚动条
+        setTimeout(function() {
+            container.querySelectorAll('.post-images').forEach(function(el) {
+                window._forumUpdateScrollbar(el);
+            });
+        }, 50);
     }
 
     async function renderXiaoliHome(container) {
