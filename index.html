@@ -2765,6 +2765,7 @@ body {
         <h3 style="color: var(--tag-special); margin-top: 0;">更新日志</h3>
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
+            <p><b>2026.5.29</b><br>•【0529】南昌场更新</p>
             <p><b>2026.5.16</b><br>• 新增【消息提醒】功能</p>
             <p><b>2026.5.10</b><br>• 新增【账号注册】【小粒之家】【物料空间】功能</p>
             <p><b>2026.4.26</b><br>•【0425】宁波场更新</p>
@@ -3357,7 +3358,8 @@ window.saveBoxImage = function(elementId, fileName) {
         "0101": "新年~新的日光，新的希望。 \n愿妳天真，充满想象。 \n勇敢出发，保持形状。 \n谢谢武汉！给我们新的力量~" ,
         "260314": "给大家汇报假期:\n好吃，好喝，好玩，好爬，好游…\n也祝大家今天：\n好听，好看，好闻，好坐，好唱…\n\n好梦～\n谢谢成都，明天再见！（来听新歌～～ " ,
         "260315":"春天好，\n我们呼吸，唱歌，舒展，流动…\n和万物一起生～长～\n\n谢谢成都！两天都玩得开心啦！ ",
-        "260425":"在泛泛的生活里，\n拥抱一些小小的具体，\n和绿色打招呼！🦋🌿\n谢谢宁波，祝大家今天新鲜、美妙！"
+        "260425":"在泛泛的生活里，\n拥抱一些小小的具体，\n和绿色打招呼！🦋🌿\n谢谢宁波，祝大家今天新鲜、美妙！",
+        "260529":"阳光在路上流淌，\n流经我们的眼眶、喉咙、指缝…\n唱歌！\n声音里都是夏日的丰沛和温热。\n\n谢谢南昌！我们明天、后天再见再见吧～    "
     };
 // --- 修正后的顺序 ---
 const eggIcons = Array.from({length: 34}, (_, i) => `images/果实 (${i+1}).webp`); // 1. 先定义路径
@@ -3392,7 +3394,7 @@ window.addEventListener('load', () => {
         songs: [{n:"进化feat郁可唯",t:"guest",l:"https://music.163.com/dj?id=3706367534&uct2=U2FsdGVkX18FT2Xl3kbd4xpB7WQBb4XzGYd2jEh84bo="},{n:"路过人间",t:"guest",l:"路过人间.mp3"},{n:"从头",t:"request",l:"https://music.163.com/dj?id=3706447568&uct2=U2FsdGVkX1+GMyVaf1RsQAyuABhXON6PB9rBqqMmbwM="},{n:"至少还有妳",t:"request",l:"https://music.163.com/dj?id=3706545509&uct2=U2FsdGVkX1/mkml9SfWc8c1qgVECnFHBR/l3KAY3Zo4="},{n:"知洲",t:"surprise",l:"https://music.163.com/dj?id=3706969603&uct2=U2FsdGVkX19j3bMICkS/uMZ9XBpcvJdC5nRa3oJ+vQI="},{n:"七楼",t:"surprise",l:"https://music.163.com/dj?id=3706425563&uct2=U2FsdGVkX18zVrAUafeeYmwwUpNhifbSw4K8l7GnuMQ="}] },
         { id: "1115", city: "重庆", time: "2025.11.15", weather: "🌧️", season: "winter",part: 1, guest: "嘉宾：叶蓓🍁", personalPics: Array.from({length: 9}, (_, i) => `images/1115 (${i+1}).webp`), guestPics: Array.from({length: 6}, (_, i) => `images/1115guest (${i+1}).webp`), 
         songs: [{n:"爱完不完feat叶蓓",t:"guest",l:"https://music.163.com/dj?id=3707607232&uct2=U2FsdGVkX188irRezNYb8+Xc2KJgghL6IKQzuNBRcMo="},{n:"蒲公英",t:"guest",l:"https://music.163.com/dj?id=3707384582&uct2=U2FsdGVkX193Ef8lKqmxr+xfXyKqEqH4fAbD5ZMi92E="},{n:"玉人歌",t:"request",l:"https://music.163.com/dj?id=3707689231&uct2=U2FsdGVkX18NOhGk8ySvGMch8vNTYtraJjMT//qdeGw="},{n:"怪情歌",t:"request",l:"https://music.163.com/dj?id=3707607231&uct2=U2FsdGVkX19xP3s+srt6myQ6hewJoS/v2jR5ZVqR80o="},{n:"无烟区",t:"surprise",l:"https://music.163.com/dj?id=3707626191&uct2=U2FsdGVkX1/7FhYRTt6XggmP0j/+nfPjoB+l2CwNejk="},{n:"知洲",t:"surprise"}] },
-        { id: "1129", city: "厦门", time: "2025.11.29", weather: "☀️", season: "winter",part: 1, guest: "独唱场🐰", personalPics: Array.from({length: 9}, (_, i) => `images/1129 (${i+1}).webp`), guestPics: [], 
+        { id: "1129", city: "厦门", time: "2025.11.29", weather: "☀️", season: "winter",part: 1, guest: "", personalPics: Array.from({length: 9}, (_, i) => `images/1129 (${i+1}).webp`), guestPics: [], 
         songs: [{n:"大裂缝",t:"request",l:"https://music.163.com/dj?id=3708637509&uct2=U2FsdGVkX1+jkAgSuoIK6p6m3b1M/x4E8UIu3/ztKaM="},{n:"和平",t:"request",l:"https://music.163.com/dj?id=3708719514&uct2=U2FsdGVkX18mTEwiOQHO6LibcEao/mZjbxgo/Rf91os="},{n:"沉迷",t:"surprise",l:"https://music.163.com/dj?id=3708613508&uct2=U2FsdGVkX1+MY/2lMm+UM0tbapOqrVwP8EU5wptbRR4="},{n:"爱完不完",t:"surprise",l:"https://music.163.com/dj?id=3708787514&uct2=U2FsdGVkX19RxEN7r6GhhvV6l679wDFLhAByd4cT/q0="}] },
         { id: "1206", city: "深圳", time: "2025.12.06", weather: "☀️", season: "winter",part: 1, guest: "嘉宾：GAI😎", personalPics: Array.from({length: 12}, (_, i) => `images/1206 (${i+1}).webp`), guestPics: Array.from({length: 6}, (_, i) => `images/1206guest (${i+1}).webp`), 
         songs: [{n:"历历万乡featGAI",t:"guest",l:""},{n:"兰花草",t:"guest",l:""},{n:"多多留意",t:"request",l:"https://music.163.com/dj?id=3710666578&uct2=U2FsdGVkX1/jxH4bSfFadsM/Bp8TYqET7WE1NJbh7Fg="},{n:"被动",t:"request",l:"https://music.163.com/dj?id=3710647637&uct2=U2FsdGVkX1/4xvHzvqDpTV4MazAiGzuqSNOcEN9Zcgw="},{n:"难解风情",t:"surprise"},{n:"乱",t:"surprise"}] },
@@ -3410,7 +3412,7 @@ window.addEventListener('load', () => {
          songs: [{n:"小半（feat胡彦斌）",t:"guest",l:""},{n:"情不自禁",t:"guest",l:"https://music.163.com/dj?id=3715382225&uct2=U2FsdGVkX1+AYX1LPVoeix578XUkRiBFtM4aJYh/4X8="},{n:"游鱼",t:"request",l:""},{n:"小情歌",t:"request",l:"https://music.163.com/dj?id=3715270210&uct2=U2FsdGVkX1+l45c1YbqCRziVUY68o38a6eUOlXWYtUo="},{n:"浪味仙地",t:"surprise",l:""},{n:"试运行",t:"surprise",l:""}] },
         { id: "260425", city: "宁波", time: "2026.04.25", weather: "☀️", season: "spring",part: 1, guest: "嘉宾：金海心🐱", personalPics: Array.from({length: 19}, (_, i) => `images/260425 (${i+1}).webp`), guestPics: Array.from({length: 1}, (_, i) => `images/260425guest (${i+1}).webp`), 
         songs: [{n:"虚拟feat金海心",t:"guest",l:"https://music.163.com/dj?id=3718670422&uct2=U2FsdGVkX1+p0dOZtZ82wSlFS3cef9Rn2zpQRlzOHqs="},{n:"把耳朵叫醒",t:"guest",l:"https://music.163.com/dj?id=3718663445&uct2=U2FsdGVkX1/MBrB734KPeLvBbQBOUlmFareZidAP3Bg="},{n:"地球巡逻小分队",t:"request",l:"https://music.163.com/dj?id=3718732407&uct2=U2FsdGVkX1/zvAJoHciNmE1SkWG1whrTtAa/gIZ0uhA="},{n:"当爱在靠近",t:"request",l:"https://music.163.com/dj?id=3718594426&uct2=U2FsdGVkX19mJl5DNm+SJO3HvKX9YiiLsh0oNtGH/Lk="}] }, 
-        { id: "NC0", city: "南昌", time: "2026.05.29", weather: "", season: "summer",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
+        { id: "260529", city: "南昌", time: "2026.05.29", weather: "🌤️", season: "summer",part: 1, guest: "", personalPics: Array.from({length: 9}, (_, i) => `images/260529 (${i+1}).webp`), guestPics: [], songs: [{n:"我只去过东南亚",t:"request",l:""},{n:"你在烦恼什么",t:"request",l:""},{n:"世界正中",t:"surprise",l:""},{n:"超认真嬉戏",t:"surprise",l:""},{n:"游鱼",t:"surprise",l:""}] },
         { id: "NC1", city: "南昌", time: "2026.05.30", weather: "", season: "summer",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
         { id: "NC2", city: "南昌", time: "2026.05.31", weather: "", season: "summer",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
         { id: "QD1", city: "青岛", time: "2026.06.27", weather: "", season: "summer",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [] },
@@ -3841,7 +3843,7 @@ function renderMyGrain(container) {
         { name: "重庆", color: "#E3BDD0" }, { name: "厦门", color: "#B6D9D6" },
         { name: "深圳", color: "#9C9DCF" }, { name: "苏州", color: "#D5BE4F" },
         { name: "武汉", color: "#F69393" }, { name: "成都", color: "#A2C957" },
-        { name: "宁波", color: "#F56C7A" }
+        { name: "宁波", color: "#F56C7A" }, { name: "南昌", color: "#f39c5e" }
     ];
     let lightstickHTML = cityData.map(city => {
         const isCollected = localStorage.getItem(`stick_${city.name}`) === 'true';
@@ -4125,7 +4127,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             <div class="medal-item ${hasAnyTonglou ? 'unlocked' : ''}"  onclick="openGrainAchievement('<b>达成条件：【打卡任意痛楼】</b><br>${hasAnyTonglou ? '“四海好大 欢迎回家”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">🏠</div><div class="name">小粒之家</div>
             </div>
-            <div class="medal-item ${myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314')  ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【看一次独唱场】</b><br>${(myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314') ) ? '“我只属于妳在这短暂的生命”' : '该成就未解锁'}')">
+            <div class="medal-item ${myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314')|| myIds.includes('260529')  ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【看一次独唱场】</b><br>${(myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314')|| myIds.includes('260529') ) ? '“我只属于妳在这短暂的生命”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">🎫</div><div class="name">绝对占有</div>
             </div>
             <div class="medal-item ${hasLongVacation ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【在周末连看两场一粒】</b><br>${hasLongVacation ? '“只有阳光持！续！照！耀！”' : '该成就未解锁'}')">
