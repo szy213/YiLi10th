@@ -897,9 +897,8 @@ body {
     display: grid;
 }
 
-/* 3. 【重点】把天气、特殊场次及其他模块的强制单行样式提出来 */
+/* 3. 【重点】把天气、季节及其他模块的强制单行样式提出来 */
 #ach-weather.active,
-#ach-special.active,
 #ach-others.active {
     display: flex !important; /* 使用 flex 覆盖上面的 grid */
     justify-content: space-between;
@@ -909,14 +908,12 @@ body {
 
 /* 4. 内部缩放优化 */
 #ach-weather .medal-item,
-#ach-special .medal-item,
 #ach-others .medal-item {
     flex: 1;
     min-width: 0;
 }
 
 #ach-weather .icon-wrapper,
-#ach-special .icon-wrapper,
 #ach-others .icon-wrapper {
     width: 40px;  
     height: 40px;
@@ -924,7 +921,6 @@ body {
 }
 
 #ach-weather .name,
-#ach-special .name,
 #ach-others .name {
     font-size: 10px; 
     white-space: nowrap;
@@ -3365,7 +3361,7 @@ window.saveBoxImage = function(elementId, fileName) {
         "260314": "给大家汇报假期:\n好吃，好喝，好玩，好爬，好游…\n也祝大家今天：\n好听，好看，好闻，好坐，好唱…\n\n好梦～\n谢谢成都，明天再见！（来听新歌～～ " ,
         "260315":"春天好，\n我们呼吸，唱歌，舒展，流动…\n和万物一起生～长～\n\n谢谢成都！两天都玩得开心啦！ ",
         "260425":"在泛泛的生活里，\n拥抱一些小小的具体，\n和绿色打招呼！🦋🌿\n谢谢宁波，祝大家今天新鲜、美妙！",
-        "260529":"阳光在路上流淌，\n经我们的眼眶、喉咙、指缝…\n唱歌！\n声音里都是夏日的丰沛和温热。\n\n谢谢南昌！我们明天、后天再见再见吧～    ",
+        "260529":"阳光在路上流淌，\n流经我们的眼眶、喉咙、指缝…\n唱歌！\n声音里都是夏日的丰沛和温热。\n\n谢谢南昌！我们明天、后天再见再见吧～    ",
         "260530":"路过漂亮的水果摊，\n橘子葡萄李子杏子梨……\n丰满的、多彩的、美妙果实。\n大自然的赠予！\n再献上一粒。\n\n谢谢南昌，音乐，甜美多汁😉"
     };
 // --- 修正后的顺序 ---
@@ -4058,11 +4054,11 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     achBox.id = 'capture-achievements'; 
     achBox.className = 'achievement-box'; 
 
-    const totalPossible = 19;
-    const currentUnlocked = (myIds.includes('0726')?2:0) + (myIds.includes('1231')?1:0) + (myIds.includes('0101')?1:0) + (myIds.includes('260807')?1:0) +
+    const totalPossible = 18;
+    const currentUnlocked = (myIds.includes('0726')?2:0) + (myIds.includes('1231')?1:0) + (myIds.includes('0101')?1:0) +
                             Array.from(myWeathers).length + Array.from(mySeasons).length +
                             (hasAnyTonglou?1:0) +
-                            ((myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314')|| myIds.includes('260529'))?1:0) +
+                            ((myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314'))?1:0) +
                             (hasLongVacation?1:0) + (totalKM >= 500?1:0) + (isFourSeasonsComplete?1:0);
     
     const progressPercent = Math.round((currentUnlocked / totalPossible) * 100);
