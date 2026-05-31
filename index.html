@@ -897,22 +897,25 @@ body {
     display: grid;
 }
 
-/* 3. 【重点】把天气、季节及其他模块的强制单行样式提出来 */
+/* 3. 【重点】把特殊场次、天气、季节及其他模块的强制单行样式提出来 */
+#ach-special.active,
 #ach-weather.active,
 #ach-others.active {
     display: flex !important; /* 使用 flex 覆盖上面的 grid */
     justify-content: space-between;
-    flex-wrap: nowrap; 
-    gap: 4px; 
+    flex-wrap: nowrap;
+    gap: 4px;
 }
 
 /* 4. 内部缩放优化 */
+#ach-special .medal-item,
 #ach-weather .medal-item,
 #ach-others .medal-item {
     flex: 1;
     min-width: 0;
 }
 
+#ach-special .icon-wrapper,
 #ach-weather .icon-wrapper,
 #ach-others .icon-wrapper {
     width: 40px;  
@@ -920,6 +923,7 @@ body {
     font-size: 20px; 
 }
 
+#ach-special .name,
 #ach-weather .name,
 #ach-others .name {
     font-size: 10px; 
@@ -4054,7 +4058,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     achBox.id = 'capture-achievements'; 
     achBox.className = 'achievement-box'; 
 
-    const totalPossible = 18;
+    const totalPossible = 19;
     const currentUnlocked = (myIds.includes('0726')?2:0) + (myIds.includes('1231')?1:0) + (myIds.includes('0101')?1:0) +
                             Array.from(myWeathers).length + Array.from(mySeasons).length +
                             (hasAnyTonglou?1:0) +
