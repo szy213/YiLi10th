@@ -3771,7 +3771,14 @@ function scrollToTour(id) {
     }
 }
 
-function saveCheckState(id, isChecked) {
+function saveCheckState(id, isChecked, checkboxEl) {
+    // 需要登录后才能勾选/取消
+    if (!currentUser) {
+        if (checkboxEl) checkboxEl.checked = !isChecked;
+        toggleAuthModal();
+        return;
+    }
+
     // 使用 tourData 中的 id 作为存储键名，确保唯一性
     localStorage.setItem('checked_' + id, isChecked);
 
@@ -5492,7 +5499,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     <label style="cursor: pointer; margin-right: 15px;">
         <input type="checkbox" 
         ${isTonglouChecked ? 'checked' : ''} 
-        onchange="saveTonglouStatus('${item.id}', this.checked); if(this.checked) typeof spawnRabbit === 'function' && spawnRabbit();"> 
+        onchange="saveTonglouStatus('${item.id}', this.checked, this); if(this.checked) typeof spawnRabbit === 'function' && spawnRabbit();"> 
         痛楼打卡
     </label>
 ` : '';
@@ -5536,7 +5543,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
                     <input type="checkbox" 
                     data-status="${item.status}"
                     ${isChecked ? 'checked' : ''} 
-                    onchange="saveCheckState('${item.id}', this.checked)"> 
+                    onchange="saveCheckState('${item.id}', this.checked, this)"> 
                     ${item.status === 'unplayed' ? '期待相见' : '我在现场'}
                 </label>
             </div>  
@@ -6135,7 +6142,13 @@ function spawnRabbit() {
 }
 
 // 封装原有的保存逻辑
-function saveTonglouStatus(id, checked) {
+function saveTonglouStatus(id, checked, checkboxEl) {
+    // 需要登录后才能勾选/取消
+    if (!currentUser) {
+        if (checkboxEl) checkboxEl.checked = !checked;
+        toggleAuthModal();
+        return;
+    }
     localStorage.setItem('tonglou_' + id, checked);
 }
 
