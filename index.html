@@ -2091,6 +2091,20 @@ body {
     font-size: 14px;
     letter-spacing: 2px;
 }
+.load-more-wrap { text-align: center; padding: 24px 0; }
+.load-more-btn {
+    padding: 10px 40px;
+    border: 1px solid #ccc;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.85);
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: all 0.2s ease;
+}
+.load-more-btn:hover { border-color: var(--tag-bg); color: #333; }
+.load-more-btn:disabled { opacity: 0.5; cursor: default; }
 /* ========== 通知系统 样式 ========== */
 .notif-bell {
     width: 36px;
@@ -3176,7 +3190,7 @@ async function handleAuth() {
 
 // 图片压缩：缩小并转为 WebP，减少存储和 CDN 流量
 async function compressImage(file, maxW, maxH, quality) {
-    maxW = maxW || 1200; maxH = maxH || 1200; quality = quality || 0.75;
+    maxW = maxW || 800; maxH = maxH || 800; quality = quality || 0.6;
     return new Promise(function(resolve) {
         var reader = new FileReader();
         reader.onload = function(e) {
@@ -3205,9 +3219,20 @@ async function compressImage(file, maxW, maxH, quality) {
 }
 
 async function uploadAvatar(userId) {
-    const file = await compressImage(selectedAvatarFile, 400, 400, 0.8);
+    const ts = Date.now();
+    // 上传缩略图（100x100，用于列表/评论等小尺寸展示）
+    const thumbFile = await compressImage(selectedAvatarFile, 100, 100, 0.7);
+    const thumbExt = thumbFile.name.split('.').pop();
+    const thumbPath = userId + '/' + ts + '_thumb.' + thumbExt;
+    const { error: thumbErr } = await supabaseClient.storage
+        .from('avatars')
+        .upload(thumbPath, thumbFile, { upsert: true, cacheControl: 'public, max-age=31536000' });
+    if (thumbErr) { console.warn('头像缩略图上传失败:', thumbErr.message); }
+
+    // 上传原图（400x400，用于放大查看）
+    const file = await compressImage(selectedAvatarFile, 400, 400, 0.7);
     const fileExt = file.name.split('.').pop();
-    const filePath = userId + '/' + Date.now() + '.' + fileExt;
+    const filePath = userId + '/' + ts + '.' + fileExt;
     const { error } = await supabaseClient.storage
         .from('avatars')
         .upload(filePath, file, { upsert: true, cacheControl: 'public, max-age=31536000' });
@@ -3219,9 +3244,15 @@ async function uploadAvatar(userId) {
     const { data: urlData } = supabaseClient.storage
         .from('avatars')
         .getPublicUrl(filePath);
+    const { data: thumbData } = supabaseClient.storage
+        .from('avatars')
+        .getPublicUrl(thumbPath);
     if (urlData && urlData.publicUrl) {
         await supabaseClient.auth.updateUser({
-            data: { avatar_url: urlData.publicUrl }
+            data: {
+                avatar_url: thumbData?.publicUrl || urlData.publicUrl,  // 列表默认用缩略图
+                avatar_full: urlData.publicUrl
+            }
         });
     }
 }
@@ -4293,20 +4324,40 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     // =========================================
     var _forumCurrentSort = 'default';   // 排序：default / time / likes
     var _forumCurrentMyFilter = '';      // 筛选：空=全部，mine=我的帖子
-    var _forumAllPosts = [];             // 缓存全部帖子
+    var _forumAllPosts = [];             // 缓存全部帖子（跨页累积）
+    var _forumPageSize = 20;
+    var _forumCurrentPage = 1;
+    var _forumHasMore = false;
     var _notificationPollingInterval = null;
     var _notificationUnreadCount = 0;
     var _notificationDropdownOpen = false;
 
-    async function loadPosts() {
-        if (!supabaseClient) return [];
-        // Select posts and get like/comment counts from related tables
-        const { data: posts, error } = await supabaseClient
-            .from('posts')
-            .select('*')
-            .order('created_at', { ascending: false });
-        if (error) { console.warn('加载帖子失败:', error.message); return []; }
-        if (!posts || posts.length === 0) return [];
+    async function loadPosts(page) {
+        // page: 页码（1-indexed），likes 排序时忽略分页、拉取全部
+        if (!supabaseClient) return { posts: [], hasMore: false };
+
+        var needAll = (_forumCurrentSort === 'likes');  // 跨表排序，必须全量拉取
+        var query = supabaseClient.from('posts').select('*');
+
+        if (_forumCurrentSort === 'time') {
+            query = query.order('created_at', { ascending: true });
+        } else {
+            query = query.order('created_at', { ascending: false });
+        }
+
+        // 服务端筛选：我的帖子
+        if (_forumCurrentMyFilter === 'mine' && currentUser) {
+            query = query.eq('user_id', currentUser.id);
+        }
+
+        if (!needAll && page) {
+            var offset = (page - 1) * _forumPageSize;
+            query = query.range(offset, offset + _forumPageSize - 1);
+        }
+
+        const { data: posts, error } = await query;
+        if (error) { console.warn('加载帖子失败:', error.message); return { posts: [], hasMore: false }; }
+        if (!posts || posts.length === 0) return { posts: [], hasMore: false };
 
         // Fetch likes and comments counts per post
         const postIds = posts.map(p => p.id);
@@ -4329,12 +4380,19 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         const commentCounts = {};
         if (comments) comments.forEach(c => { commentCounts[c.post_id] = (commentCounts[c.post_id] || 0) + 1; });
 
-        return posts.map(p => ({
+        var enriched = posts.map(p => ({
             ...p,
             likeCount: likeCounts[p.id] || 0,
             commentCount: commentCounts[p.id] || 0,
             likedByMe: myLikes.has(p.id)
         }));
+
+        var hasMore = false;
+        if (!needAll && page) {
+            hasMore = posts.length === _forumPageSize;
+        }
+
+        return { posts: enriched, hasMore: hasMore };
     }
 
     async function submitPost(content, files) {
@@ -4343,7 +4401,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         var imageUrls = [];
         if (files && files.length > 0) {
             for (var i = 0; i < files.length; i++) {
-                var compressed = await compressImage(files[i], 1200, 1200, 0.75);
+                var compressed = await compressImage(files[i], 800, 800, 0.6);
                 var fileExt = compressed.name.split('.').pop();
                 var filePath = 'posts/' + currentUser.id + '/' + Date.now() + '_' + i + '.' + fileExt;
                 var uploadResult = await supabaseClient.storage.from('materials').upload(filePath, compressed, { upsert: true, cacheControl: 'public, max-age=31536000' });
@@ -4370,7 +4428,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     }
 
     async function toggleLikePost(postId) {
-        if (!supabaseClient || !currentUser) return;
+        if (!supabaseClient || !currentUser) return null;
         // Check if already liked
         const { data: existing } = await supabaseClient
             .from('likes')
@@ -4380,10 +4438,12 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             .maybeSingle();
         if (existing) {
             await supabaseClient.from('likes').delete().eq('id', existing.id);
+            return false;  // 已取消点赞
         } else {
             await supabaseClient.from('likes').insert({ post_id: postId, user_id: currentUser.id });
             // 创建通知（若点赞的不是自己的帖子）
             _createLikeNotification(postId);
+            return true;  // 已点赞
         }
     }
 
@@ -4468,7 +4528,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         stopNotificationPolling();
         if (!supabaseClient || !currentUser) return;
         fetchUnreadNotificationCount();
-        _notificationPollingInterval = setInterval(fetchUnreadNotificationCount, 20000);
+        _notificationPollingInterval = setInterval(fetchUnreadNotificationCount, 60000);
     }
 
     function stopNotificationPolling() {
@@ -4819,19 +4879,18 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             myFilterSelect.value = _forumCurrentMyFilter;
             myFilterSelect.addEventListener('change', function() {
                 _forumCurrentMyFilter = this.value;
-                _forumRenderSorted();
+                _forumReload();
             });
         }
         if (sortSelect) {
             sortSelect.value = _forumCurrentSort;
             sortSelect.addEventListener('change', function() {
                 _forumCurrentSort = this.value;
-                _forumRenderSorted();
+                _forumReload();
             });
         }
 
-        _forumAllPosts = await loadPosts();
-        _forumRenderSorted();
+        _forumReload();
     }
 
     // 根据当前筛选/排序条件渲染帖子列表
@@ -4841,7 +4900,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         listEl.innerHTML = '';
         let posts = [..._forumAllPosts];
 
-        // 筛选：我的帖子
+        // 筛选：我的帖子（loadPosts 已做服务端筛选，此处仅 likes 全量模式兜底）
         if (_forumCurrentMyFilter === 'mine' && currentUser) {
             posts = posts.filter(p => p.user_id === currentUser.id);
         }
@@ -4855,6 +4914,33 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         // default: 保持 loadPosts 返回的顺序（created_at 降序）
 
         renderForumPosts(listEl, posts);
+
+        // Load More 按钮
+        if (_forumHasMore) {
+            var loadMore = document.createElement('div');
+            loadMore.className = 'load-more-wrap';
+            loadMore.innerHTML = '<button class="load-more-btn" id="forum-load-more-btn">加载更多</button>';
+            listEl.appendChild(loadMore);
+            loadMore.querySelector('button').addEventListener('click', _forumLoadMore);
+        }
+    }
+
+    async function _forumReload() {
+        var result = await loadPosts(1);
+        _forumAllPosts = result.posts;
+        _forumHasMore = result.hasMore;
+        _forumCurrentPage = 1;
+        _forumRenderSorted();
+    }
+
+    async function _forumLoadMore() {
+        var btn = document.getElementById('forum-load-more-btn');
+        if (btn) { btn.disabled = true; btn.textContent = '加载中...'; }
+        _forumCurrentPage++;
+        var result = await loadPosts(_forumCurrentPage);
+        _forumAllPosts = _forumAllPosts.concat(result.posts);
+        _forumHasMore = result.hasMore;
+        _forumRenderSorted();
     }
 
     // 全局回调函数
@@ -4912,8 +4998,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
                 area.querySelectorAll('.pf-image-preview-wrapper').forEach(function(el) { el.remove(); });
             }
             document.getElementById('pf-file-input').value = '';
-            _forumAllPosts = await loadPosts();
-            _forumRenderSorted();
+            _forumReload();
         } else {
             alert('发布失败，请稍后重试');
         }
@@ -4923,8 +5008,14 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
 
     window._forumToggleLike = async function(postId, btn) {
         if (!currentUser) { alert('请先登录'); return; }
-        await toggleLikePost(postId);
-        _forumAllPosts = await loadPosts();
+        var liked = await toggleLikePost(postId);
+        if (liked === null) return;  // 操作失败
+        // 乐观更新：直接改本地数据，不重查数据库
+        var post = _forumAllPosts.find(function(p) { return p.id === postId; });
+        if (post) {
+            post.likedByMe = liked;
+            post.likeCount += liked ? 1 : -1;
+        }
         _forumRenderSorted();
     };
 
@@ -4933,8 +5024,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         if (!confirm('确定要删除这条帖子吗？')) return;
         const ok = await deletePost(postId);
         if (ok) {
-            _forumAllPosts = await loadPosts();
-            _forumRenderSorted();
+            _forumReload();
         } else {
             alert('删除失败，请稍后重试');
         }
@@ -5055,8 +5145,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         if (result) {
             window._forumLastPostId = postId;
             window._forumRefreshComments(postId);
-            _forumAllPosts = await loadPosts();
-            _forumRenderSorted();
+            _forumReload();
         } else {
             alert('评论失败，请稍后重试');
         }
@@ -5069,16 +5158,31 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     var wuliaoSelectedFile = null;
     var _wuliaoCurrentFilter = '';        // 当前场次筛选，空=全部
     var _wuliaoCurrentMyFilter = '';      // 筛选：空=全部，mine=我的帖子
-    var _wuliaoAllMaterials = [];         // 缓存全部物料
+    var _wuliaoAllMaterials = [];         // 缓存全部物料（跨页累积）
+    var _wuliaoPageSize = 20;
+    var _wuliaoCurrentPage = 1;
+    var _wuliaoHasMore = false;
 
-    async function loadMaterials() {
-        if (!supabaseClient) return [];
-        const { data: materials, error } = await supabaseClient
-            .from('materials')
-            .select('*')
-            .order('created_at', { ascending: false });
-        if (error) { console.warn('加载物料失败:', error.message); return []; }
-        if (!materials || materials.length === 0) return [];
+    async function loadMaterials(page) {
+        // page: 页码（1-indexed），有场次筛选时忽略分页、拉取全部
+        if (!supabaseClient) return { posts: [], hasMore: false };
+
+        var needAll = !!_wuliaoCurrentFilter;  // 场次筛选是客户端过滤，必须全量拉取
+        var query = supabaseClient.from('materials').select('*').order('created_at', { ascending: false });
+
+        // 服务端筛选：我的帖子
+        if (_wuliaoCurrentMyFilter === 'mine' && currentUser) {
+            query = query.eq('user_id', currentUser.id);
+        }
+
+        if (!needAll && page) {
+            var offset = (page - 1) * _wuliaoPageSize;
+            query = query.range(offset, offset + _wuliaoPageSize - 1);
+        }
+
+        const { data: materials, error } = await query;
+        if (error) { console.warn('加载物料失败:', error.message); return { posts: [], hasMore: false }; }
+        if (!materials || materials.length === 0) return { posts: [], hasMore: false };
 
         const ids = materials.map(m => m.id);
         const [{ data: likes }, { data: comments }] = await Promise.all([
@@ -5095,17 +5199,24 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         const commentCounts = {};
         if (comments) comments.forEach(c => { commentCounts[c.material_id] = (commentCounts[c.material_id] || 0) + 1; });
 
-        return materials.map(m => ({
+        var enriched = materials.map(m => ({
             ...m,
             likeCount: likeCounts[m.id] || 0,
             commentCount: commentCounts[m.id] || 0,
             likedByMe: myLikes.has(m.id)
         }));
+
+        var hasMore = false;
+        if (!needAll && page) {
+            hasMore = materials.length === _wuliaoPageSize;
+        }
+
+        return { posts: enriched, hasMore: hasMore };
     }
 
     async function submitMaterial(name, tourDate, file, contact) {
         if (!supabaseClient || !currentUser) return { data: null, error: '未登录或服务未就绪' };
-        const compressed = await compressImage(file, 1200, 1200, 0.75);
+        const compressed = await compressImage(file, 800, 800, 0.6);
         const fileExt = compressed.name.split('.').pop();
         const filePath = 'materials/' + currentUser.id + '/' + Date.now() + '.' + fileExt;
         const { error: uploadErr } = await supabaseClient.storage
@@ -5146,7 +5257,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     }
 
     async function toggleMaterialLike(materialId) {
-        if (!supabaseClient || !currentUser) return;
+        if (!supabaseClient || !currentUser) return null;
         const { data: existing } = await supabaseClient
             .from('material_likes')
             .select('id')
@@ -5155,8 +5266,10 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             .maybeSingle();
         if (existing) {
             await supabaseClient.from('material_likes').delete().eq('id', existing.id);
+            return false;  // 已取消点赞
         } else {
             await supabaseClient.from('material_likes').insert({ material_id: materialId, user_id: currentUser.id });
+            return true;  // 已点赞
         }
     }
 
@@ -5309,18 +5422,17 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             myFilterSelect.value = _wuliaoCurrentMyFilter;
             myFilterSelect.addEventListener('change', function() {
                 _wuliaoCurrentMyFilter = this.value;
-                _wuliaoRenderFiltered();
+                _wuliaoReload();
             });
         }
         if (filterSelect) {
             filterSelect.value = _wuliaoCurrentFilter;
             filterSelect.addEventListener('change', function() {
                 _wuliaoCurrentFilter = this.value;
-                _wuliaoRenderFiltered();
+                _wuliaoReload();
             });
         }
-        _wuliaoAllMaterials = await loadMaterials();
-        _wuliaoRenderFiltered();
+        _wuliaoReload();
     }
 
     // 根据当前筛选/排序条件渲染物料列表
@@ -5332,12 +5444,39 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             ? _wuliaoAllMaterials.filter(m => (m.tour_date || '无').includes(_wuliaoCurrentFilter))
             : [..._wuliaoAllMaterials];
 
-        // 筛选：我的帖子
+        // 筛选：我的帖子（loadMaterials 已做服务端筛选，此处仅场次筛选全量模式兜底）
         if (_wuliaoCurrentMyFilter === 'mine' && currentUser) {
             filtered = filtered.filter(m => m.user_id === currentUser.id);
         }
 
         renderWuliaoCards(listEl, filtered);
+
+        // Load More 按钮（仅在无场次筛选时分页）
+        if (_wuliaoHasMore) {
+            var loadMore = document.createElement('div');
+            loadMore.className = 'load-more-wrap';
+            loadMore.innerHTML = '<button class="load-more-btn" id="wl-load-more-btn">加载更多</button>';
+            listEl.appendChild(loadMore);
+            loadMore.querySelector('button').addEventListener('click', _wuliaoLoadMore);
+        }
+    }
+
+    async function _wuliaoReload() {
+        var result = await loadMaterials(1);
+        _wuliaoAllMaterials = result.posts;
+        _wuliaoHasMore = result.hasMore;
+        _wuliaoCurrentPage = 1;
+        _wuliaoRenderFiltered();
+    }
+
+    async function _wuliaoLoadMore() {
+        var btn = document.getElementById('wl-load-more-btn');
+        if (btn) { btn.disabled = true; btn.textContent = '加载中...'; }
+        _wuliaoCurrentPage++;
+        var result = await loadMaterials(_wuliaoCurrentPage);
+        _wuliaoAllMaterials = _wuliaoAllMaterials.concat(result.posts);
+        _wuliaoHasMore = result.hasMore;
+        _wuliaoRenderFiltered();
     }
 
     // 全局回调
@@ -5381,8 +5520,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
                 uploadDiv.innerHTML = '<span class="placeholder">点击选择物料图片</span>';
             }
             document.getElementById('wl-file-input').value = '';
-            _wuliaoAllMaterials = await loadMaterials();
-            _wuliaoRenderFiltered();
+            _wuliaoReload();
         } else {
             alert('发布失败: ' + (submitErr || '未知错误'));
         }
@@ -5392,8 +5530,14 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
 
     window._wuliaoToggleLike = async function(materialId, btn) {
         if (!currentUser) { alert('请先登录'); return; }
-        await toggleMaterialLike(materialId);
-        _wuliaoAllMaterials = await loadMaterials();
+        var liked = await toggleMaterialLike(materialId);
+        if (liked === null) return;  // 操作失败
+        // 乐观更新：直接改本地数据，不重查数据库
+        var m = _wuliaoAllMaterials.find(function(mat) { return mat.id === materialId; });
+        if (m) {
+            m.likedByMe = liked;
+            m.likeCount += liked ? 1 : -1;
+        }
         _wuliaoRenderFiltered();
     };
 
@@ -5402,8 +5546,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         if (!confirm('确定要删除这条物料吗？')) return;
         const ok = await deleteMaterial(materialId);
         if (ok) {
-            _wuliaoAllMaterials = await loadMaterials();
-            _wuliaoRenderFiltered();
+            _wuliaoReload();
         } else {
             alert('删除失败，请稍后重试');
         }
@@ -5448,8 +5591,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         var result = await submitMaterialComment(materialId, input.value.trim());
         if (result) {
             window._wuliaoRefreshComments(materialId);
-            _wuliaoAllMaterials = await loadMaterials();
-            _wuliaoRenderFiltered();
+            _wuliaoReload();
         } else {
             alert('评论失败，请稍后重试');
         }
