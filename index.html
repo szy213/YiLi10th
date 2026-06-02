@@ -3190,7 +3190,7 @@ async function handleAuth() {
 
 // 图片压缩：缩小并转为 WebP，减少存储和 CDN 流量
 async function compressImage(file, maxW, maxH, quality) {
-    maxW = maxW || 800; maxH = maxH || 800; quality = quality || 0.6;
+    maxW = maxW || 800; maxH = maxH || 800; quality = quality || 0.5;
     return new Promise(function(resolve) {
         var reader = new FileReader();
         reader.onload = function(e) {
@@ -3219,20 +3219,18 @@ async function compressImage(file, maxW, maxH, quality) {
 }
 
 async function uploadAvatar(userId) {
-    const ts = Date.now();
+    // 固定路径，换头像时自动覆盖旧文件，避免 storage 无限累积
     // 上传缩略图（100x100，用于列表/评论等小尺寸展示）
-    const thumbFile = await compressImage(selectedAvatarFile, 100, 100, 0.7);
-    const thumbExt = thumbFile.name.split('.').pop();
-    const thumbPath = userId + '/' + ts + '_thumb.' + thumbExt;
+    const thumbFile = await compressImage(selectedAvatarFile, 100, 100, 0.5);
+    const thumbPath = userId + '/avatar_thumb.webp';
     const { error: thumbErr } = await supabaseClient.storage
         .from('avatars')
         .upload(thumbPath, thumbFile, { upsert: true, cacheControl: 'public, max-age=31536000' });
     if (thumbErr) { console.warn('头像缩略图上传失败:', thumbErr.message); }
 
     // 上传原图（400x400，用于放大查看）
-    const file = await compressImage(selectedAvatarFile, 400, 400, 0.7);
-    const fileExt = file.name.split('.').pop();
-    const filePath = userId + '/' + ts + '.' + fileExt;
+    const file = await compressImage(selectedAvatarFile, 400, 400, 0.5);
+    const filePath = userId + '/avatar_full.webp';
     const { error } = await supabaseClient.storage
         .from('avatars')
         .upload(filePath, file, { upsert: true, cacheControl: 'public, max-age=31536000' });
@@ -4401,7 +4399,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         var imageUrls = [];
         if (files && files.length > 0) {
             for (var i = 0; i < files.length; i++) {
-                var compressed = await compressImage(files[i], 800, 800, 0.6);
+                var compressed = await compressImage(files[i], 800, 800, 0.5);
                 var fileExt = compressed.name.split('.').pop();
                 var filePath = 'posts/' + currentUser.id + '/' + Date.now() + '_' + i + '.' + fileExt;
                 var uploadResult = await supabaseClient.storage.from('materials').upload(filePath, compressed, { upsert: true, cacheControl: 'public, max-age=31536000' });
@@ -5216,7 +5214,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
 
     async function submitMaterial(name, tourDate, file, contact) {
         if (!supabaseClient || !currentUser) return { data: null, error: '未登录或服务未就绪' };
-        const compressed = await compressImage(file, 800, 800, 0.6);
+        const compressed = await compressImage(file, 800, 800, 0.5);
         const fileExt = compressed.name.split('.').pop();
         const filePath = 'materials/' + currentUser.id + '/' + Date.now() + '.' + fileExt;
         const { error: uploadErr } = await supabaseClient.storage
