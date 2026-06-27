@@ -2703,6 +2703,7 @@ body {
         <option value="bgm2.mp3">不灭</option>
         <option value="bgm3.mp3">任朝暮</option>
         <option value="bgm4.mp3">留下</option>
+        <option value="bgm12.mp3">试运行</option>
         <option value="bgm5.mp3">至少还有妳（cover）</option>
         <option value="bgm6.mp3">幻期颐</option>
         <option value="bgm7.mp3">正趣果上果</option>
@@ -2784,6 +2785,7 @@ body {
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
             <p><b>2026.6.27</b><br>•【0627】青岛场更新</p>
+            <p><b>2026.6.27</b><br>• 新增BGM：《试运行》</p>
             <p><b>2026.5.31</b><br>•【0531】南昌场更新</p>
             <p><b>2026.5.30</b><br>•【0530】南昌场更新</p>
             <p><b>2026.5.30</b><br>• 新增【红馆场】成就</p>
@@ -3027,6 +3029,7 @@ var currentUser = null;
                     currentUser = session.user;
                     updateAuthUI(true);
                     syncCheckInsFromCloud();
+                    syncTonglousFromCloud();
                     syncNotesFromCloud();
                     syncLightsticksFromCloud();
                 } else {
@@ -3040,6 +3043,7 @@ var currentUser = null;
                     currentUser = session.user;
                     updateAuthUI(true);
                     syncCheckInsFromCloud();
+                    syncTonglousFromCloud();
                     syncNotesFromCloud();
                     syncLightsticksFromCloud();
                 }
@@ -3314,8 +3318,10 @@ async function syncCheckInsFromCloud() {
         return;
     }
 
-    // 合并到 localStorage（云端优先）
-    const cloudIds = new Set(data.map(row => row.city_id));
+    // 合并到 localStorage（云端优先），排除痛楼打卡记录
+    const cloudIds = new Set(
+        data.filter(row => !row.city_id.startsWith('tonglou_')).map(row => row.city_id)
+    );
     cloudIds.forEach(id => {
         localStorage.setItem('checked_' + id, 'true');
     });
@@ -3334,6 +3340,69 @@ async function syncCheckInsFromCloud() {
     // 刷新当前页面显示
     if (typeof render === 'function') {
         render();
+    }
+}
+
+// --- 痛楼打卡云端同步 ---
+async function syncTonglousFromCloud() {
+    if (!supabaseClient || !currentUser) return;
+
+    const { data, error } = await supabaseClient
+        .from('check_ins')
+        .select('city_id')
+        .eq('user_id', currentUser.id)
+        .like('city_id', 'tonglou_%');
+
+    if (error) {
+        console.warn('同步痛楼打卡记录失败:', error.message);
+        return;
+    }
+
+    const cloudIds = new Set(data.map(row => row.city_id.replace('tonglou_', '')));
+    cloudIds.forEach(id => {
+        localStorage.setItem('tonglou_' + id, 'true');
+    });
+
+    // 反向同步：把本地有但云端没有的痛楼打卡推上去
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('tonglou_') && localStorage.getItem(key) === 'true') {
+            const id = key.replace('tonglou_', '');
+            if (!cloudIds.has(id)) {
+                saveTonglouToCloud(id, true);
+            }
+        }
+    }
+
+    if (typeof render === 'function') {
+        render();
+    }
+}
+
+async function saveTonglouToCloud(id, isChecked) {
+    if (!supabaseClient || !currentUser) return;
+
+    const cityId = 'tonglou_' + id;
+
+    if (isChecked) {
+        const { error } = await supabaseClient
+            .from('check_ins')
+            .upsert({ user_id: currentUser.id, city_id: cityId, timestamp: new Date().toISOString() })
+            .select();
+        if (error && error.code === '23505') {
+            // 唯一约束冲突，忽略
+        } else if (error) {
+            console.warn('痛楼打卡云端保存失败:', error.message);
+        }
+    } else {
+        const { error } = await supabaseClient
+            .from('check_ins')
+            .delete()
+            .eq('user_id', currentUser.id)
+            .eq('city_id', cityId);
+        if (error) {
+            console.warn('痛楼打卡云端删除失败:', error.message);
+        }
     }
 }
 
@@ -3542,7 +3611,8 @@ window.saveBoxImage = function(elementId, fileName) {
         "260425":"在泛泛的生活里，\n拥抱一些小小的具体，\n和绿色打招呼！🦋🌿\n谢谢宁波，祝大家今天新鲜、美妙！",
         "260529":"阳光在路上流淌，\n流经我们的眼眶、喉咙、指缝…\n唱歌！\n声音里都是夏日的丰沛和温热。\n\n谢谢南昌！我们明天、后天再见再见吧～    ",
         "260530":"路过漂亮的水果摊，\n橘子葡萄李子杏子梨……\n丰满的、多彩的、美妙果实。\n大自然的赠予！\n再献上一粒。\n\n谢谢南昌，音乐，甜美多汁😉",
-        "260531":"夏天是一条漂亮的抛物线，\n我们把自己丢进日光，\n丢进丛莽，\n丢进海洋，\n也丢进人来人往。\n丢到音乐里来碰个面^_−☆\n\n谢谢南昌，谢谢大家三天的陪伴～"
+        "260531":"夏天是一条漂亮的抛物线，\n我们把自己丢进日光，\n丢进丛莽，\n丢进海洋，\n也丢进人来人往。\n丢到音乐里来碰个面^_−☆\n\n谢谢南昌，谢谢大家三天的陪伴～",
+        "260627":"写首小诗送给大家：\n叽叽喳喳，\n嘻嘻哈哈。\n喝点小酒，\n踩踩浪花。\n\n谢谢青岛，快乐无边！"
     };
 // --- 修正后的顺序 ---
 const eggIcons = Array.from({length: 34}, (_, i) => `images/果实 (${i+1}).webp`); // 1. 先定义路径
@@ -3602,7 +3672,7 @@ window.addEventListener('load', () => {
         { id: "260531", city: "南昌", time: "2026.05.31", weather: "🌤️", season: "summer",part: 1, guest: "", personalPics: Array.from({length: 18}, (_, i) => `images/260531 (${i+1}).webp`), guestPics: [],
         songs: [{n:"Birds of a feather",t:"request",l:"https://music.163.com/dj?id=3721057197&uct2=U2FsdGVkX18o4fffhCmkN5XgdFNgvmh9XCzRPfFkco4="},{n:"梦醒时分",t:"request",l:"https://music.163.com/dj?id=3721063206&uct2=U2FsdGVkX1/HUDgwKj5d7sB+9eKhEzrRmts81f4vm7Q="},{n:"飞白",t:"surprise",l:""},{n:"玉人歌",t:"surprise",l:""}]},
         { id: "260627", city: "青岛", time: "2026.06.27", weather: "☀️", season: "summer",part: 1, guest: "", personalPics: Array.from({length: 9}, (_, i) => `images/260627 (${i+1}).webp`), guestPics: [], songs: [{n:"Ocean Keeper",t:"request",l:""},{n:"无名浪潮",t:"request",l:""},{n:"比如世界",t:"surprise",l:""},{n:"群居生物",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
-        { id: "260628", city: "青岛", time: "2026.06.28", weather: "☀️", season: "summer",part: 1, status: "unplayed", guest: "", personalPics: Array.from({length: 9}, (_, i) => `images/260628 (${i+1}).webp`), guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
+        { id: "260628", city: "青岛", time: "2026.06.28", weather: "☀️", season: "summer",part: 1, status: "unplayed", guest: "", personalPics:[], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "QZ1", city: "泉州", time: "2026.07.24", weather: "", season: "summer",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "QZ2", city: "泉州", time: "2026.07.25", weather: "", season: "summer",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "HK1", city: "香港", time: "2026.08.08", weather: "", season: "autumn",part: 1, status: "unplayed",guest: "", isSpecial: "红馆场🎟️", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
@@ -6417,6 +6487,10 @@ function saveTonglouStatus(id, checked, checkboxEl) {
         return;
     }
     localStorage.setItem('tonglou_' + id, checked);
+    // 同步到云端
+    if (currentUser) {
+        saveTonglouToCloud(id, checked);
+    }
 }
 
 </script>
