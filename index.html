@@ -2783,6 +2783,7 @@ body {
         <h3 style="color: var(--tag-special); margin-top: 0;">更新日志</h3>
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
+            <p><b>2026.6.27</b><br>•【0627】青岛场更新</p>
             <p><b>2026.5.31</b><br>•【0531】南昌场更新</p>
             <p><b>2026.5.30</b><br>•【0530】南昌场更新</p>
             <p><b>2026.5.30</b><br>• 新增【红馆场】成就</p>
@@ -3026,6 +3027,8 @@ var currentUser = null;
                     currentUser = session.user;
                     updateAuthUI(true);
                     syncCheckInsFromCloud();
+                    syncNotesFromCloud();
+                    syncLightsticksFromCloud();
                 } else {
                     currentUser = null;
                     updateAuthUI(false);
@@ -3037,6 +3040,8 @@ var currentUser = null;
                     currentUser = session.user;
                     updateAuthUI(true);
                     syncCheckInsFromCloud();
+                    syncNotesFromCloud();
+                    syncLightsticksFromCloud();
                 }
             }).catch(err => {
                 console.warn('Supabase 连接失败:', err.message);
@@ -3315,6 +3320,17 @@ async function syncCheckInsFromCloud() {
         localStorage.setItem('checked_' + id, 'true');
     });
 
+    // 反向同步：把本地有但云端没有的打卡推上去
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('checked_') && localStorage.getItem(key) === 'true') {
+            const id = key.replace('checked_', '');
+            if (!cloudIds.has(id)) {
+                saveCheckInToCloud(id, true);
+            }
+        }
+    }
+
     // 刷新当前页面显示
     if (typeof render === 'function') {
         render();
@@ -3343,6 +3359,106 @@ async function saveCheckInToCloud(cityId, isChecked) {
         if (error) {
             console.warn('云端删除失败:', error.message);
         }
+    }
+}
+
+// --- 笔记云端同步 ---
+async function syncNotesFromCloud() {
+    if (!supabaseClient || !currentUser) return;
+
+    const { data, error } = await supabaseClient
+        .from('user_notes')
+        .select('city_id, content')
+        .eq('user_id', currentUser.id);
+
+    if (error) {
+        console.warn('同步笔记失败:', error.message);
+        return;
+    }
+
+    const cloudNoteIds = new Set();
+    data.forEach(row => {
+        if (row.content) {
+            localStorage.setItem('note-' + row.city_id, row.content);
+        }
+        cloudNoteIds.add(row.city_id);
+    });
+
+    // 反向同步：把本地有但云端没有的笔记推上去
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('note-')) {
+            const id = key.replace('note-', '');
+            const content = localStorage.getItem(key);
+            if (!cloudNoteIds.has(id) && content) {
+                saveNoteToCloud(id, content);
+            }
+        }
+    }
+
+    if (typeof render === 'function') {
+        render();
+    }
+}
+
+async function saveNoteToCloud(cityId, content) {
+    if (!supabaseClient || !currentUser) return;
+
+    const { error } = await supabaseClient
+        .from('user_notes')
+        .upsert({ user_id: currentUser.id, city_id: cityId, content: content, updated_at: new Date().toISOString() });
+
+    if (error) {
+        console.warn('笔记云端保存失败:', error.message);
+    }
+}
+
+// --- 荧光棒云端同步 ---
+async function syncLightsticksFromCloud() {
+    if (!supabaseClient || !currentUser) return;
+
+    const { data, error } = await supabaseClient
+        .from('user_lightsticks')
+        .select('city_name, collected')
+        .eq('user_id', currentUser.id);
+
+    if (error) {
+        console.warn('同步荧光棒失败:', error.message);
+        return;
+    }
+
+    const cloudStickNames = new Set();
+    data.forEach(row => {
+        localStorage.setItem('stick_' + row.city_name, row.collected ? 'true' : 'false');
+        cloudStickNames.add(row.city_name);
+    });
+
+    // 反向同步：把本地有但云端没有的荧光棒推上去
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('stick_')) {
+            const name = key.replace('stick_', '');
+            if (!cloudStickNames.has(name)) {
+                const collected = localStorage.getItem(key) === 'true';
+                saveLightstickToCloud(name, collected);
+            }
+        }
+    }
+
+    if (typeof render === 'function') {
+        render();
+    }
+}
+
+async function saveLightstickToCloud(cityName, collected) {
+    if (!supabaseClient || !currentUser) return;
+
+    const { error } = await supabaseClient
+        .from('user_lightsticks')
+        .upsert({ user_id: currentUser.id, city_name: cityName, collected: collected, updated_at: new Date().toISOString() });
+
+    if (error) {
+        console.warn('荧光棒云端保存失败:', error.message);
     }
 }
 
@@ -3485,8 +3601,8 @@ window.addEventListener('load', () => {
         songs: [{n:"空空（feat江美琪）",t:"guest",l:""},{n:"亲爱的你怎么不在我身边",t:"guest",l:""},{n:"那就这样吧",t:"request",l:"https://music.163.com/dj?id=3721061201&uct2=U2FsdGVkX1/G+m0xQ4y/s8dFgRTWXoGeaZfuMwjr6bs="},{n:"泥丸",t:"request",l:""}]},
         { id: "260531", city: "南昌", time: "2026.05.31", weather: "🌤️", season: "summer",part: 1, guest: "", personalPics: Array.from({length: 18}, (_, i) => `images/260531 (${i+1}).webp`), guestPics: [],
         songs: [{n:"Birds of a feather",t:"request",l:"https://music.163.com/dj?id=3721057197&uct2=U2FsdGVkX18o4fffhCmkN5XgdFNgvmh9XCzRPfFkco4="},{n:"梦醒时分",t:"request",l:"https://music.163.com/dj?id=3721063206&uct2=U2FsdGVkX1/HUDgwKj5d7sB+9eKhEzrRmts81f4vm7Q="},{n:"飞白",t:"surprise",l:""},{n:"玉人歌",t:"surprise",l:""}]},
-        { id: "QD1", city: "青岛", time: "2026.06.27", weather: "", season: "summer",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
-        { id: "QD2", city: "青岛", time: "2026.06.28", weather: "", season: "summer",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
+        { id: "260627", city: "青岛", time: "2026.06.27", weather: "☀️", season: "summer",part: 1, guest: "", personalPics: Array.from({length: 9}, (_, i) => `images/260627 (${i+1}).webp`), guestPics: [], songs: [{n:"Ocean Keeper",t:"request",l:""},{n:"无名浪潮",t:"request",l:""},{n:"比如世界",t:"surprise",l:""},{n:"群居生物",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
+        { id: "260628", city: "青岛", time: "2026.06.28", weather: "☀️", season: "summer",part: 1, status: "unplayed", guest: "", personalPics: Array.from({length: 9}, (_, i) => `images/260628 (${i+1}).webp`), guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "QZ1", city: "泉州", time: "2026.07.24", weather: "", season: "summer",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "QZ2", city: "泉州", time: "2026.07.25", weather: "", season: "summer",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "HK1", city: "香港", time: "2026.08.08", weather: "", season: "autumn",part: 1, status: "unplayed",guest: "", isSpecial: "红馆场🎟️", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
@@ -3578,7 +3694,10 @@ function calcTotalKM(list) {
     "那天下午，时间流逝，直至静止","后来对妳的幻想 是我神秘的营养 是我神秘的营养","朝起早，夜眠迟；老易至，惜此时。","爱 爱过但是太疯狂全遗忘","今夜 让我们祈祷爱科技的朋友都是浪漫派怪咖 当然 就算不是的话 我的歌也不会太浪费 大家吃好喝好..."
     ,"下鸡地狱 可以；下没有鸡的地狱 不行","走一个小时的路去健身房 路上听自己的歌 一小时不够，想走十年。三专的歌已经选好。","如果我们因为爱的“杂草”（嫉妒，为追求需索平衡导致的内部错乱等等）使彼此变得丑陋，那我们千万要以远离的方式来继续执行这份爱。<br>因为爱是让你永远绽放 永远美<br><br>现在你还是很美啊。是我长久的、远远的、不动声色的爱，一直在滋养你来着。"
     ,"很多时候我们对着生活生气，撕心裂肺、大吼大叫、呲牙咧嘴，但是它好像就是不回应","过下去，总还是会遇到上一次让你想要喊停的困难。但是，再遇到这种困难就看你是不是要逃避了。如果你逃避，问题只会越来越大，或者是没有改善。活下去总归还有好多好多可能性。","在家里给自己做便当像是时间的延续，昨天到今天，今天还会带来明天，每一天都有旧的昨天和新的明天。<br>聚焦到便当这个食物上，就会让我看到离我其实很远但是又在我想象中能存在的世界。"
-    ,"陈女士，身高一百六十一厘米，体重四十九公斤，您的体型完全正常，请继续保持。平时注意体育锻炼，转弯要打转向灯。少熬夜，少看小人书；多背单词，多吃蔬菜。紧握扶手，注意脚下安全。","扩展都是大家在扩展，深入都是大家在深入。我就仅仅是永不停息的热闹浪潮里，只浮起一瞬间的小沙一粒。浪不会退，我迟早会沉。但我浮起那一瞬间，隔着空气看见了你们。一瞬间，几年吧；几年呢，不知道。"];
+    ,"陈女士，身高一百六十一厘米，体重四十九公斤，您的体型完全正常，请继续保持。平时注意体育锻炼，转弯要打转向灯。少熬夜，少看小人书；多背单词，多吃蔬菜。紧握扶手，注意脚下安全。","扩展都是大家在扩展，深入都是大家在深入。我就仅仅是永不停息的热闹浪潮里，只浮起一瞬间的小沙一粒。浪不会退，我迟早会沉。但我浮起那一瞬间，隔着空气看见了你们。一瞬间，几年吧；几年呢，不知道。"
+    ,"你开心点 不要到处认错了 是我的错 你不要背","忧郁和烦躁，你把它们排出体外是没有用的，那只会让你看到确确实实的忧郁和烦躁。只有让它们像水一样在身体里流，再缓慢，也要转化它们，才能健康。","如果我永远不问出你有可能说不的问题","我疯狂地闷声大哭，你就在我身后弹吉他。","你经历过的分别还不够痛苦，你赚过的钱还不够多，你做出来的音乐还不够好听，你的意义还没创造出来，你的追求还停留在意义的层次，你的爱人不在你身边，你还不能死。"
+    ,"尽管羡慕 尽管追逐不复存在的脚步 尽管边跑边哭，随便什么方法，我只在乎你跑得够不够快。————————不够","不作判断 不旁顾","我给你吟一首诗<br>与鲜艳的过从<br>用亢奋来搅动<br>我的好菩萨<br>我爬坡上坎<br>至今没人和你雷同","我不找你要，你也别给我太多，但时不时要多一点，我不知道，反正要留住。","接住最美的一片雪花，我手心因我的严苛而滚烫]，她化了。化了之后其他雪花都号称自己才是最美的那片，说自己白色里面有粉有蓝有鹅黄 强光和能量 慈悲和忍耐等等。但无论如何我再抬不起手，那片最美的雪花太冰了。"
+    ,];
 
     // 2. 核心函数
     // 替换第 216 行起的函数
@@ -3906,6 +4025,7 @@ const cityList = [
 function toggleStick(name, el) {
     const isCollected = el.classList.toggle('active');
     localStorage.setItem(`stick_${name}`, isCollected);
+    saveLightstickToCloud(name, isCollected);
 }
 
 
@@ -3923,7 +4043,9 @@ function renderMyGrain(container) {
         { name: "重庆", color: "#E3BDD0" }, { name: "厦门", color: "#B6D9D6" },
         { name: "深圳", color: "#9C9DCF" }, { name: "苏州", color: "#D5BE4F" },
         { name: "武汉", color: "#F69393" }, { name: "成都", color: "#A2C957" },
-        { name: "宁波", color: "#F56C7A" }, { name: "南昌", color: "#f39c5e" }
+        { name: "宁波", color: "#F56C7A" }, { name: "南昌", color: "#f39c5e" },
+        { name: "青岛", color: "#47b9ad" },
+        
     ];
     let lightstickHTML = cityData.map(city => {
         const isCollected = localStorage.getItem(`stick_${city.name}`) === 'true';
@@ -4210,7 +4332,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             <div class="medal-item ${hasAnyTonglou ? 'unlocked' : ''}"  onclick="openGrainAchievement('<b>达成条件：【打卡任意痛楼】</b><br>${hasAnyTonglou ? '“四海好大 欢迎回家”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">🏠</div><div class="name">小粒之家</div>
             </div>
-            <div class="medal-item ${myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314')|| myIds.includes('260529')  ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【看一次独唱场】</b><br>${(myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314')|| myIds.includes('260529') ) ? '“我只属于妳在这短暂的生命”' : '该成就未解锁'}')">
+            <div class="medal-item ${myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314')|| myIds.includes('260529')|| myIds.includes('260627')  ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【看一次独唱场】</b><br>${(myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314')|| myIds.includes('260529') || myIds.includes('260627')) ? '“我只属于妳在这短暂的生命”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">🎫</div><div class="name">绝对占有</div>
             </div>
             <div class="medal-item ${hasLongVacation ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【在周末连看两场一粒】</b><br>${hasLongVacation ? '“只有阳光持！续！照！耀！”' : '该成就未解锁'}')">
@@ -6079,17 +6201,18 @@ window.toggleRibbon = function(id, el, event) {
 // 荧光棒切换函数 (保持妳原有的，防止报错)
 window.toggleLightstick = function(city, el) {
     el.classList.toggle('active');
-    localStorage.setItem(`stick_${city}`, el.classList.contains('active'));
+    const isActive = el.classList.contains('active');
+    localStorage.setItem(`stick_${city}`, isActive);
+    saveLightstickToCloud(city, isActive);
 };
 /**
  * 配套点击切换函数
  * 确保点击时不仅改变视觉，还要保存到本地
  */
 function toggleLightstick(name, el) {
-    // 切换 active 类名（触发置灰滤镜消失）
     const isActive = el.classList.toggle('active');
-    // 保存到本地存储
     localStorage.setItem(`stick_${name}`, isActive);
+    saveLightstickToCloud(name, isActive);
 }
 
 
@@ -6104,14 +6227,12 @@ function switchAchTab(evt, tabId) {
 
 
 function editNote(id) {
-    // 阻止点击穿透到卡片（如果需要）
     const oldNote = localStorage.getItem('note-' + id) || "";
     const newNote = prompt("在这里写下关于这一场的悄悄话...", oldNote);
-    
+
     if (newNote !== null) {
-        // 保存到本地
         localStorage.setItem('note-' + id, newNote);
-        // 实时更新页面上的气泡内容
+        saveNoteToCloud(id, newNote);
         const bubble = document.getElementById('bubble-' + id);
         if (bubble) {
             bubble.innerText = newNote || '点击羽毛笔记录心情...';
