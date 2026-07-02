@@ -3438,8 +3438,9 @@ async function syncNotesFromCloud() {
 
     const { data, error } = await supabaseClient
         .from('user_notes')
-        .select('city_id, content')
-        .eq('user_id', currentUser.id);
+        .select('city_id, content, updated_at')
+        .eq('user_id', currentUser.id)
+        .order('updated_at', { ascending: true });
 
     if (error) {
         console.warn('同步笔记失败:', error.message);
@@ -3447,6 +3448,7 @@ async function syncNotesFromCloud() {
     }
 
     const cloudNoteIds = new Set();
+    // 按 updated_at 升序排列，后写入的覆盖先写入的，确保始终保留最新内容
     data.forEach(row => {
         if (row.content) {
             localStorage.setItem('note-' + row.city_id, row.content);
@@ -3476,7 +3478,7 @@ async function saveNoteToCloud(cityId, content) {
 
     const { error } = await supabaseClient
         .from('user_notes')
-        .upsert({ user_id: currentUser.id, city_id: cityId, content: content, updated_at: new Date().toISOString() });
+        .upsert({ user_id: currentUser.id, city_id: cityId, content: content, updated_at: new Date().toISOString() }, { onConflict: 'user_id, city_id' });
 
     if (error) {
         console.warn('笔记云端保存失败:', error.message);
@@ -3523,12 +3525,22 @@ async function syncLightsticksFromCloud() {
 async function saveLightstickToCloud(cityName, collected) {
     if (!supabaseClient || !currentUser) return;
 
-    const { error } = await supabaseClient
-        .from('user_lightsticks')
-        .upsert({ user_id: currentUser.id, city_name: cityName, collected: collected, updated_at: new Date().toISOString() });
-
-    if (error) {
-        console.warn('荧光棒云端保存失败:', error.message);
+    if (collected) {
+        const { error } = await supabaseClient
+            .from('user_lightsticks')
+            .upsert({ user_id: currentUser.id, city_name: cityName, collected: true, updated_at: new Date().toISOString() });
+        if (error) {
+            console.warn('荧光棒云端保存失败:', error.message);
+        }
+    } else {
+        const { error } = await supabaseClient
+            .from('user_lightsticks')
+            .delete()
+            .eq('user_id', currentUser.id)
+            .eq('city_name', cityName);
+        if (error) {
+            console.warn('荧光棒云端删除失败:', error.message);
+        }
     }
 }
 
@@ -3766,12 +3778,12 @@ function calcTotalKM(list) {
     ,"试探构造，有理想边界的世界。<br>春夏交接、金黄的秋、银白的冬，<br>与妳一起，无限扩充。","自然固有潮汐<br>热烈的、兴奋的，自然是欢欣鼓舞<br>质疑的、哀怨的，也得要待到从头<br>溯洄从之，道阻且长。<br>也如流淌，也如生活。"
     ,"最后<br>在我掏出我的心窝子之后<br>妳们应该说的不是“我爱妳”<br>而是<br>“我也爱妳”","结果此生话题落到了别处，但重要的是我们都在慢慢慢慢告别居无定所，在远远远远祝福。特别好，可以把纹身挖开，用脚走路，走去妳的祝福处，也就是我的现在啊。",
     "那天下午，时间流逝，直至静止","后来对妳的幻想 是我神秘的营养 是我神秘的营养","朝起早，夜眠迟；老易至，惜此时。","爱 爱过但是太疯狂全遗忘","今夜 让我们祈祷爱科技的朋友都是浪漫派怪咖 当然 就算不是的话 我的歌也不会太浪费 大家吃好喝好..."
-    ,"下鸡地狱 可以；下没有鸡的地狱 不行","走一个小时的路去健身房 路上听自己的歌 一小时不够，想走十年。三专的歌已经选好。","如果我们因为爱的“杂草”（嫉妒，为追求需索平衡导致的内部错乱等等）使彼此变得丑陋，那我们千万要以远离的方式来继续执行这份爱。<br>因为爱是让你永远绽放 永远美<br><br>现在你还是很美啊。是我长久的、远远的、不动声色的爱，一直在滋养你来着。"
-    ,"很多时候我们对着生活生气，撕心裂肺、大吼大叫、呲牙咧嘴，但是它好像就是不回应","过下去，总还是会遇到上一次让你想要喊停的困难。但是，再遇到这种困难就看你是不是要逃避了。如果你逃避，问题只会越来越大，或者是没有改善。活下去总归还有好多好多可能性。","在家里给自己做便当像是时间的延续，昨天到今天，今天还会带来明天，每一天都有旧的昨天和新的明天。<br>聚焦到便当这个食物上，就会让我看到离我其实很远但是又在我想象中能存在的世界。"
-    ,"陈女士，身高一百六十一厘米，体重四十九公斤，您的体型完全正常，请继续保持。平时注意体育锻炼，转弯要打转向灯。少熬夜，少看小人书；多背单词，多吃蔬菜。紧握扶手，注意脚下安全。","扩展都是大家在扩展，深入都是大家在深入。我就仅仅是永不停息的热闹浪潮里，只浮起一瞬间的小沙一粒。浪不会退，我迟早会沉。但我浮起那一瞬间，隔着空气看见了你们。一瞬间，几年吧；几年呢，不知道。"
-    ,"你开心点 不要到处认错了 是我的错 你不要背","忧郁和烦躁，你把它们排出体外是没有用的，那只会让你看到确确实实的忧郁和烦躁。只有让它们像水一样在身体里流，再缓慢，也要转化它们，才能健康。","如果我永远不问出你有可能说不的问题","我疯狂地闷声大哭，你就在我身后弹吉他。","你经历过的分别还不够痛苦，你赚过的钱还不够多，你做出来的音乐还不够好听，你的意义还没创造出来，你的追求还停留在意义的层次，你的爱人不在你身边，你还不能死。"
-    ,"尽管羡慕 尽管追逐不复存在的脚步 尽管边跑边哭，随便什么方法，我只在乎你跑得够不够快。————————不够","不作判断 不旁顾","我给你吟一首诗<br>与鲜艳的过从<br>用亢奋来搅动<br>我的好菩萨<br>我爬坡上坎<br>至今没人和你雷同","我不找你要，你也别给我太多，但时不时要多一点，我不知道，反正要留住。","接住最美的一片雪花，我手心因我的严苛而滚烫，她化了。化了之后其他雪花都号称自己才是最美的那片，说自己白色里面有粉有蓝有鹅黄 强光和能量 慈悲和忍耐等等。但无论如何我再抬不起手，那片最美的雪花太冰了。"
-    ,"但深度被恸哭行为掩盖 深度和种类不再重要 还有爱 一切都被恸哭概括 囊括 包裹 抚摸","没有人不喜欢落日飞车 就像没有人不喜欢吃锅巴一样","陈南溪爱看英雄科幻片。生活中有什么要剿灭或捍卫的呢，少，我们觉得不激烈，但确实有英勇存在————些个惦记、些个牵着你的手穿过繁忙地下铁...谢谢所有的亲密爱人...","电光石火带来的亢奋短短时间就褪去，我毕竟不会笨太久，站在冷落里也并不觉得尴尬，哎呀，好笨，是电光石火褪去，亢奋是冷落浇灭的。《睡吧》","当我需要一个美妙的夜晚，一个美妙的夜晚出现，历经辗转、受到保证。太美妙，太安全了，我要拖着我半空的行李箱出逃。"
+    ,"下鸡地狱 可以；下没有鸡的地狱 不行","走一个小时的路去健身房 路上听自己的歌 一小时不够，想走十年。三专的歌已经选好。","如果我们因为爱的“杂草”（嫉妒，为追求需索平衡导致的内部错乱等等）使彼此变得丑陋，那我们千万要以远离的方式来继续执行这份爱。<br>因为爱是让妳永远绽放 永远美<br><br>现在妳还是很美啊。是我长久的、远远的、不动声色的爱，一直在滋养妳来着。"
+    ,"很多时候我们对着生活生气，撕心裂肺、大吼大叫、呲牙咧嘴，但是它好像就是不回应","过下去，总还是会遇到上一次让妳想要喊停的困难。但是，再遇到这种困难就看妳是不是要逃避了。如果妳逃避，问题只会越来越大，或者是没有改善。活下去总归还有好多好多可能性。","在家里给自己做便当像是时间的延续，昨天到今天，今天还会带来明天，每一天都有旧的昨天和新的明天。<br>聚焦到便当这个食物上，就会让我看到离我其实很远但是又在我想象中能存在的世界。"
+    ,"陈女士，身高一百六十一厘米，体重四十九公斤，您的体型完全正常，请继续保持。平时注意体育锻炼，转弯要打转向灯。少熬夜，少看小人书；多背单词，多吃蔬菜。紧握扶手，注意脚下安全。","扩展都是大家在扩展，深入都是大家在深入。我就仅仅是永不停息的热闹浪潮里，只浮起一瞬间的小沙一粒。浪不会退，我迟早会沉。但我浮起那一瞬间，隔着空气看见了妳们。一瞬间，几年吧；几年呢，不知道。"
+    ,"妳开心点 不要到处认错了 是我的错 妳不要背","忧郁和烦躁，妳把它们排出体外是没有用的，那只会让妳看到确确实实的忧郁和烦躁。只有让它们像水一样在身体里流，再缓慢，也要转化它们，才能健康。","如果我永远不问出妳有可能说不的问题","我疯狂地闷声大哭，妳就在我身后弹吉他。","妳经历过的分别还不够痛苦，妳赚过的钱还不够多，妳做出来的音乐还不够好听，妳的意义还没创造出来，妳的追求还停留在意义的层次，妳的爱人不在妳身边，妳还不能死。"
+    ,"尽管羡慕 尽管追逐不复存在的脚步 尽管边跑边哭，随便什么方法，我只在乎妳跑得够不够快。————————不够","不作判断 不旁顾","我给妳吟一首诗<br>与鲜艳的过从<br>用亢奋来搅动<br>我的好菩萨<br>我爬坡上坎<br>至今没人和妳雷同","我不找妳要，妳也别给我太多，但时不时要多一点，我不知道，反正要留住。","接住最美的一片雪花，我手心因我的严苛而滚烫，她化了。化了之后其他雪花都号称自己才是最美的那片，说自己白色里面有粉有蓝有鹅黄 强光和能量 慈悲和忍耐等等。但无论如何我再抬不起手，那片最美的雪花太冰了。"
+    ,"但深度被恸哭行为掩盖 深度和种类不再重要 还有爱 一切都被恸哭概括 囊括 包裹 抚摸","没有人不喜欢落日飞车 就像没有人不喜欢吃锅巴一样","陈南溪爱看英雄科幻片。生活中有什么要剿灭或捍卫的呢，少，我们觉得不激烈，但确实有英勇存在————些个惦记、些个牵着妳的手穿过繁忙地下铁...谢谢所有的亲密爱人...","电光石火带来的亢奋短短时间就褪去，我毕竟不会笨太久，站在冷落里也并不觉得尴尬，哎呀，好笨，是电光石火褪去，亢奋是冷落浇灭的。《睡吧》","当我需要一个美妙的夜晚，一个美妙的夜晚出现，历经辗转、受到保证。太美妙，太安全了，我要拖着我半空的行李箱出逃。"
     ,];
 
     // 2. 核心函数
@@ -4689,7 +4701,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             .single();
         if (error) { console.warn('评论失败:', error.message); return null; }
         // 创建通知（若评论的不是自己的帖子）
-        _createCommentNotification(postId, content);
+        await _createCommentNotification(postId, content);
         return data;
     }
 
@@ -4827,9 +4839,9 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
 
             var textHTML = '';
             if (n.type === 'like') {
-                textHTML = '<span class="notif-nickname">' + escapeHtml(n.actor_nickname || '一粒') + '</span> 赞了你的帖子';
+                textHTML = '<span class="notif-nickname">' + escapeHtml(n.actor_nickname || '一粒') + '</span> 赞了妳的帖子';
             } else {
-                textHTML = '<span class="notif-nickname">' + escapeHtml(n.actor_nickname || '一粒') + '</span> 评论了你的帖子';
+                textHTML = '<span class="notif-nickname">' + escapeHtml(n.actor_nickname || '一粒') + '</span> 评论了妳的帖子';
                 if (n.comment_preview) {
                     textHTML += '<br><span class="notif-preview">"' + escapeHtml(n.comment_preview) + '"</span>';
                 }
@@ -4906,12 +4918,13 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
 
         if (existing) {
             // 更新时间戳，不产生重复通知
-            await supabaseClient
+            var { error: updateErr } = await supabaseClient
                 .from('notifications')
                 .update({ created_at: new Date().toISOString() })
                 .eq('id', existing.id);
+            if (updateErr) console.warn('通知更新失败:', updateErr.message);
         } else {
-            await supabaseClient
+            var { error: insertErr } = await supabaseClient
                 .from('notifications')
                 .insert({
                     recipient_user_id: post.user_id,
@@ -4922,6 +4935,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
                     post_id: postId,
                     read: false
                 });
+            if (insertErr) console.warn('点赞通知插入失败:', insertErr.message);
         }
     }
 
@@ -4935,7 +4949,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         var preview = (commentContent || '').substring(0, 60);
         if (commentContent && commentContent.length > 60) preview += '...';
 
-        await supabaseClient
+        var { error: insertErr } = await supabaseClient
             .from('notifications')
             .insert({
                 recipient_user_id: post.user_id,
@@ -4947,6 +4961,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
                 read: false,
                 comment_preview: preview
             });
+        if (insertErr) console.warn('评论通知插入失败:', insertErr.message);
     }
 
     // ======== 通知系统结束 ========
