@@ -2784,6 +2784,7 @@ body {
         <h3 style="color: var(--tag-special); margin-top: 0;">更新日志</h3>
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
+            <p><b>2026.6.28</b><br>•【0808】香港场更新</p>
             <p><b>2026.6.28</b><br>•【0628】青岛场更新（泉州两场可能会晚点更新！因为作者也要去看粒粒啦）</p>
             <p><b>2026.6.27</b><br>•【0627】青岛场更新</p>
             <p><b>2026.6.27</b><br>• 新增BGM：《试运行》</p>
@@ -3626,7 +3627,9 @@ window.saveBoxImage = function(elementId, fileName) {
         "260530":"路过漂亮的水果摊，\n橘子葡萄李子杏子梨……\n丰满的、多彩的、美妙果实。\n大自然的赠予！\n再献上一粒。\n\n谢谢南昌，音乐，甜美多汁😉",
         "260531":"夏天是一条漂亮的抛物线，\n我们把自己丢进日光，\n丢进丛莽，\n丢进海洋，\n也丢进人来人往。\n丢到音乐里来碰个面^_−☆\n\n谢谢南昌，谢谢大家三天的陪伴～",
         "260627":"写首小诗送给大家：\n叽叽喳喳，\n嘻嘻哈哈。\n喝点小酒，\n踩踩浪花。\n\n谢谢青岛，快乐无边！",
-        "260628":"漫无边际的蓝涌入眼眶。\n晴空，海洋，\n蓝色的歌声和幻想。\n交织成一个盛夏，\n回味悠长。\n\n青岛的两天，我会记得~"
+        "260628":"漫无边际的蓝涌入眼眶。\n晴空，海洋，\n蓝色的歌声和幻想。\n交织成一个盛夏，\n回味悠长。\n\n青岛的两天，我会记得~",
+        "260808":"在梦的银河里，\n光斑散落一地。\n缓慢而清晰的，\n在我们心上，\n一朵朵泛起涟漪。\n\n香港明天继续见～❤️ ",
+        
     };
 // --- 修正后的顺序 ---
 const eggIcons = Array.from({length: 34}, (_, i) => `images/果实 (${i+1}).webp`); // 1. 先定义路径
@@ -3689,7 +3692,7 @@ window.addEventListener('load', () => {
         songs: [{n:"Ocean Keeper",t:"request",l:"https://music.163.com/dj?id=3723594134&uct2=U2FsdGVkX1+PwtAkokCWu1v/UWMrU/pDEaQTStejzd4="},{n:"无名浪潮",t:"request",l:"https://music.163.com/dj?id=3723516132&uct2=U2FsdGVkX1/n8mRDcjQHMtK6MnLi/a2y7ubnDtQHLT0="},{n:"比如世界",t:"surprise",l:""},{n:"群居生物",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "260628", city: "青岛", time: "2026.06.28", weather: "☀️", season: "summer",part: 1, guest: "", personalPics: Array.from({length: 19}, (_, i) => `images/260628 (${i+1}).webp`), guestPics: [], 
         songs: [{n:"Crush",t:"request",l:"https://music.163.com/dj?id=3723557130&uct2=U2FsdGVkX18mv7N60C47BHeqaIC5lVC2Ak4d6RgkmjU="},{n:"言不由衷",t:"request",l:"https://music.163.com/dj?id=3723580130&uct2=U2FsdGVkX1/1qfv/7Erxk9bIHekqx8W9I7rA41mkXlo="},{n:"实用音乐",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
-        { id: "HK1", city: "香港", time: "2026.08.08", weather: "", season: "autumn",part: 1, status: "unplayed",guest: "", isSpecial: "红馆场🎟️", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
+        { id: "260808", city: "香港", time: "2026.08.08", weather: "", season: "autumn",part: 1,guest: "", isSpecial: "红馆场🎟️", personalPics: Array.from({length: 22}, (_, i) => `images/260808 (${i+1}).webp`), guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"似是故人来",t:"request",l:""},{n:"今宵多珍重",t:"request",l:""},{n:"贪得",t:"surprise",l:""},{n:"梦中人",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "HK2", city: "香港", time: "2026.08.09", weather: "", season: "autumn",part: 1, status: "unplayed",guest: "", isSpecial: "红馆场🎟️", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "HF1", city: "合肥", time: "2026.08.15", weather: "", season: "autumn",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "HF2", city: "合肥", time: "2026.08.16", weather: "", season: "autumn",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
@@ -4134,7 +4137,7 @@ function renderMyGrain(container) {
         { name: "深圳", color: "#9C9DCF" }, { name: "苏州", color: "#D5BE4F" },
         { name: "武汉", color: "#F69393" }, { name: "成都", color: "#A2C957" },
         { name: "宁波", color: "#F56C7A" }, { name: "南昌", color: "#f39c5e" },
-        { name: "青岛", color: "#47b9ad" },
+        { name: "青岛", color: "#47b9ad" },{ name: "香港", color: "#d3e3fd" },
         
     ];
     let lightstickHTML = cityData.map(city => {
@@ -6175,7 +6178,7 @@ function renderEquip(container) {
         { name: "重庆", color: "#E3BDD0" }, { name: "厦门", color: "#B6D9D6" },
         { name: "深圳", color: "#9C9DCF" }, { name: "苏州", color: "#D5BE4F" },
         { name: "武汉", color: "#F69393" }, { name: "成都", color: "#A2C957" },
-        { name: "宁波", color: "#F56C7A" }
+        { name: "宁波", color: "#F56C7A" }, { name: "香港", color: "#d3e3fd" },
 
     ];
     let lightstickHTML = cityData.map(city => {
