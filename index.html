@@ -553,27 +553,32 @@ body {
 .part-btn {
     font-family: "STSong", "SimSun", serif;
     /* 使用 clamp 让字号在手机上自动变小，在电脑上保持大字号 */
-    font-size: clamp(14px, 2.5vw, 24px); 
-    
+    font-size: clamp(14px, 2.5vw, 24px);
+
     white-space: nowrap;    /* 文字本身不换行 */
-    background: none;
-    border: none;
-    border-bottom: 2px solid transparent;
-    color: #666;
+    background: rgba(255, 255, 255, 0.75);
+    border: 1.5px solid rgba(180, 160, 130, 0.5);
+    border-radius: 8px;
+    color: #555;
     cursor: pointer;
-    padding: 10px 0;       /* 增加上下内边距 */
+    padding: 8px 12px;       /* 增加左右内边距 */
     transition: all 0.3s;
     letter-spacing: 1px;
-    
+
     flex: 1;                /* 核心：平分宽度，每个占 1/3 */
     text-align: center;
     min-width: 0;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .part-btn.active {
-    color: var(--tag-guest);
-    border-bottom: 2px solid var(--tag-guest);
+    color: #fff;
+    background: var(--tag-guest);
+    border-color: var(--tag-guest);
     font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 /* 针对极窄屏幕（如 iPhone SE）的微调 */
@@ -583,7 +588,7 @@ body {
     }
     .part-btn {
         letter-spacing: 0; /* 取消字间距 */
-        padding: 5px 0;
+        padding: 5px 8px;
     }
 }
         .tour-card.unplayed { opacity: 0.8; filter: grayscale(0.8); }
@@ -4469,7 +4474,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             <div class="medal-item ${myIds.includes('0101') ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【观看元旦场】</b><br>${myIds.includes('0101') ? '“这人间岁岁年年永不停歇变换”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">🧨</div><div class="name">元旦场</div>
             </div>
-            <div class="medal-item ${myIds.includes('260807'||'260808') ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【观看红馆场】</b><br>${myIds.includes('260807'||'260808') ? '“踏着闪耀星辰铺开的路 我昂首阔步”' : '该成就未解锁'}')">
+            <div class="medal-item ${(myIds.includes('260808') || myIds.includes('260809')) ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【观看红馆场】</b><br>${(myIds.includes('260808') || myIds.includes('260809')) ? '“踏着闪耀星辰铺开的路 我昂首阔步”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">🎟️</div><div class="name">红馆场</div>
             </div>
         </div>
