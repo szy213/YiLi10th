@@ -729,6 +729,41 @@ body {
     content: ' ▲';
 }
 
+/* 月份筛选器 */
+.month-selector {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    padding: 0 10px;
+}
+
+.month-btn {
+    font-family: "STSong", "SimSun", serif;
+    font-size: clamp(11px, 1.8vw, 14px);
+    background: rgba(255,255,255,0.5);
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 20px;
+    color: #666;
+    cursor: pointer;
+    padding: 6px 16px;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.month-btn:hover {
+    background: rgba(140, 34, 34, 0.1);
+    color: var(--seal-red);
+}
+
+.month-btn.active {
+    background: var(--tag-guest);
+    color: #fff;
+    border-color: var(--tag-guest);
+    font-weight: bold;
+}
+
 /* 垂直刻度尺容器 - 已删除相关样式 */
 
 /* 舞台光扫过特效 */
@@ -2695,6 +2730,8 @@ body {
 
 </div>
 
+<div class="month-selector" id="monthSelector"></div>
+
 <div class="tour-grid" id="mainGrid"></div>
 
 <div class="music-wrapper">
@@ -2784,7 +2821,8 @@ body {
         <h3 style="color: var(--tag-special); margin-top: 0;">更新日志</h3>
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
-            <p><b>2026.6.28</b><br>•【0808】香港场更新</p>
+            <p><b>2026.8.10</b><br>•【0809】香港场更新</p>
+            <p><b>2026.8.9</b><br>•【0808】香港场更新</p>
             <p><b>2026.6.28</b><br>•【0628】青岛场更新（泉州两场可能会晚点更新！因为作者也要去看粒粒啦）</p>
             <p><b>2026.6.27</b><br>•【0627】青岛场更新</p>
             <p><b>2026.6.27</b><br>• 新增BGM：《试运行》</p>
@@ -3629,6 +3667,7 @@ window.saveBoxImage = function(elementId, fileName) {
         "260627":"写首小诗送给大家：\n叽叽喳喳，\n嘻嘻哈哈。\n喝点小酒，\n踩踩浪花。\n\n谢谢青岛，快乐无边！",
         "260628":"漫无边际的蓝涌入眼眶。\n晴空，海洋，\n蓝色的歌声和幻想。\n交织成一个盛夏，\n回味悠长。\n\n青岛的两天，我会记得~",
         "260808":"在梦的银河里，\n光斑散落一地。\n缓慢而清晰的，\n在我们心上，\n一朵朵泛起涟漪。\n\n香港明天继续见～❤️ ",
+        "260809":"是夜，\n是平稳的、流动的呼吸，\n是心坠在云里，\n悬停后又被轻轻托住。\n\n香港的两天，谢谢我们一起创造了这些时刻💓 ​​​",
         
     };
 // --- 修正后的顺序 ---
@@ -3692,8 +3731,8 @@ window.addEventListener('load', () => {
         songs: [{n:"Ocean Keeper",t:"request",l:"https://music.163.com/dj?id=3723594134&uct2=U2FsdGVkX1+PwtAkokCWu1v/UWMrU/pDEaQTStejzd4="},{n:"无名浪潮",t:"request",l:"https://music.163.com/dj?id=3723516132&uct2=U2FsdGVkX1/n8mRDcjQHMtK6MnLi/a2y7ubnDtQHLT0="},{n:"比如世界",t:"surprise",l:""},{n:"群居生物",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "260628", city: "青岛", time: "2026.06.28", weather: "☀️", season: "summer",part: 1, guest: "", personalPics: Array.from({length: 19}, (_, i) => `images/260628 (${i+1}).webp`), guestPics: [], 
         songs: [{n:"Crush",t:"request",l:"https://music.163.com/dj?id=3723557130&uct2=U2FsdGVkX18mv7N60C47BHeqaIC5lVC2Ak4d6RgkmjU="},{n:"言不由衷",t:"request",l:"https://music.163.com/dj?id=3723580130&uct2=U2FsdGVkX1/1qfv/7Erxk9bIHekqx8W9I7rA41mkXlo="},{n:"实用音乐",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
-        { id: "260808", city: "香港", time: "2026.08.08", weather: "", season: "autumn",part: 1,guest: "", isSpecial: "红馆场🎟️", personalPics: Array.from({length: 22}, (_, i) => `images/260808 (${i+1}).webp`), guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"似是故人来",t:"request",l:""},{n:"今宵多珍重",t:"request",l:""},{n:"贪得",t:"surprise",l:""},{n:"梦中人",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
-        { id: "HK2", city: "香港", time: "2026.08.09", weather: "", season: "autumn",part: 1, status: "unplayed",guest: "", isSpecial: "红馆场🎟️", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
+        { id: "260808", city: "香港", time: "2026.08.08", weather: "🌤️", season: "autumn",part: 1,guest: "", isSpecial: "红馆场🎟️", personalPics: Array.from({length: 22}, (_, i) => `images/260808 (${i+1}).webp`), guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"似是故人来",t:"request",l:""},{n:"今宵多珍重",t:"request",l:""},{n:"贪得",t:"surprise",l:""},{n:"梦中人",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
+        { id: "260809", city: "香港", time: "2026.08.09", weather: "🌤️", season: "autumn",part: 1,guest: "", isSpecial: "红馆场🎟️", personalPics: Array.from({length: 20}, (_, i) => `images/260809 (${i+1}).webp`), guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"人生何处不相逢",t:"request",l:""},{n:"倩女幽魂",t:"request",l:""},{n:"走失",t:"surprise",l:""},{n:"无与伦比的美丽",t:"surprise",l:""},{n:"梦中人",t:"surprise",l:""}] },
         { id: "HF1", city: "合肥", time: "2026.08.15", weather: "", season: "autumn",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "HF2", city: "合肥", time: "2026.08.16", weather: "", season: "autumn",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "SY1", city: "沈阳" , time:"2026.08.22" , weather:"" , season:"autumn" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""} ]},
@@ -3894,6 +3933,8 @@ function closeModal() {
 
     let currentPart = 1;
     let sliderObserver = null;
+    let currentYear = '2025';
+    let currentMonth = '7';
 
     function initLazySliders() {
         // 如果已经存在监听器，先断开，防止重复监听
@@ -3937,15 +3978,52 @@ function closeModal() {
     function selectYear(year) {
         const yearBtn = document.getElementById('yearBtn');
         if (yearBtn) yearBtn.innerText = year;
-        
+        currentYear = year;
+
+        // Auto-select first available month for this year
+        const months = getAvailableMonths(year);
+        if (months.length > 0) {
+            currentMonth = months[0];
+        }
+
         // 切换到 Part 1 (巡演列表)
         changePart(1, yearBtn);
-        
-        if (year === '2026') {
-            setTimeout(() => scrollToTour('0101'), 100);
-        } else {
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
+
+        updateMonthSelector();
+
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+
+    function getAvailableMonths(year) {
+        const months = new Set();
+        tourData.forEach(item => {
+            if (item.part !== 1) return;
+            const parts = item.time.split('.');
+            if (parts.length >= 2 && parts[0] === year) {
+                months.add(parts[1]);
+            }
+        });
+        return [...months].sort();
+    }
+
+    function updateMonthSelector() {
+        const container = document.getElementById('monthSelector');
+        if (!container) return;
+
+        const months = getAvailableMonths(currentYear);
+        const monthNames = {1:'1月',2:'2月',3:'3月',4:'4月',5:'5月',6:'6月',7:'7月',8:'8月',9:'9月',10:'10月',11:'11月',12:'12月'};
+
+        container.innerHTML = months.map(m => {
+            const active = m === currentMonth ? ' active' : '';
+            return `<button class="month-btn${active}" onclick="selectMonth('${m}')">${monthNames[m] || m+'月'}</button>`;
+        }).join('');
+    }
+
+    function selectMonth(month) {
+        currentMonth = month;
+        changePart(1, document.getElementById('yearBtn'));
+        updateMonthSelector();
+        window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
     function switchXiaoliPart(part, label) {
@@ -3982,6 +4060,12 @@ function closeModal() {
 
     // 3. 内容渲染逻辑
     render();
+
+    // 3.5 月份筛选器显示/隐藏
+    const monthSelector = document.getElementById('monthSelector');
+    if (monthSelector) {
+        monthSelector.style.display = (part === 1) ? 'flex' : 'none';
+    }
 
     // 4. 页面滚动反馈
     // --- 新增：控制底部三个功能按钮的显示/隐藏 ---
@@ -5844,7 +5928,17 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         return;
     }
 
-    const filteredData = tourData.filter(item => item.part === currentPart);
+    const filteredData = tourData.filter(item => {
+        if (item.part !== currentPart) return false;
+        if (currentPart === 1) {
+            const parts = item.time.split('.');
+            if (parts.length >= 2) {
+                return parts[0] === currentYear && parts[1] === currentMonth;
+            }
+            return false;
+        }
+        return true;
+    });
     
     // 渲染卡片
     filteredData.forEach(item => {
@@ -5925,19 +6019,19 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     // 1. 准备原始的 34 张图片路径
     const allEggIcons = Array.from({length: 34}, (_, i) => `images/果实 (${i+1}).webp`);
 
-    // 2. 随机打乱并截取前 12 张（保证这 12 张各不相同）
+    // 2. 随机打乱并截取前 4 张（保证这 4 张各不相同）
     const selectedIcons = [...allEggIcons]
         .sort(() => Math.random() - 0.5)
-        .slice(0, 12);
+        .slice(0, 4);
 
     // --- 新增：获取容器宽高，用于计算绝对像素位置以避免重叠 ---
     const gridWidth = grid.clientWidth || window.innerWidth;
     // 卡片渲染完后 grid 会有高度，做个兜底
-    const gridHeight = grid.clientHeight || window.innerHeight * 3; 
+    const gridHeight = grid.clientHeight || window.innerHeight * 3;
     const placedEggs = []; // 用于存放已生成果实的坐标
 
-    // 3. 循环 12 次，生成 12 个不重复且不重叠的果实
-    for(let i = 0; i < 12; i++) {
+    // 3. 循环 4 次，生成 4 个不重复且不重叠的果实
+    for(let i = 0; i < 4; i++) {
         const egg = document.createElement('img');
         egg.className = 'shiguan-egg';
         egg.src = selectedIcons[i]; 
@@ -6104,7 +6198,10 @@ backToTopBtn.onmouseleave = () => {
 };
 
 
-    window.onload = render;
+    window.onload = function() {
+        updateMonthSelector();
+        render();
+    };
 
     window.addEventListener('scroll', () => {
     if (currentPart === 3 || currentPart === 4 || currentPart === 5) return;
