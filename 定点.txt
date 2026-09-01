@@ -15,7 +15,7 @@
       3972 +            const tooltip = mapBox.querySelector('#coord-tooltip');                    
       3973 +            tooltip.classList.remove('show');                                          
       3974 +        }                                                                              
-      3975 +    };                                                                                 
+      };                                                                                 
       3976 +                                                                                       
       3977 +    const coordTooltip = mapBox.querySelector('#coord-tooltip');                       
       3978 +    const coordPicked = mapBox.querySelector('#coord-picked');                         

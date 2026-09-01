@@ -3750,7 +3750,9 @@ window.addEventListener('load', () => {
         { id: "260823", city: "沈阳" , time:"2026.08.23" , weather:"🌧️" , season:"autumn" , part : 1 , guest:"嘉宾：杨千嬅💜", personalPics:Array.from({length: 9}, (_, i) => `images/260823 ${i+1}.webp`),guestPics:Array.from({length: 9}, (_, i) => `images/260823guest ${i+1}.webp`),songs:[{n:"小半（feat杨千嬅）",t:"guest",l:""},{n:"处处吻",t:"guest",l:""},{n:"你抽的烟",t:"request",l:""},{n:"我们存在一刹那的喜欢",t:"request",l:""},{n:"游鱼",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""} ]},
         { id: "ZJ1", city: "诸暨" , time:"2026.09.05" , weather:"" , season:"autumn" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""} ]},
         { id: "ZZ1", city: "郑州" , time:"2026.09.12" , weather:"" , season:"autumn" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
-        { id: "LY", city: "临沂" , time:"2026.10.24" , weather:"" , season:"autumn" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
+        { id: "GZ1", city: "广州" , time:"2026.10.17" , weather:"" , season:"autumn" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
+        { id: "LY1", city: "临沂" , time:"2026.10.24" , weather:"" , season:"autumn" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
+        { id: "GY1", city: "贵阳" , time:"2026.11.07" , weather:"" , season:"winter" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "TJ1", city: "天津" , time:"coming soon" , weather:"" , season:"" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "QZ1", city: "泉州", time: "coming soon", weather: "", season: "",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "QZ2", city: "泉州", time: "coming soon", weather: "", season: "",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
@@ -3766,6 +3768,7 @@ const CITY_COORDS = {
     "郑州": [113.62, 34.74], "青岛": [120.38, 36.06], "泉州": [118.67, 24.87],
     "合肥": [117.22, 31.82] ,"南昌": [115.89, 28.67] ,"香港": [114.16, 22.31] ,
     "天津": [117.20, 39.10] ,"诸暨": [120.24, 29.71] ,"临沂": [118.36, 35.10] ,
+    "贵阳": [106.63, 26.65] ,
 };
 
 
@@ -4564,9 +4567,10 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         "武汉": { left: "64.6%", top: "60.7%" }, "厦门": { left: "71.9%", top: "72.5%" }, "杭州": { left: "73.7%", top: "60.5%" }, 
         "深圳": { left: "66.3%", top: "77.8%" },"南京": { left: "71.7%", top: "56.7%" }, "郑州": { left: "63.6%", top: "52.0%" },
         "宁波": { left: "75.4%", top: "61.2%" },"苏州": { left: "73.4%", top: "56.8%" },"南昌": { left: "68.1%", top: "65.0%" },
-        "青岛": { left: "72.1%", top: "47.5%" },"香港": { left: "64.8%", top: "79.0%" },"沈阳": { left: "74.3%", top: "34.5%" },
+        "青岛": { left: "72.1%", top: "47.5%" },"香港": { left: "65.4%", top: "79.7%" },"沈阳": { left: "74.3%", top: "34.5%" },
         "合肥": { left: "69.4%", top: "57.2%" },"天津": { left: "67.7%", top: "41.9%" },"泉州": { left: "73.3%", top: "67.8%" },
-        "临沂": { left: "68.8%", top: "50.4%" },"诸暨": { left: "73.8%", top: "61.3%" },
+        "临沂": { left: "68.8%", top: "50.4%" },"诸暨": { left: "73.8%", top: "61.3%" },"贵阳": { left: "54.2%", top: "69.2%" },
+        "广州": { left: "64.0%", top: "76.0%" },
     };
     const pinsLayer = mapBox.querySelector('#pins-layer');
     const litCities = new Set(myTours.map(t => t.city));
