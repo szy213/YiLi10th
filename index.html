@@ -3683,7 +3683,9 @@ window.saveBoxImage = function(elementId, fileName) {
         "260822":"☁\n\n凝视天空中悬浮的云。\n心上无事～\n耳畔有风～\n轻快自在！\n\n谢谢沈阳，一点点初秋的味道。明天见～ ",
         "260823":"风在融化，\n雨滴滑落脸颊。\n叶片逗留在手心，\n飞鸟的喧哗。\n小心翼翼，轻拿轻放。\n世界的 处 处 吻。\n\n谢谢沈阳，微凉的浪漫。 ",
         "260905":"用朴素的好奇庆祝生活。\n爱它寻常，\n月亮总是圆滚，\n星辰依旧闪耀，\n晚风中摇曳。\n\n谢谢诸暨，漂亮的夜晚。晚安~ ",
-        "260912":"日子在指尖旋转，\n轻盈的平衡～飞速地舞动。\n我们踩碎了一地阴影，\n被风扬起，随心悬停。\n\n谢谢郑州。 "
+        "260912":"日子在指尖旋转，\n轻盈的平衡～飞速地舞动。\n我们踩碎了一地阴影，\n被风扬起，随心悬停。\n\n谢谢郑州。 ",
+        "261017":"绿的树，一片一片，\n深深浅浅，层层叠叠。\n剥落了夏天，\n在秋日里相互晕染，\n静谧、流动、生长着的自然。\n\n谢谢广州，一起拥抱自然，明天见。",
+
     };
 // --- 修正后的顺序 ---
 const eggIcons = Array.from({length: 34}, (_, i) => `images/果实 (${i+1}).webp`); // 1. 先定义路径
@@ -3754,7 +3756,7 @@ window.addEventListener('load', () => {
         { id: "260823", city: "沈阳" , time:"2026.08.23" , weather:"🌧️" , season:"autumn" , part : 1 , guest:"嘉宾：杨千嬅💜", personalPics:Array.from({length: 9}, (_, i) => `images/260823 ${i+1}.webp`),guestPics:Array.from({length: 6}, (_, i) => `images/260823guest ${i+1}.webp`),songs:[{n:"小半（feat杨千嬅）",t:"guest",l:""},{n:"处处吻",t:"guest",l:""},{n:"你抽的烟",t:"request",l:""},{n:"我们存在一刹那的喜欢",t:"request",l:""},{n:"游鱼",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""} ]},
         { id: "260905", city: "诸暨" , time:"2026.09.05" , weather:"🌧️" , season:"autumn" , part : 1 , guest:"", personalPics:Array.from({length: 9}, (_, i) => `images/260905 ${i+1}.webp`),guestPics:[],songs:[{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"素日之死",t:"request",l:""},{n:"南屏晚钟",t:"request",l:""},{n:"爱完不完",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""} ]},
         { id: "260912", city: "郑州" , time:"2026.09.12" , weather:"🌤️" , season:"autumn" , part : 1  , guest:"林志炫🤴", personalPics:Array.from({length: 9}, (_, i) => `images/260912 ${i+1}.webp`),guestPics:Array.from({length: 6}, (_, i) => `images/260912guest ${i+1}.webp`),songs:[ {n:"小半（feat林志炫）",t:"guest",l:""},{n:"散了吧",t:"guest",l:""},{n:"预感",t:"request",l:""},{n:"夏夜晚风",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
-        { id: "GZ1", city: "广州" , time:"2026.10.17" , weather:"" , season:"autumn" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
+        { id: "261017", city: "广州" , time:"2026.10.17" , weather:"☀️" , season:"autumn" , part : 1  , guest:"", personalPics:Array.from({length: 9}, (_, i) => `images/261017 ${i+1}.webp`),guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"气球",t:"request",l:""},{n:"稀客",t:"request",l:""},{n:"比如世界",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "GZ2", city: "广州" , time:"2026.10.18" , weather:"" , season:"autumn" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "LY1", city: "临沂" , time:"2026.10.24" , weather:"" , season:"autumn" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "GY1", city: "贵阳" , time:"2026.11.07" , weather:"" , season:"winter" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
@@ -4243,6 +4245,7 @@ function renderMyGrain(container) {
         { name: "青岛", color: "#47b9ad" }, { name: "香港", color: "#d3e3fd" },
         { name: "合肥", color: "#b37ff7" }, { name: "沈阳", color: "#95D189" },
         { name: "诸暨", color: "#D0DD19" }, { name: "郑州", color: "#7fc9ce" },
+        { name: "广州", color: "#E93D9A" },
         
     ];
     let lightstickHTML = cityData.map(city => {
@@ -4530,7 +4533,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             <div class="medal-item ${hasAnyTonglou ? 'unlocked' : ''}"  onclick="openGrainAchievement('<b>达成条件：【打卡任意痛楼】</b><br>${hasAnyTonglou ? '“四海好大 欢迎回家”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">🏠</div><div class="name">小粒之家</div>
             </div>
-            <div class="medal-item ${myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314')|| myIds.includes('260529')|| myIds.includes('260627') || myIds.includes('260628')|| myIds.includes('260808')|| myIds.includes('260809')|| myIds.includes('260815')|| myIds.includes('260816')|| myIds.includes('260822')|| myIds.includes('260905')   ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【看一次独唱场】</b><br>${(myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314')|| myIds.includes('260529') || myIds.includes('260627')|| myIds.includes('260628')|| myIds.includes('260808')|| myIds.includes('260809')|| myIds.includes('260815')|| myIds.includes('260816')|| myIds.includes('260822')|| myIds.includes('260905') ) ? '“我只属于妳在这短暂的生命”' : '该成就未解锁'}')">
+            <div class="medal-item ${myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314')|| myIds.includes('260529')|| myIds.includes('260627') || myIds.includes('260628')|| myIds.includes('260808')|| myIds.includes('260809')|| myIds.includes('260815')|| myIds.includes('260816')|| myIds.includes('260822')|| myIds.includes('260905')|| myIds.includes('261017')   ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【看一次独唱场】</b><br>${(myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314')|| myIds.includes('260529') || myIds.includes('260627')|| myIds.includes('260628')|| myIds.includes('260808')|| myIds.includes('260809')|| myIds.includes('260815')|| myIds.includes('260816')|| myIds.includes('260822')|| myIds.includes('260905')|| myIds.includes('261017') ) ? '“我只属于妳在这短暂的生命”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">🎫</div><div class="name">绝对占有</div>
             </div>
             <div class="medal-item ${hasLongVacation ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【在周末连看两场一粒】</b><br>${hasLongVacation ? '“只有阳光持！续！照！耀！”' : '该成就未解锁'}')">
@@ -6298,7 +6301,7 @@ function renderEquip(container) {
         { name: "深圳", color: "#9C9DCF" }, { name: "苏州", color: "#D5BE4F" },
         { name: "武汉", color: "#F69393" }, { name: "成都", color: "#A2C957" },
         { name: "宁波", color: "#F56C7A" }, { name: "香港", color: "#d3e3fd" },
-        { name: "诸暨", color: "#f7f79a" },
+        { name: "诸暨", color: "#f7f79a" },{ name: "广州", color: "#E93D9A" }
 
     ];
     let lightstickHTML = cityData.map(city => {
