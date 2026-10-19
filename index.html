@@ -2826,6 +2826,8 @@ body {
         <h3 style="color: var(--tag-special); margin-top: 0;">更新日志</h3>
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
+            <p><b>2026.10.19</b><br>•【1018】广州场更新</p>
+            <p><b>2026.10.18</b><br>•【1017】广州场更新</p>
             <p><b>2026.9.13</b><br>•【0912】郑州场更新</p>
             <p><b>2026.9.6</b><br>•【0905】诸暨场更新</p>
             <p><b>2026.8.24</b><br>•【0823】沈阳场更新</p>
@@ -3685,6 +3687,7 @@ window.saveBoxImage = function(elementId, fileName) {
         "260905":"用朴素的好奇庆祝生活。\n爱它寻常，\n月亮总是圆滚，\n星辰依旧闪耀，\n晚风中摇曳。\n\n谢谢诸暨，漂亮的夜晚。晚安~ ",
         "260912":"日子在指尖旋转，\n轻盈的平衡～飞速地舞动。\n我们踩碎了一地阴影，\n被风扬起，随心悬停。\n\n谢谢郑州。 ",
         "261017":"绿的树，一片一片，\n深深浅浅，层层叠叠。\n剥落了夏天，\n在秋日里相互晕染，\n静谧、流动、生长着的自然。\n\n谢谢广州，一起拥抱自然，明天见。",
+        "261018":"世界色彩在蔓延，\n光斑旋转、\n堆叠成明媚灿烂的每天，\n映照着我们的脸，\n舒展的喜悦。\n\n谢谢广州，下周临沂见~ ",
 
     };
 // --- 修正后的顺序 ---
@@ -3757,7 +3760,7 @@ window.addEventListener('load', () => {
         { id: "260905", city: "诸暨" , time:"2026.09.05" , weather:"🌧️" , season:"autumn" , part : 1 , guest:"", personalPics:Array.from({length: 9}, (_, i) => `images/260905 ${i+1}.webp`),guestPics:[],songs:[{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"素日之死",t:"request",l:""},{n:"南屏晚钟",t:"request",l:""},{n:"爱完不完",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""} ]},
         { id: "260912", city: "郑州" , time:"2026.09.12" , weather:"🌤️" , season:"autumn" , part : 1  , guest:"林志炫🤴", personalPics:Array.from({length: 9}, (_, i) => `images/260912 ${i+1}.webp`),guestPics:Array.from({length: 6}, (_, i) => `images/260912guest ${i+1}.webp`),songs:[ {n:"小半（feat林志炫）",t:"guest",l:""},{n:"散了吧",t:"guest",l:""},{n:"预感",t:"request",l:""},{n:"夏夜晚风",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "261017", city: "广州" , time:"2026.10.17" , weather:"☀️" , season:"autumn" , part : 1  , guest:"", personalPics:Array.from({length: 9}, (_, i) => `images/261017 ${i+1}.webp`),guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"气球",t:"request",l:""},{n:"稀客",t:"request",l:""},{n:"比如世界",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
-        { id: "GZ2", city: "广州" , time:"2026.10.18" , weather:"" , season:"autumn" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
+        { id: "261018", city: "广州" , time:"2026.10.18" , weather:"🌤️" , season:"autumn" , part : 1  , guest:"", personalPics:Array.from({length: 9}, (_, i) => `images/261018 ${i+1}.webp`),guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"北极光",t:"request",l:""},{n:"我不难过",t:"request",l:""},{n:"清透",t:"surprise",l:""},{n:"下世纪见",t:"surprise",l:""},{n:"爱完不完",t:"surprise",l:""}] },
         { id: "LY1", city: "临沂" , time:"2026.10.24" , weather:"" , season:"autumn" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "GY1", city: "贵阳" , time:"2026.11.07" , weather:"" , season:"winter" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "TJ1", city: "天津" , time:"coming soon" , weather:"" , season:"" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
