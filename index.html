@@ -2826,6 +2826,8 @@ body {
         <h3 style="color: var(--tag-special); margin-top: 0;">更新日志</h3>
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
+            <p><b>2026.11.08</b><br>• 新增【故乡场】成就</p>
+            <p><b>2026.11.08</b><br>•【1107】贵阳场更新</p>
             <p><b>2026.10.25</b><br>•【1024】临沂场更新</p>
             <p><b>2026.10.19</b><br>•【1018】广州场更新</p>
             <p><b>2026.10.18</b><br>•【1017】广州场更新</p>
@@ -3690,6 +3692,7 @@ window.saveBoxImage = function(elementId, fileName) {
         "261017":"绿的树，一片一片，\n深深浅浅，层层叠叠。\n剥落了夏天，\n在秋日里相互晕染，\n静谧、流动、生长着的自然。\n\n谢谢广州，一起拥抱自然，明天见。",
         "261018":"世界色彩在蔓延，\n光斑旋转、\n堆叠成明媚灿烂的每天，\n映照着我们的脸，\n舒展的喜悦。\n\n谢谢广州，下周临沂见~ ",
         "261024":"又见北方的秋~~\n风凉凉的，\n天蓝蓝的，\n车轮碾压过一地落叶，\n好像是世界成熟的交响\n——褪去余温的辉煌。\n\n谢谢临沂！秋天快乐，自在悠扬~😄 ",
+        "261107":"走在街道忍不住深嗅，\n湿漉漉、凉津津的味道～\n包裹住初冬。\n万物依旧柔软，\n像大地的眼波荡漾。\n\n回家啦！谢谢贵阳！😄😄😄～～ ",
 
     };
 // --- 修正后的顺序 ---
@@ -3764,10 +3767,9 @@ window.addEventListener('load', () => {
         { id: "261017", city: "广州" , time:"2026.10.17" , weather:"☀️" , season:"autumn" , part : 1  , guest:"", personalPics:Array.from({length: 9}, (_, i) => `images/261017 ${i+1}.webp`),guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"气球",t:"request",l:""},{n:"稀客",t:"request",l:""},{n:"比如世界",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "261018", city: "广州" , time:"2026.10.18" , weather:"🌤️" , season:"autumn" , part : 1  , guest:"", personalPics:Array.from({length: 9}, (_, i) => `images/261018 ${i+1}.webp`),guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"北极光",t:"request",l:""},{n:"我不难过",t:"request",l:""},{n:"清透",t:"surprise",l:""},{n:"下世纪见",t:"surprise",l:""},{n:"爱完不完",t:"surprise",l:""}] },
         { id: "261024", city: "临沂" , time:"2026.10.24" , weather:"☀️" , season:"autumn" , part : 1  , guest:"", personalPics:Array.from({length: 9}, (_, i) => `images/261024 ${i+1}.webp`),guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"鱼",t:"request",l:""},{n:"拜拜",t:"request",l:""},{n:"Crush",t:"surprise",l:""},{n:"清透",t:"surprise",l:""},{n:"比如世界",t:"surprise",l:""}] },
-        { id: "GY1", city: "贵阳" , time:"2026.11.07" , weather:"" , season:"winter" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
-        { id: "TJ1", city: "天津" , time:"coming soon" , weather:"" , season:"" , part : 1 , status:"unplayed" , guest:"", personalPics:[],guestPics:[],songs:[ {n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
-        { id: "QZ1", city: "泉州", time: "coming soon", weather: "", season: "",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
-        { id: "QZ2", city: "泉州", time: "coming soon", weather: "", season: "",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
+        { id: "261107", city: "贵阳" , time:"2026.11.07" , weather:"🌧️" , season:"winter" , part : 1  , guest:"艾怡良🐶", personalPics:Array.from({length: 9}, (_, i) => `images/261107 ${i+1}.webp`),guestPics:Array.from({length: 4}, (_, i) => `images/261107guest ${i+1}.webp`),songs:[ {n:"无所求必满载而归（feat艾怡良）",t:"guest",l:""},{n:"Forever Young",t:"guest",l:""},{n:"幻期颐",t:"request",l:""},{n:"思念是一种病",t:"request",l:""},{n:"Crush",t:"surprise",l:""},{n:"清透",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
+        { id: "SY1", city: "三亚", time: "2026.12.05", weather: "", season: "winter",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
+        { id: "QZ1", city: "泉州", time: "2026.12.19", weather: "", season: "winter",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
     ];
 
 // 城市经纬度坐标库（用于计算两地距离）
@@ -4251,6 +4253,7 @@ function renderMyGrain(container) {
         { name: "合肥", color: "#b37ff7" }, { name: "沈阳", color: "#95D189" },
         { name: "诸暨", color: "#D0DD19" }, { name: "郑州", color: "#7fc9ce" },
         { name: "广州", color: "#E93D9A" }, { name: "临沂", color: "#f7889c" },
+        { name: "贵阳", color: "#6CAA7F "}
         
     ];
     let lightstickHTML = cityData.map(city => {
@@ -4501,6 +4504,9 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             <div class="medal-item ${(myIds.includes('260808') || myIds.includes('260809')) ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【观看红馆场】</b><br>${(myIds.includes('260808') || myIds.includes('260809')) ? '“踏着闪耀星辰铺开的路 我昂首阔步”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">🎟️</div><div class="name">红馆场</div>
             </div>
+            <div class="medal-item ${myIds.includes('261107') ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【观看贵阳场】</b><br>${myIds.includes('261107') ? '“四海好大 欢迎回家”' : '该成就未解锁'}')">
+                <div class="icon-wrapper">🏠</div><div class="name">故乡场</div>
+            </div>
         </div>
         <div id="ach-weather" class="achievement-grid">
             <div class="medal-item ${myWeathers.has('☀️') ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【在晴天看一粒】</b><br>${myWeathers.has('☀️') ? '“轻风 草地 阳光倾泻”' : '该成就未解锁'}')">
@@ -4535,8 +4541,8 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
         </div>
         <div id="ach-others" class="achievement-grid">
             
-            <div class="medal-item ${hasAnyTonglou ? 'unlocked' : ''}"  onclick="openGrainAchievement('<b>达成条件：【打卡任意痛楼】</b><br>${hasAnyTonglou ? '“四海好大 欢迎回家”' : '该成就未解锁'}')">
-                <div class="icon-wrapper">🏠</div><div class="name">小粒之家</div>
+            <div class="medal-item ${hasAnyTonglou ? 'unlocked' : ''}"  onclick="openGrainAchievement('<b>达成条件：【打卡任意痛楼】</b><br>${hasAnyTonglou ? '“踏遍万水千山总有一地故乡”' : '该成就未解锁'}')">
+                <div class="icon-wrapper">🏡</div><div class="name">小粒之家</div>
             </div>
             <div class="medal-item ${myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314')|| myIds.includes('260529')|| myIds.includes('260627') || myIds.includes('260628')|| myIds.includes('260808')|| myIds.includes('260809')|| myIds.includes('260815')|| myIds.includes('260816')|| myIds.includes('260822')|| myIds.includes('260905')|| myIds.includes('261017') || myIds.includes('261024')   ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【看一次独唱场】</b><br>${(myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314')|| myIds.includes('260529') || myIds.includes('260627')|| myIds.includes('260628')|| myIds.includes('260808')|| myIds.includes('260809')|| myIds.includes('260815')|| myIds.includes('260816')|| myIds.includes('260822')|| myIds.includes('260905')|| myIds.includes('261017')|| myIds.includes('261024') ) ? '“我只属于妳在这短暂的生命”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">🎫</div><div class="name">绝对占有</div>
