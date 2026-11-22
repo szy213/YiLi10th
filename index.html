@@ -2722,6 +2722,7 @@ body {
         <div class="dropdown-content">
             <a href="javascript:void(0)" onclick="selectYear('2025')">2025</a>
             <a href="javascript:void(0)" onclick="selectYear('2026')">2026</a>
+            <a href="javascript:void(0)" onclick="selectYear('2027')">2027</a>
         </div>
     </div>
     <div class="dropdown">
@@ -2826,6 +2827,7 @@ body {
         <h3 style="color: var(--tag-special); margin-top: 0;">更新日志</h3>
         <div style="color: #555; line-height: 1.6; font-size: 14px; font-family: 'Noto Serif SC', serif;">
             <p><b>(点击任意位置退出)</b><br></p>
+            <p><b>2026.11.22</b><br>• 新增【收官场】成就</p>
             <p><b>2026.11.08</b><br>• 新增【故乡场】成就</p>
             <p><b>2026.11.08</b><br>•【1107】贵阳场更新</p>
             <p><b>2026.10.25</b><br>•【1024】临沂场更新</p>
@@ -3770,11 +3772,11 @@ window.addEventListener('load', () => {
         { id: "261107", city: "贵阳" , time:"2026.11.07" , weather:"🌧️" , season:"winter" , part : 1  , guest:"嘉宾：艾怡良🐶",isSpecial: "故乡场🏠", personalPics:Array.from({length: 9}, (_, i) => `images/261107 ${i+1}.webp`),guestPics:Array.from({length: 4}, (_, i) => `images/261107guest ${i+1}.webp`),songs:[ {n:"无所求必满载而归（feat艾怡良）",t:"guest",l:""},{n:"Forever Young",t:"guest",l:""},{n:"幻期颐",t:"request",l:""},{n:"思念是一种病",t:"request",l:""},{n:"Crush",t:"surprise",l:""},{n:"清透",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "SY1", city: "三亚", time: "2026.12.05", weather: "", season: "winter",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "QZ1", city: "泉州", time: "2026.12.19", weather: "", season: "winter",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
-        { id: "WX1", city: "无锡", time: "2026.12.31", weather: "", season: "winter",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
+        { id: "WX1", city: "无锡", time: "2026.12.31", weather: "", season: "winter",part: 1, status: "unplayed", guest: "",isSpecial: "跨年场🎆",  personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "SH1", city: "上海", time: "2027.01.12", weather: "", season: "winter",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "SH2", city: "上海", time: "2027.01.13", weather: "", season: "winter",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
         { id: "BJ1", city: "北京", time: "2027.01.30", weather: "", season: "winter",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
-        { id: "BJ2", city: "北京", time: "2027.01.31", weather: "", season: "winter",part: 1, status: "unplayed", guest: "", personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
+        { id: "BJ2", city: "北京", time: "2027.01.31", weather: "", season: "winter",part: 1, status: "unplayed", guest: "",isSpecial: "收官场" ,personalPics: [], guestPics: [], songs: [{n:"",t:"guest",l:""},{n:"",t:"guest",l:""},{n:"",t:"request",l:""},{n:"",t:"request",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""},{n:"",t:"surprise",l:""}] },
     ];
 
 // 城市经纬度坐标库（用于计算两地距离）
@@ -4467,12 +4469,21 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
     achBox.id = 'capture-achievements'; 
     achBox.className = 'achievement-box'; 
 
-    const totalPossible = 19;
-    const currentUnlocked = (myIds.includes('0726')?2:0) + (myIds.includes('1231')?1:0) + (myIds.includes('0101')?1:0) +
-                            Array.from(myWeathers).length + Array.from(mySeasons).length +
-                            (hasAnyTonglou?1:0) +
-                            ((myIds.includes('1129') || myIds.includes('1231') || myIds.includes('0101')|| myIds.includes('260314'))?1:0) +
-                            (hasLongVacation?1:0) + (totalKM >= 500?1:0) + (isFourSeasonsComplete?1:0);
+    const totalPossible = 21;
+    const soloShowIds = ['1129', '1231', '0101', '260314', '260529', '260627', '260628', '260808', '260809', '260815', '260816', '260822', '260905', '261017', '261024'];
+    const currentUnlocked =
+                            (myIds.includes('0726') ? 2 : 0) +                                      // 首场 + 生日场
+                            (myIds.includes('1231') ? 1 : 0) +                                      // 跨年场
+                            (myIds.includes('0101') ? 1 : 0) +                                      // 元旦场
+                            ((myIds.includes('260808') || myIds.includes('260809')) ? 1 : 0) +      // 红馆场
+                            (myIds.includes('261107') ? 1 : 0) +                                    // 故乡场
+                            (myIds.includes('BJ2') ? 1 : 0) +                                       // 收官场
+                            Array.from(myWeathers).length + Array.from(mySeasons).length +          // 天气 + 季节
+                            (hasAnyTonglou ? 1 : 0) +                                               // 小粒之家
+                            (soloShowIds.some(id => myIds.includes(id)) ? 1 : 0) +                  // 绝对占有
+                            (hasLongVacation ? 1 : 0) +                                             // 悠长假期
+                            (totalKM >= 500 ? 1 : 0) +                                              // 历历万乡
+                            (isFourSeasonsComplete ? 1 : 0);                                        // 四季流转
     
     const progressPercent = Math.round((currentUnlocked / totalPossible) * 100);
 
@@ -4500,7 +4511,7 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             <div class="medal-item ${myIds.includes('0726') ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【观看生日场】</b><br>${myIds.includes('0726') ? '“要妳永存想象 要妳快乐健康”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">🎂</div><div class="name">生日场</div>
             </div>
-            <div class="medal-item ${myIds.includes('1231') ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【观看跨年场】</b><br>${myIds.includes('1231') ? '“烟花落入杯杯佳酿”' : '该成就未解锁'}')">
+            <div class="medal-item ${myIds.includes('1231') ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【观看跨年场】</b><br>${myIds.includes('1231')|| myIds.includes('261231') ? '“烟花落入杯杯佳酿”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">🎆</div><div class="name">跨年场</div>
             </div>
             <div class="medal-item ${myIds.includes('0101') ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【观看元旦场】</b><br>${myIds.includes('0101') ? '“这人间岁岁年年永不停歇变换”' : '该成就未解锁'}')">
@@ -4511,6 +4522,9 @@ const hasAnyTonglou = ['0726', '0727', '0920', '0921', '1101'].some(id =>
             </div>
             <div class="medal-item ${myIds.includes('261107') ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【观看贵阳场】</b><br>${myIds.includes('261107') ? '“四海好大 欢迎回家”' : '该成就未解锁'}')">
                 <div class="icon-wrapper">🏠</div><div class="name">故乡场</div>
+            </div>
+            <div class="medal-item ${myIds.includes('BJ2') ? 'unlocked' : ''}" onclick="openGrainAchievement('<b>达成条件：【观看收官场】</b><br>${myIds.includes('BJ2') ? '“离别要用什么姿态”' : '该成就未解锁'}')">
+                <div class="icon-wrapper">🏁</div><div class="name">收官场</div>
             </div>
         </div>
         <div id="ach-weather" class="achievement-grid">
